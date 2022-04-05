@@ -6,6 +6,7 @@ html {
 html, input, select, option, text {
   font-size: 12pt;
 }
+body { padding: 0.5rem 1rem; }
 
 * {
   box-sizing: border-box;
@@ -15,6 +16,7 @@ html, input, select, option, text {
   margin: .5em 0;
 }
 
+a { text-decoration: none; }
 a[target="_blank"]:after {
   font-size: 70%;
   vertical-align: top;
@@ -22,6 +24,30 @@ a[target="_blank"]:after {
   content: "\29C9"; /* two joined squares for external link */
 }
 
+.title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+body > header, body > footer { max-height: 5vh; }
+main {
+  width: 100%;
+  min-height: 90vh;
+}
+@media(min-width:35em) {
+  main {
+      display: table;
+      border-spacing: 1em 0;
+  }
+  main > nav, main > section {
+      display: table-cell;
+  }
+}
+.sb {
+  width: 20%;
+  min-width: 200px;
+  max-width: 500px;
+}
+.fr { float: right; }
 
 /* User Content */
 .uc a {
