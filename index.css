@@ -47,7 +47,14 @@ main {
   min-width: 200px;
   max-width: 500px;
 }
+.sr {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+  position: absolute;
+}
 .fr { float: right; }
+.alert { border: 2px solid red; }
 
 /* User Content */
 .uc a {

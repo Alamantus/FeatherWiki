@@ -1,19 +1,36 @@
 import html from 'choo/html';
 
 export const globalView = (state, emit) => {
-  const siteRoot = state.href.substring(state.href.lastIndexOf('/'));
-  const { pageSlug } = state.params.pageSlug;
-  const page = state.p.entries.find(p => p.slug === pageSlug);
+  const { siteRoot, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
+  const pageSlug = state.query.page;
+  const page = p.pages.find(p => p.slug === pageSlug);
+  let pageTitle;
+  switch (pageSlug) {
+    case 'settings': pageTitle = 'Wiki Settings'; break;
+    default: pageTitle = page?.title ?? 'Welcome'; break;
+  }
   
   return html`<body>
     <header>
-      <a href=${siteRoot} class="title">${state.p.title}</a>
-      <span class="fr"><button title="Download wiki in its current state" onclick=${() => emit('save')}>Save</button></span>
+      <a href=${siteRoot} class="title">${p.title}</a>
+      <span class="fr">${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button></span>
     </header>
     <main>
-      <nav class="sb" hidden=${!state.showSidebar}></nav>
+      <nav class="sb" hidden=${!showSidebar}>
+        <ul>
+          <li><a href="${siteRoot}?page=settings">Wiki Settings</a></li>
+          <li>
+            <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
+            <fieldset hidden=${!showNewPageField}>
+              <label class="sr" for="newPageField">New Page Title</label>
+              <input id="newPageField" placeholder="New Page Title">
+              <button onclick=${() => emit(events.CREATE_NEW_PAGE)}>Create</button>
+            </fieldset>
+          </li>
+        </ul>
+      </nav>
       <section>
-        <header><h1>${page?.title ?? 'Welcome!'}</h1></header>
+        <header><h1>${pageTitle}</h1></header>
       </section>
     </main>
     <footer>

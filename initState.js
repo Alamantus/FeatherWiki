@@ -1,16 +1,21 @@
 import { decompress, pack } from 'json-compress';
 
 export const initState = state => {
+  state.siteRoot = state.href.substring(state.href.lastIndexOf('/'));
+  if (state.siteRoot.length < 1) state.siteRoot = '/';
+  state.showSidebar = false;
+  state.showNewPageField = false;
+
   state.a = document.getElementById('a').innerHTML;
   state.s = document.getElementById('s').innerHTML;
   try {
     state.p = decompress(JSON.parse(document.getElementById('p').innerHTML));
   } catch (e) {
-    state.p = {title:'New Wiki',description:'',entries:[]};
+    state.p = {title:'New Wiki',description:'',pages:[]};
   }
   state.lastSave = pack(state.p);
   state.currentState = state.lastSave;
-  state.showSidebar = false;
+  state.changedSinceSave = false;
 
   return state;
 }
