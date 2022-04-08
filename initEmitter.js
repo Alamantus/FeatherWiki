@@ -8,8 +8,7 @@ export const initEmitter = (state, emitter) => {
   });
   
   state.events.CREATE_NEW_PAGE = 'createNewPage';
-  emitter.on(state.events.CREATE_NEW_PAGE, () => {
-    const title = document.getElementById('newPageField').value.trim();
+  emitter.on(state.events.CREATE_NEW_PAGE, (title) => {
     if (title.length < 1) return;
 
     const genId = () => {

@@ -1,4 +1,5 @@
 import html from 'choo/html';
+import raw from 'choo/html/raw';
 
 export const globalView = (state, emit) => {
   const { siteRoot, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
@@ -21,20 +22,28 @@ export const globalView = (state, emit) => {
           <li><a href="${siteRoot}?page=settings">Wiki Settings</a></li>
           <li>
             <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
-            <fieldset hidden=${!showNewPageField}>
+            <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
               <label class="sr" for="newPageField">New Page Title</label>
-              <input id="newPageField" placeholder="New Page Title">
-              <button onclick=${() => emit(events.CREATE_NEW_PAGE)}>Create</button>
-            </fieldset>
+              <input id="newPageField" placeholder="New Page Title" autocomplete="off">
+              <button type="submit">Create</button>
+            </form>
           </li>
         </ul>
       </nav>
       <section>
-        <header><h1>${pageTitle}</h1></header>
+        <header>
+          <h1>${pageTitle}</h1>
+        </header>
       </section>
     </main>
     <footer>
       <span class="fr">Powered by <a href="https://codeberg.org/Alamantus/FeatherWiki" target="_blank" rel="noopener noreferrer">FeatherWiki</a></span>
     </footer>
   </body>`;
+
+  function createNewPage(e) {
+    e.preventDefault();
+    const title = e.currentTarget.newPageField.value;
+    emit(events.CREATE_NEW_PAGE, title.trim());
+  }
 };
