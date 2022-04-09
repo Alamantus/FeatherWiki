@@ -6,7 +6,7 @@ export const settingsView = (state, emit) => {
     <div class=r>
       <label class="c tr w14" for=wTitle>Wiki Title</label>
       <div class="c w34">
-        <input class=w1 id=wTitle value=${p.name}>
+        <input class=w1 id=wTitle value=${p.name} minlength=1 required>
       </div>
     </div>
     <div class=r>
@@ -24,13 +24,9 @@ export const settingsView = (state, emit) => {
     e.preventDefault();
     const form = e.currentTarget;
     const title = form.wTitle.value.trim();
-    if (title.length > 0) {
-      state.p.name = title;
-    }
-    const desc = form.wDesc.value.trim();
-    if (desc.length > 0) {
-      state.p.desc = desc;
-    }
+    if (title.length < 1) return alert('Title is required');
+    state.p.name = title;
+    state.p.desc = form.wDesc.value.trim();
     emit(events.CHECK_CHANGED);
   }
 }
