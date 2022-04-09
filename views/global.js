@@ -14,10 +14,14 @@ export const globalView = (state, emit) => {
   }
   
   return html`<body>
-    <header>
-      <span><a href=${siteRoot} class=t>${p.name}</a></span>
-      ${ p.desc ? html`<p>${p.desc}</p>` : ''}
-      <span class="fr">${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button></span>
+    <header class="r">
+      <div class="c w12">
+        <span><a href=${siteRoot} class="t sb">${p.name}</a></span>
+        ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
+      </div>
+      <div class="c w12 tr">
+        ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button>
+      </div>
     </header>
     <main>
       <nav class="sb" hidden=${!showSidebar}>

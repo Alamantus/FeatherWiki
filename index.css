@@ -28,13 +28,10 @@ a[target="_blank"]:after {
   font-size: 1.5em;
   font-weight: bold;
 }
-body > header, body > footer { max-height: 5vh; }
-main { min-height: 90vh; }
-.w1, .r, main { width: 100%; }
-.w34 { width: 75%; }
-.w12 { width: 50%; }
-.w14 { width: 25%; }
+.w1, w34, w12, w14, .r, main { width: 100%; }
 @media(min-width:35em) {
+  body > header, body > footer { max-height: 5vh; }
+  main { min-height: 90vh; }
   .r, main {
       display: table;
       border-spacing: 1em 0;
@@ -42,11 +39,14 @@ main { min-height: 90vh; }
   .c, main > nav, main > section {
       display: table-cell;
   }
-}
-.sb {
-  width: 20%;
-  min-width: 200px;
-  max-width: 500px;
+  .sb {
+    width: 20%;
+    min-width: 200px;
+    max-width: 500px;
+  }
+  .w34 { width: 75%; }
+  .w12 { width: 50%; }
+  .w14 { width: 25%; }
 }
 .sr {
   visibility: hidden;
