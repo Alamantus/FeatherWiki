@@ -1,6 +1,5 @@
 import.meta.hot;
 import choo from 'choo';
-import html from 'choo/html';
 import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';

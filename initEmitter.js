@@ -8,8 +8,8 @@ export const initEmitter = (state, emitter) => {
   });
   
   state.events.CREATE_NEW_PAGE = 'createNewPage';
-  emitter.on(state.events.CREATE_NEW_PAGE, (title) => {
-    if (title.length < 1) return;
+  emitter.on(state.events.CREATE_NEW_PAGE, (name) => {
+    if (name.length < 1) return;
 
     const genId = () => {
       const s = [];
@@ -24,8 +24,8 @@ export const initEmitter = (state, emitter) => {
     while (state.p.pages.findIndex(p => p.id === id) >= 0) {
       id = genId();
     }
-    const slug = title.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-');
-    state.p.pages.push({ id, title, slug, });
+    const slug = name.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-');
+    state.p.pages.push({ id, name, slug, });
     state.showNewPageField = false;
     emitter.emit(state.events.CHECK_CHANGED);
     emitter.emit(state.events.PUSHSTATE, state.siteRoot + '?page=' + slug);

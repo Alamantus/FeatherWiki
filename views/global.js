@@ -5,13 +5,8 @@ import { views } from '.';
 
 export const globalView = (state, emit) => {
   const { siteRoot, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
-  const pageSlug = state.query.page;
+  const pageSlug = state.query.page ?? 'land';
   const page = p.pages.find(p => p.slug === pageSlug);
-  let pageTitle;
-  switch (pageSlug) {
-    case 'settings': pageTitle = 'Wiki Settings'; break;
-    default: pageTitle = page?.title ?? 'Welcome'; break;
-  }
   
   return html`<body>
     <header class="r">
@@ -37,18 +32,11 @@ export const globalView = (state, emit) => {
           </li>
         </ul>
       </nav>
-      <section>
-        <header>
-          <h1>${pageTitle}</h1>
-        </header>
-        <article>
-        ${
-          page
-          ? raw(page.content)
-          : views[pageSlug]?.(state, emit)
-        }
-        </article>
-      </section>
+      ${
+        page
+        ? views.page(state, emit, page)
+        : views[pageSlug]?.(state, emit)
+      }
     </main>
     <footer>
       <span class="fr">Powered by <a href="https://codeberg.org/Alamantus/FeatherWiki" target="_blank" rel="noopener noreferrer">FeatherWiki</a></span>
