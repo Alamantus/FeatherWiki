@@ -11,7 +11,7 @@ export const initState = state => {
   try {
     state.p = decompress(JSON.parse(document.getElementById('p').innerHTML));
   } catch (e) {
-    state.p = {title:'New Wiki',description:'',pages:[]};
+    state.p = {name:'New Wiki',desc:'',pages:[]};
   }
   state.lastSave = pack(state.p);
   state.currentState = state.lastSave;

@@ -24,21 +24,22 @@ a[target="_blank"]:after {
   content: "\29C9"; /* two joined squares for external link */
 }
 
-.title {
+.t {
   font-size: 1.5em;
   font-weight: bold;
 }
 body > header, body > footer { max-height: 5vh; }
-main {
-  width: 100%;
-  min-height: 90vh;
-}
+main { min-height: 90vh; }
+.w1, .r, main { width: 100%; }
+.w34 { width: 75%; }
+.w12 { width: 50%; }
+.w14 { width: 25%; }
 @media(min-width:35em) {
-  main {
+  .r, main {
       display: table;
       border-spacing: 1em 0;
   }
-  main > nav, main > section {
+  .c, main > nav, main > section {
       display: table-cell;
   }
 }
@@ -53,6 +54,7 @@ main {
   width: 0;
   position: absolute;
 }
+.tr { text-align: right; }
 .fr { float: right; }
 .alert { border: 2px solid red; }
 

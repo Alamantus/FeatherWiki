@@ -52,7 +52,7 @@ export const initEmitter = (state, emitter) => {
   state.events.SAVE_WIKI = 'saveWiki';
   emitter.on('saveWiki', async () => {
     const output = `<!DOCTYPE html><html lang=en><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${state.p.title}</title>${state.p.description ? '<meta name="description" content="' + state.p.description.replace(/"/g, '\\"') + '">' : ''}
+<title>${state.p.name}</title>${state.p.desc ? '<meta name="description" content="' + state.p.desc.replace(/"/g, '\\"') + '">' : ''}
 <style id="s">${state.s}</style></head><body><script id="a">${state.a}</script><script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script></body></html>
 `;
     const filename = /\/$/.test(window.location.pathname) ? 'index.html' : window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);

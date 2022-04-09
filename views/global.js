@@ -1,6 +1,8 @@
 import html from 'choo/html';
 import raw from 'choo/html/raw';
 
+import { views } from '.';
+
 export const globalView = (state, emit) => {
   const { siteRoot, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
   const pageSlug = state.query.page;
@@ -13,7 +15,8 @@ export const globalView = (state, emit) => {
   
   return html`<body>
     <header>
-      <a href=${siteRoot} class="title">${p.title}</a>
+      <span><a href=${siteRoot} class=t>${p.name}</a></span>
+      ${ p.desc ? html`<p>${p.desc}</p>` : ''}
       <span class="fr">${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button></span>
     </header>
     <main>
@@ -34,6 +37,13 @@ export const globalView = (state, emit) => {
         <header>
           <h1>${pageTitle}</h1>
         </header>
+        <article>
+        ${
+          page
+          ? raw(page.content)
+          : views[pageSlug]?.(state, emit)
+        }
+        </article>
       </section>
     </main>
     <footer>
