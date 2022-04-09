@@ -1,5 +1,4 @@
 import html from 'choo/html';
-import raw from 'choo/html/raw';
 
 import { views } from '.';
 
@@ -35,7 +34,7 @@ export const globalView = (state, emit) => {
       ${
         page
         ? views.page(state, emit, page)
-        : views[pageSlug]?.(state, emit)
+        : views[pageSlug]?.(state, emit) ?? views.land(state, emit)
       }
     </main>
     <footer>
