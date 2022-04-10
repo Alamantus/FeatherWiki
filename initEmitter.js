@@ -1,10 +1,16 @@
 import { compress, pack } from 'json-compress';
 
 export const initEmitter = (state, emitter) => {
+  emitter.on(state.events.RENDER, callback => {
+    if (typeof callback === 'function') setTimeout(callback, 100);
+  });
+
   state.events.SHOW_NEW_PAGE_FIELD = 'showNewPageField';
   emitter.on(state.events.SHOW_NEW_PAGE_FIELD, () => {
     state.showNewPageField = true;
-    emitter.emit(state.events.RENDER);
+    emitter.emit(state.events.RENDER, () => {
+      document.getElementById('newPageField').focus();
+    });
   });
   
   state.events.CREATE_NEW_PAGE = 'createNewPage';
@@ -27,8 +33,15 @@ export const initEmitter = (state, emitter) => {
     const slug = name.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-');
     state.p.pages.push({ id, name, slug, });
     state.showNewPageField = false;
+    state.edit = true;
     emitter.emit(state.events.CHECK_CHANGED);
     emitter.emit(state.events.PUSHSTATE, state.siteRoot + '?page=' + slug);
+  });
+
+  state.events.START_EDIT = 'startEdit';
+  emitter.on(state.events.START_EDIT, () => {
+    state.edit = true;
+    emitter.emit(state.events.RENDER);
   });
 
   state.events.UPDATE_PAGE = 'updatePage';
@@ -39,7 +52,14 @@ export const initEmitter = (state, emitter) => {
     } else {
       state.p.pages.push(page);
     }
+    state.edit = false;
+    state.editStore = false;
     emitter.emit(state.events.CHECK_CHANGED);
+  });
+
+  emitter.on(state.events.NAVIGATE, () => {
+    state.edit = false;
+    state.editStore = '';
   });
 
   state.events.CHECK_CHANGED = 'checkChanged';

@@ -5,6 +5,8 @@ export const initState = state => {
   if (state.siteRoot.length < 1) state.siteRoot = '/';
   state.showSidebar = false;
   state.showNewPageField = false;
+  state.edit = false;
+  state.editStore = '';
 
   state.a = document.getElementById('a').innerHTML;
   state.s = document.getElementById('s').innerHTML;
