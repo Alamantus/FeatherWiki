@@ -6,10 +6,17 @@ export const pageEdit = (state, emit, page) => {
   setTimeout(initEdit, 100);
   return html`<form onsubmit=${save}>
     <header>
-      <h1>
-        <label for=pName class=sr>Page Title</label>
-        <input id=pName value=${page.name} placeholder="Page Title" required minlength=1>
-      </h1>
+      <h1>Edit Page</h1>
+      <div class=r>
+        <div class="c w12">
+          <label for=pName class=sr>Page Title</label>
+          <input id=pName value=${page.name} placeholder="Page Title" required minlength=1>
+        </div>
+        <div class="c w12">
+          <label for=slug class=sr>Page Slug</label>
+          <input id=slug value=${page.slug} placeholder="Page Slug" required minlength=1>
+          <button onclick=${slugifyTitle}>Slugify Title</button>
+        </div>
     </header>
     <article id=editor></article>
     <footer class=r>
@@ -47,10 +54,16 @@ export const pageEdit = (state, emit, page) => {
     editor.content.innerHTML = page.content ?? '';
   }
 
+  function slugifyTitle (e) {
+    e.preventDefault();
+    document.getElementById('slug').value = state.help.slugify(document.getElementById('pName').value);
+  }
+
   function save (e) {
     e.preventDefault();
     const form = e.currentTarget;
     page.name = form.pName.value;
+    page.slug = form.slug.value;
     page.content = state.editStore;
     page.tags = form.tags.value.split(',').map(tag => tag.trim());
     emit(state.events.UPDATE_PAGE, page);

@@ -7,6 +7,9 @@ export const initState = state => {
   state.showNewPageField = false;
   state.edit = false;
   state.editStore = '';
+  state.help = {
+    slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
+  };
 
   state.a = document.getElementById('a').innerHTML;
   state.s = document.getElementById('s').innerHTML;

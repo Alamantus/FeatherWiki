@@ -30,7 +30,7 @@ export const initEmitter = (state, emitter) => {
     while (state.p.pages.findIndex(p => p.id === id) >= 0) {
       id = genId();
     }
-    const slug = name.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-');
+    const slug = state.help.slugify(name);
     state.p.pages.push({ id, name, slug, });
     state.showNewPageField = false;
     state.edit = true;
@@ -54,6 +54,7 @@ export const initEmitter = (state, emitter) => {
     }
     state.edit = false;
     state.editStore = false;
+    emitter.emit(state.events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
     emitter.emit(state.events.CHECK_CHANGED);
   });
 
