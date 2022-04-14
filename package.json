@@ -20,6 +20,8 @@
     "buffer": "^6.0.3",
     "choo-devtools": "^3.0.4",
     "events": "^3.3.0",
-    "parcel": "^2.4.1"
+    "minify-html-literals": "^1.3.5",
+    "parcel": "^2.4.1",
+    "parcel-transformer-minify-html-literals": "file:parcel-transformer-minify-html-literals"
   }
 }
