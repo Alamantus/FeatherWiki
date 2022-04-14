@@ -1,9 +1,14 @@
 {
   "name": "featherwiki",
-  "packageManager": "yarn@3.2.0",
   "scripts": {
-    "start": "snowpack dev --polyfill-node",
-    "build": "snowpack build"
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "targets": {
+    "default": {
+      "outputFormat": "global"
+    }
   },
   "dependencies": {
     "choo": "^7.1.0",
@@ -11,7 +16,10 @@
     "pell": "^1.0.6"
   },
   "devDependencies": {
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
     "choo-devtools": "^3.0.4",
-    "snowpack": "^3.8.8"
+    "events": "^3.3.0",
+    "parcel": "^2.4.1"
   }
 }
