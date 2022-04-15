@@ -3,18 +3,20 @@ import raw from 'choo/html/raw';
 import { init } from 'pell';
 
 export const pageEdit = (state, emit, page) => {
+  const { slugify } = state.help;
+
   setTimeout(initEdit, 100);
   return html`<form onsubmit=${save}>
     <header>
       <h1>Edit Page</h1>
       <div class=r>
         <div class="c w12">
-          <label for=pName class=sr>Page Title</label>
-          <input id=pName value=${page.name} placeholder="Page Title" required minlength=1>
+          <label for=pName>Page Title</label>
+          <input id=pName value=${page.name} required minlength=2>
         </div>
         <div class="c w12">
-          <label for=slug class=sr>Page Slug</label>
-          <input id=slug value=${page.slug} placeholder="Page Slug" required minlength=1>
+          <label for=slug>Page Slug</label>
+          <input id=slug value=${page.slug} required minlength=2>
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
@@ -56,14 +58,18 @@ export const pageEdit = (state, emit, page) => {
 
   function slugifyTitle (e) {
     e.preventDefault();
-    document.getElementById('slug').value = state.help.slugify(document.getElementById('pName').value);
+    document.getElementById('slug').value = slugify(document.getElementById('pName').value.trim());
   }
 
   function save (e) {
     e.preventDefault();
     const form = e.currentTarget;
-    page.name = form.pName.value;
-    page.slug = form.slug.value;
+    const name = form.pName.value.trim();
+    if (name.length < 1) return alert('Page Title cannot be blank.');
+    const slug = form.slug.value.trim();
+    if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
+    page.name = name;
+    page.slug = slugify(slug);
     page.content = state.editStore;
     page.tags = form.tags.value.split(',').map(tag => tag.trim());
     emit(state.events.UPDATE_PAGE, page);
