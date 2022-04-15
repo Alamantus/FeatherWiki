@@ -18,9 +18,13 @@ export const pageDisplay = (state, emit, page) => {
           : ''
         }
       </div>
-      <div class="c w14 tr">
-        <button onclick=${() => emit(state.events.START_EDIT)}>Edit</button>
-      </div>
+      ${
+        page.id
+        ? html`<div class="c w14 tr">
+          <button onclick=${() => emit(state.events.START_EDIT)}>Edit</button>
+        </div>`
+        : ''
+      }
     </footer>`
   ];
 }

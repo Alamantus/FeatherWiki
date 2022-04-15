@@ -3,9 +3,7 @@ import html from 'choo/html';
 import { views } from '.';
 
 export const globalView = (state, emit) => {
-  const { siteRoot, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
-  const pageSlug = state.query.page ?? 'land';
-  const page = p.pages.find(p => p.slug === pageSlug);
+  const { siteRoot, pg, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
   
   return html`<body>
     <header class="r">
@@ -20,7 +18,7 @@ export const globalView = (state, emit) => {
     <main>
       <nav class="sb" hidden=${!showSidebar}>
         <ul>
-          <li><a href="${siteRoot}?page=settings">Wiki Settings</a></li>
+          <li><a href="${siteRoot}?page=s">${views.s.name}</a></li>
           <li>
             <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
             <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
@@ -32,9 +30,9 @@ export const globalView = (state, emit) => {
         </ul>
       </nav>
       ${
-        page
-        ? views.page(state, emit, page)
-        : views[pageSlug]?.(state, emit) ?? views.land(state, emit)
+        pg
+        ? views.p.render(state, emit, pg)
+        : views[state.query.page ?? 'h']?.render(state, emit)
       }
     </main>
     <footer>
@@ -44,7 +42,8 @@ export const globalView = (state, emit) => {
 
   function createNewPage(e) {
     e.preventDefault();
-    const title = e.currentTarget.newPageField.value;
-    emit(events.CREATE_NEW_PAGE, title.trim());
+    const title = e.currentTarget.newPageField.value.trim();
+    if (title.length < 2) return alert('Enter more than 1 character to create a new page.');
+    emit(events.CREATE_PAGE, title.trim());
   }
 };

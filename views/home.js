@@ -1,6 +1,6 @@
 import html from 'choo/html';
 
-export const landView = (state, emit) => {
+export const homeView = (state, emit) => {
   const { events, p } = state;
   return html`<section>
     <header>

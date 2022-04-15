@@ -1,8 +1,40 @@
 import { compress, pack } from 'json-compress';
 
+import { views } from './views';
+
 export const initEmitter = (state, emitter) => {
   emitter.on(state.events.RENDER, callback => {
     if (typeof callback === 'function') setTimeout(callback, 100);
+  });
+
+  state.events.HANDLE_404 = 'handle404';
+  emitter.on(state.events.HANDLE_404, () => {
+    const { page } = state.query;
+    if (page?.length > 1) {
+      const { help, events, siteRoot } = state;
+      const slug = help.slugify(page);
+      const pg = help.findPage(slug);
+      if (!pg && !views[slug]) {
+        const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
+        emitter.emit(events.CREATE_PAGE, name, false);
+      }
+    } else if (page?.length > 0 && !views[page]) {
+      state.pg = { name: '404', content: '<p>Page not found</p>'};
+      emitter.emit(state.events.RENDER);
+    }
+  });
+
+  emitter.on(state.events.DOMCONTENTLOADED, () => {
+    emitter.emit(state.events.HANDLE_404);
+    emitter.emit(state.events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
+  });
+
+  emitter.on(state.events.NAVIGATE, () => {
+    state.edit = false;
+    state.editStore = '';
+    state.pg = state.help.getPage();
+    emitter.emit(state.events.HANDLE_404);
+    emitter.emit(state.events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
   });
 
   state.events.SHOW_NEW_PAGE_FIELD = 'showNewPageField';
@@ -13,8 +45,8 @@ export const initEmitter = (state, emitter) => {
     });
   });
   
-  state.events.CREATE_NEW_PAGE = 'createNewPage';
-  emitter.on(state.events.CREATE_NEW_PAGE, (name) => {
+  state.events.CREATE_PAGE = 'createNewPage';
+  emitter.on(state.events.CREATE_PAGE, (name, save = true) => {
     if (name.length < 1) return;
 
     const genId = () => {
@@ -31,11 +63,18 @@ export const initEmitter = (state, emitter) => {
       id = genId();
     }
     const slug = state.help.slugify(name);
-    state.p.pages.push({ id, name, slug, });
+    const newPg = { id, name, slug, };
     state.showNewPageField = false;
-    state.edit = true;
-    emitter.emit(state.events.CHECK_CHANGED);
-    emitter.emit(state.events.PUSHSTATE, state.siteRoot + '?page=' + slug);
+
+    const { events, query, siteRoot } = state;
+    if (save) {
+      state.p.pages.push(newPg);
+      emitter.emit(events.CHECK_CHANGED);
+      emitter.emit(events[query.page !== slug ? 'REPLACESTATE' : 'PUSHSTATE'], siteRoot + '?page=' + slug);
+    } else {
+      state.pg = newPg;
+    }
+    emitter.emit(events.START_EDIT);
   });
 
   state.events.START_EDIT = 'startEdit';
@@ -58,16 +97,11 @@ export const initEmitter = (state, emitter) => {
     emitter.emit(state.events.CHECK_CHANGED);
   });
 
-  emitter.on(state.events.NAVIGATE, () => {
-    state.edit = false;
-    state.editStore = '';
-  });
-
   state.events.CHECK_CHANGED = 'checkChanged';
-  emitter.on(state.events.CHECK_CHANGED, () => {
+  emitter.on(state.events.CHECK_CHANGED, callback => {
     state.currentState = pack(state.p);
     state.changedSinceSave = state.lastSave !== state.currentState;
-    emitter.emit(state.events.RENDER);
+    emitter.emit(state.events.RENDER, callback);
   });
 
   state.events.SAVE_WIKI = 'saveWiki';

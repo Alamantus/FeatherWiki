@@ -9,6 +9,11 @@ export const initState = state => {
   state.editStore = '';
   state.help = {
     slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
+    findPage: s => state.p.pages.find(p => p.slug === s),
+    getPage: () => {
+      const { query, help } = state;
+      return help.findPage(query.page);
+    },
   };
 
   state.a = document.getElementById('a').innerHTML;
@@ -18,6 +23,7 @@ export const initState = state => {
   } catch (e) {
     state.p = {name:'New Wiki',desc:'',pages:[]};
   }
+  state.pg = state.help.getPage();
   state.lastSave = pack(state.p);
   state.currentState = state.lastSave;
   state.changedSinceSave = false;
