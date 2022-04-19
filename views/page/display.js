@@ -6,10 +6,11 @@ export const pageDisplay = (state, emit, page) => {
   let c = content ?? null;
   if (c) {
     (content ? content.match(/(\[\[.+\]\])?/g) : []).map(l => {
-      const name = l.replace('[[', '').replace(']]', '');
+      const match = l.replace('[[', '').replace(']]', '').split('|');
+      const slug = match[1] ? match[1].trim() : state.help.slugify(match[0]);
       return {
         match: l,
-        link: `<a href="${state.siteRoot}?page=${state.help.slugify(name)}">${name}</a>`,
+        link: `<a href="${state.siteRoot}?page=${slug}">${match[0]}</a>`,
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);
