@@ -1,7 +1,7 @@
 import html from 'choo/html';
 
 export const homeView = (state, emit) => {
-  const { events, p } = state;
+  const { p } = state;
   return html`<section>
     <header>
       <h1>Welcome</h1>

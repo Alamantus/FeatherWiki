@@ -3,7 +3,24 @@ import html from 'choo/html';
 import { views } from '.';
 
 export const globalView = (state, emit) => {
-  const { siteRoot, pg, p, events, changedSinceSave, showSidebar, showNewPageField } = state;
+  const {
+    siteRoot,
+    pg,
+    p,
+    t,
+    events,
+    query,
+    changedSinceSave,
+    showSidebar,
+    showNewPageField,
+  } = state;
+
+  let pageToRender = pg
+    ? views.p.render(state, emit, pg)
+    : views[query.page ?? 'h']?.render(state, emit);
+  if (query.tag) {
+    pageToRender = views.t.render(state, emit);
+  }
   
   return html`<body>
     <header class="r">
@@ -27,13 +44,19 @@ export const globalView = (state, emit) => {
               <button type="submit">Create</button>
             </form>
           </li>
+          ${
+            t.length > 0
+            ? html`<li>
+              <b>Tags</b>
+              <ul>
+                ${ t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
+              </ul>
+            </li>`
+            : ''
+          }
         </ul>
       </nav>
-      ${
-        pg
-        ? views.p.render(state, emit, pg)
-        : views[state.query.page ?? 'h']?.render(state, emit)
-      }
+      ${ pageToRender }
     </main>
     <footer>
       <span class="fr">Powered by <a href="https://codeberg.org/Alamantus/FeatherWiki" target="_blank" rel="noopener noreferrer">FeatherWiki</a></span>

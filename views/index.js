@@ -1,5 +1,6 @@
 import { homeView } from "./home";
 import { settingsView } from "./settings";
+import { taggedView } from "./tagged";
 import { pageView } from "./page";
 
 export const views = {
@@ -8,5 +9,6 @@ export const views = {
     name: 'Wiki Settings',
     render: settingsView,
   },
+  t: { render: taggedView },
   p: { render: pageView },
 };
