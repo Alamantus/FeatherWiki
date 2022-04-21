@@ -53,7 +53,6 @@ export const initEmitter = (state, emitter) => {
       const s = [];
       for (let i = 0; i < 10; i++) {
         const code = Math.round(Math.random() * (126 - 32)) + 32;
-        console.log(code);
         s.push(String.fromCharCode(code));
       }
       return s.join('');
@@ -111,7 +110,7 @@ export const initEmitter = (state, emitter) => {
     emitter.emit(events.RENDER, callback);
   });
 
-  emitter.on('saveWiki', async () => {
+  emitter.on(events.SAVE_WIKI, async () => {
     const output = `<!DOCTYPE html>
     <html lang=en>
     <head>
@@ -119,6 +118,7 @@ export const initEmitter = (state, emitter) => {
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>${state.p.name}</title>
       ${state.p.desc ? '<meta name="description" content="' + state.p.desc.replace(/"/g, '\\"') + '">' : ''}
+      <meta name="version" content="{{package.json:version}}" />
       <style id="s">${state.s}</style>
     </head>
     <body>

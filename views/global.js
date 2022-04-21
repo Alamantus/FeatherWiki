@@ -1,6 +1,6 @@
 import html from 'choo/html';
 
-import { views } from '.';
+import { views } from './index';
 
 export const globalView = (state, emit) => {
   const {
@@ -59,7 +59,7 @@ export const globalView = (state, emit) => {
       ${ pageToRender }
     </main>
     <footer>
-      <span class="fr">Powered by <a href="https://codeberg.org/Alamantus/FeatherWiki" target="_blank" rel="noopener noreferrer">FeatherWiki</a></span>
+      <span class="fr">Powered by <a href="{{package.json:homepage}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
   </body>`;
 
