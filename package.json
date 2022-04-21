@@ -1,8 +1,11 @@
 {
   "name": "featherwiki",
+  "version": "0.0.1",
+  "title": "Feather Wiki",
+  "description": "It's like TiddlyWiki but as small as possible!",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html --dist-dir docs"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "targets": {
@@ -22,6 +25,7 @@
     "events": "^3.3.0",
     "minify-html-literals": "^1.3.5",
     "parcel": "^2.4.1",
+    "parcel-transformer-inject-package-json-value": "file:parcel-transformer-inject-package-json-value",
     "parcel-transformer-minify-html-literals": "file:parcel-transformer-minify-html-literals"
   }
 }
