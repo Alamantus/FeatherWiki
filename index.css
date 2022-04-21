@@ -38,6 +38,7 @@ a[target="_blank"]:after {
   }
   .c, main > nav, main > section {
       display: table-cell;
+      vertical-align: top;
   }
   .sb {
     width: 20%;
@@ -57,6 +58,7 @@ a[target="_blank"]:after {
 .tr { text-align: right; }
 .fr { float: right; }
 .alert { border: 2px solid red; }
+.il { display: inline; }
 
 /* User Content */
 .uc a {

@@ -17,17 +17,20 @@ export const pageDisplay = (state, emit, page) => {
     });
   }
   return [
-    html`<article>
+    html`<article class=uc>
       ${ c ? raw(c) : 'No Page Content' }
     </article>`,
     html`<footer class=r>
-      <div class="c w34">
-        ${
-          page?.tags
-          ? page.tags.join(', ')
-          : ''
-        }
-      </div>
+      <dl class="c w34 r">
+        <dt class=c><b>Tagged:</b></dt>
+        <dd class=c>
+          ${
+            page?.tags
+            ? page.tags.replace(/,/g, ', ')
+            : ''
+          }
+        </dd>
+      </dl>
       ${
         page.id
         ? html`<div class="c w14 tr">

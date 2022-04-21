@@ -3,12 +3,19 @@ import { compress, pack } from 'json-compress';
 import { views } from './views';
 
 export const initEmitter = (state, emitter) => {
-  emitter.on(state.events.RENDER, callback => {
+  const { events } = state;
+
+  emitter.on(events.DOMCONTENTLOADED, () => {
+    emitter.emit(events.HANDLE_404);
+    emitter.emit(events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
+    emitter.emit(events.COLLECT_TAGS);
+  });
+
+  emitter.on(events.RENDER, callback => {
     if (typeof callback === 'function') setTimeout(callback, 100);
   });
 
-  state.events.HANDLE_404 = 'handle404';
-  emitter.on(state.events.HANDLE_404, () => {
+  emitter.on(events.HANDLE_404, () => {
     const { page } = state.query;
     if (page?.length > 1) {
       const { help, events, siteRoot } = state;
@@ -20,33 +27,26 @@ export const initEmitter = (state, emitter) => {
       }
     } else if (page?.length > 0 && !views[page]) {
       state.pg = { name: '404', content: '<p>Page not found</p>'};
-      emitter.emit(state.events.RENDER);
+      emitter.emit(events.RENDER);
     }
   });
 
-  emitter.on(state.events.DOMCONTENTLOADED, () => {
-    emitter.emit(state.events.HANDLE_404);
-    emitter.emit(state.events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
-  });
-
-  emitter.on(state.events.NAVIGATE, () => {
+  emitter.on(events.NAVIGATE, () => {
     state.edit = false;
     state.editStore = '';
     state.pg = state.help.getPage();
-    emitter.emit(state.events.HANDLE_404);
-    emitter.emit(state.events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
+    emitter.emit(events.HANDLE_404);
+    emitter.emit(events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
   });
 
-  state.events.SHOW_NEW_PAGE_FIELD = 'showNewPageField';
-  emitter.on(state.events.SHOW_NEW_PAGE_FIELD, () => {
+  emitter.on(events.SHOW_NEW_PAGE_FIELD, () => {
     state.showNewPageField = true;
-    emitter.emit(state.events.RENDER, () => {
+    emitter.emit(events.RENDER, () => {
       document.getElementById('newPageField').focus();
     });
   });
-  
-  state.events.CREATE_PAGE = 'createNewPage';
-  emitter.on(state.events.CREATE_PAGE, (name, save = true) => {
+
+  emitter.on(events.CREATE_PAGE, (name, save = true) => {
     if (name.length < 1) return;
 
     const genId = () => {
@@ -77,39 +77,55 @@ export const initEmitter = (state, emitter) => {
     emitter.emit(events.START_EDIT);
   });
 
-  state.events.START_EDIT = 'startEdit';
-  emitter.on(state.events.START_EDIT, () => {
+  emitter.on(events.START_EDIT, () => {
+    const { pg } = state;
     state.edit = true;
-    emitter.emit(state.events.RENDER);
+    state.editStore = { name: pg.name ?? '', slug: pg.slug ?? '', content: pg.content ?? '', tags: pg.tags ?? ''};
+    emitter.emit(events.RENDER);
   });
 
-  state.events.UPDATE_PAGE = 'updatePage';
-  emitter.on(state.events.UPDATE_PAGE, (page) => {
-    const pIndex = state.p.pages.findIndex(p => p.id === page.id);
+  emitter.on(events.UPDATE_PAGE, (page) => {
+    const { p } = state;
+    const pIndex = p.pages.findIndex(pg => pg.id === page.id);
     if (pIndex > -1) {
-      state.p.pages[pIndex] = page;
+      p.pages[pIndex] = page;
     } else {
-      state.p.pages.push(page);
+      p.pages.push(page);
     }
     state.edit = false;
     state.editStore = false;
-    emitter.emit(state.events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
-    emitter.emit(state.events.CHECK_CHANGED);
+    emitter.emit(events.COLLECT_TAGS)
+    emitter.emit(events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
+    emitter.emit(events.CHECK_CHANGED);
   });
 
-  state.events.CHECK_CHANGED = 'checkChanged';
-  emitter.on(state.events.CHECK_CHANGED, callback => {
+  emitter.on(events.COLLECT_TAGS, () => {
+    state.t = state.p.pages.reduce((r, p) => {
+      return [...r, ...(p.tags?.split(',') ?? [])];
+    }, []).sort();
+  });
+
+  emitter.on(events.CHECK_CHANGED, callback => {
     state.currentState = pack(state.p);
     state.changedSinceSave = state.lastSave !== state.currentState;
-    emitter.emit(state.events.RENDER, callback);
+    emitter.emit(events.RENDER, callback);
   });
 
-  state.events.SAVE_WIKI = 'saveWiki';
   emitter.on('saveWiki', async () => {
-    const output = `<!DOCTYPE html><html lang=en><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${state.p.name}</title>${state.p.desc ? '<meta name="description" content="' + state.p.desc.replace(/"/g, '\\"') + '">' : ''}
-<style id="s">${state.s}</style></head><body><script id="a">${state.a}</script><script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script></body></html>
-`;
+    const output = `<!DOCTYPE html>
+    <html lang=en>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>${state.p.name}</title>
+      ${state.p.desc ? '<meta name="description" content="' + state.p.desc.replace(/"/g, '\\"') + '">' : ''}
+      <style id="s">${state.s}</style>
+    </head>
+    <body>
+      <script id="a">${state.a}</script>
+      <script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script>
+    </body>
+    </html>`;
     const filename = /\/$/.test(window.location.pathname) ? 'index.html' : window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
@@ -120,7 +136,7 @@ export const initEmitter = (state, emitter) => {
     document.body.removeChild(el);
 
     state.lastSave = pack(state.p);
-    emitter.emit(state.events.CHECK_CHANGED);
+    emitter.emit(events.CHECK_CHANGED);
   });
 
   return emitter;
