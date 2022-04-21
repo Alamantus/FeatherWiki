@@ -53,7 +53,10 @@ export const pageEdit = (state, emit, page) => {
   }
 
   function getTagsArray () {
-    return document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    const tags = document.getElementById('tags').value.split(',').map(t => t.trim());
+    return tags.filter((t, i) => {
+      return t.length > 0 && tags.indexOf(t) === i;
+    }).sort();
   }
   
   function addTag (e) {
