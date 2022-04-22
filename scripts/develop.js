@@ -7,15 +7,6 @@ import babel from 'esbuild-plugin-babel';
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
 
-// Create an instance of the http server to handle HTTP requests
-const server = http.createServer((req, res) => {
-  // Set a response type of plain text for the response
-  res.writeHead(200, {'Content-Type': 'text/html'});
-
-  // Send back a response and end the connection
-  res.end(fs.readFileSync(outputFilePath));
-});
-
 const cssResult = esbuild.buildSync({
   entryPoints: ['index.css'],
   write: false,
@@ -38,7 +29,11 @@ esbuild.build({
     onRebuild(error, result) {
       if (error) console.error('watch build failed:', error)
       else {
-        console.info('watch build succeeded:', result.outputFiles.map(f => f.path));
+        handleBuildResult(result)
+          .catch((e) => {
+            console.error(e);
+            process.exit(1);
+          });
       }
     },
   },
@@ -48,7 +43,15 @@ esbuild.build({
   platform: 'browser',
   // target: [ 'es5' ],
   outdir: 'build',
-}).then(async result => {
+})
+  .then(handleBuildResult)
+  .then(startServer)
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+
+async function handleBuildResult (result) {
   const fileName = path.relative(process.cwd(), 'index.html');
   let html = await fs.promises.readFile(fileName, 'utf8');
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
@@ -61,8 +64,11 @@ esbuild.build({
       html = html.replace('{{jsOutput}}', output);
     }
   }
-  return html;
-}).then(async html => {
+  
+  return injectPackageJsonData(html);
+}
+
+async function injectPackageJsonData (html) {
   const fileName = path.relative(process.cwd(), 'package.json');
   const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
   const packageJson = JSON.parse(packageJsonFile);
@@ -84,12 +90,14 @@ esbuild.build({
         replace,
       };
     }).forEach(m => {
-      result = result.replace(m.match, m.replace);
+      html = html.replace(m.match, m.replace);
     });
-
-    return result;
   }
-}).then(async html => {
+
+  return writeHtmlOutput(html);
+}
+
+async function writeHtmlOutput (html) {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
@@ -98,14 +106,14 @@ esbuild.build({
     const outputKb = Uint8Array.from(Buffer.from(html)).byteLength * 0.000977;
     console.info(outputFilePath, outputKb.toFixed(3) + ' kb');
   });
-}).then(() => {
-  if (!server.listening) {
-    // Start the server on port 3000
-    server.listen(3000, 'localhost');
-    console.log('Node server running at http://localhost:3000');
-  }
-})
-  .catch((e) => {
-    console.error(e);
-    process.exit(1)
+}
+
+async function startServer () {
+  const server = http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+  
+    res.end(fs.readFileSync(outputFilePath));
   });
+  server.listen(3000, 'localhost');
+  console.log('Node server running at http://localhost:3000');
+}
