@@ -15,13 +15,13 @@ const cssResult = esbuild.buildSync({
 
 const minifyOptions = {
   collapseWhitespace: true,
+  conservativeCollapse: true,
   collapseInlineTagWhitespace: true,
   decodeEntities: true,
-  // removeAttributeQuotes: true,
+  removeAttributeQuotes: true,
   continueOnParseError: true,
   removeComments: true,
   removeEmptyAttributes: true,
-  removeEmptyElements: true,
   removeRedundantAttributes: true,
 };
 
@@ -59,10 +59,14 @@ const minifyHTMLLiteralsPlugin = {
 
 esbuild.build({
   entryPoints: ['index.js'],
+  define: {
+    'process.env.NODE_ENV': '"production"',
+  },
   sourcemap: false,
   write: false,
   bundle: true,
   minify: true,
+  treeShaking: true,
   plugins: [
     minifyHTMLLiteralsPlugin,
     babel(),

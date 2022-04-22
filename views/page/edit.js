@@ -1,5 +1,6 @@
 import html from 'choo/html';
-import { Editor } from '../../components/editor';
+// import { Editor } from '../../components/editor';
+import { editor } from './editor';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
@@ -19,7 +20,7 @@ export const pageEdit = (state, emit, page) => {
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
-    ${state.cache(Editor, 'editor').render()}
+    ${ editor(state) }
     <footer class=r>
       <div class="c w34">
         <label for=tags>Page Tags</label>
