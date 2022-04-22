@@ -6,10 +6,10 @@
   <title>{{package.json:title}}</title>
   <meta name="description" content="{{package.json:description}}" />
   <meta name="version" content="{{package.json:version}}" />
-  <style id="s">@import "./index.css"</style>
+  <style id="s">{{cssOutput}}</style>
 </head>
 <body>
-  <script type="module" id="a">import './index.js'</script>
+  <script id="a">{{jsOutput}}</script>
   <script id="p" type="application/json">{}</script>
 </body>
 </html>

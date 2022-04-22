@@ -1,5 +1,6 @@
-const fs = require('fs');
-const http = require('http');
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {
@@ -7,7 +8,7 @@ let app = http.createServer((req, res) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
 
     // Send back a response and end the connection
-    res.end(fs.readFileSync('docs/index.html'));
+    res.end(fs.readFileSync(path.resolve(process.cwd(), 'docs', 'FeatherWiki.html')));
 });
 
 // Start the server on port 3000
