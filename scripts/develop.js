@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
+import http from 'http';
 import esbuild from 'esbuild';
 import babel from 'esbuild-plugin-babel';
-import http from 'http';
 
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
@@ -26,11 +26,22 @@ const cssResult = esbuild.buildSync({
 
 esbuild.build({
   entryPoints: ['index.js'],
+  define: {
+    'process.env.NODE_ENV': '"development"',
+    'process.env.NODE_DEBUG': '"debug"',
+  },
   sourcemap: 'inline',
   write: false,
   bundle: true,
   minify: false,
-  watch: true,
+  watch: {
+    onRebuild(error, result) {
+      if (error) console.error('watch build failed:', error)
+      else {
+        console.info('watch build succeeded:', result.outputFiles.map(f => f.path));
+      }
+    },
+  },
   plugins: [
     babel(),
   ],

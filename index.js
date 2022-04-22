@@ -7,12 +7,9 @@ export default (() => {
 	const app = choo({ hash: true });
 	// Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
 
-	// if (process.env.NODE_ENV !== 'production') {
-	//   return import('choo-devtools').then(chooDevtools => {
-	//   	app.use(chooDevtools());
-	//   	run(app);
-	//   });
-	// }
+	if (process.env.NODE_ENV !== 'production') {
+		app.use(require('choo-devtools')());
+	}
 
 	run(app);
 })();
