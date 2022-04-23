@@ -1,10 +1,11 @@
 import html from 'choo/html';
 import raw from 'choo/html/raw';
-import { injectImageById, injectPageLink } from '../../helpers/injection';
+import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
   const { content } = page;
-  let c = injectPageLink(content, state);
+  let c = injectTargetBlank(content);
+  c = injectPageLink(c, state);
   c = injectImageById(c, state);
   return [
     html`<article class=uc>

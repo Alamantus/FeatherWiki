@@ -30,3 +30,18 @@ export function injectImageById (content, state) {
   }
   return c;
 }
+
+export function injectTargetBlank (content) {
+  let c = content ?? null;
+  if (c) {
+    (content?.match(/(?<=<a href=").+?(?=")/g) ?? []).map(url => {
+      return {
+        match: `<a href="${url}"`,
+        link: `<a href="${url}" target="_blank" rel="noopener noreferrer"`,
+      };
+    }).forEach(l => {
+      c = c.replace(l.match, l.link);
+    });
+  }
+  return c;
+}
