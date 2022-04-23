@@ -5,14 +5,6 @@ import babel from 'esbuild-plugin-babel';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
 
-const cssResult = esbuild.buildSync({
-  entryPoints: ['index.css'],
-  write: false,
-  bundle: true,
-  minify: true,
-  outdir: 'build',
-});
-
 const minifyOptions = {
   collapseWhitespace: true,
   conservativeCollapse: true,
@@ -77,6 +69,13 @@ esbuild.build({
 }).then(async result => {
   const fileName = path.relative(process.cwd(), 'index.html');
   let html = await fs.promises.readFile(fileName, 'utf8');
+  const cssResult = esbuild.buildSync({
+    entryPoints: ['index.css'],
+    write: false,
+    bundle: true,
+    minify: true,
+    outdir: 'build',
+  });
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
     const output = new TextDecoder().decode(out.contents);
     const outputKb = out.contents.byteLength * 0.000977;

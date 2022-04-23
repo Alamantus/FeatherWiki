@@ -7,14 +7,6 @@ import babel from 'esbuild-plugin-babel';
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
 
-const cssResult = esbuild.buildSync({
-  entryPoints: ['index.css'],
-  write: false,
-  bundle: true,
-  minify: false,
-  outdir: 'build',
-});
-
 esbuild.build({
   entryPoints: ['index.js'],
   define: {
@@ -54,6 +46,13 @@ esbuild.build({
 async function handleBuildResult (result) {
   const fileName = path.relative(process.cwd(), 'index.html');
   let html = await fs.promises.readFile(fileName, 'utf8');
+  const cssResult = esbuild.buildSync({
+    entryPoints: ['index.css'],
+    write: false,
+    bundle: true,
+    minify: false,
+    outdir: 'build',
+  });
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
     const output = new TextDecoder().decode(out.contents);
     const outputKb = out.contents.byteLength * 0.000977;
