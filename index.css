@@ -24,31 +24,38 @@ a[target="_blank"]:after {
   content: "\29C9"; /* two joined squares for external link */
 }
 
+/* title */
 .t {
   font-size: 1.5em;
   font-weight: bold;
 }
+/* default width for all widths is 100% for small screens—no columns */
 .w1, w34, w12, w14, .r, main { width: 100%; }
 @media(min-width:35em) {
   body > header, body > footer { max-height: 5vh; }
   main { min-height: 90vh; }
+  /* row */
   .r, main {
       display: table;
       border-spacing: 1em 0;
   }
+  /* column */
   .c, main > nav, main > section {
       display: table-cell;
       vertical-align: top;
   }
+  /* sidebar */
   .sb {
     width: 20%;
     min-width: 200px;
     max-width: 500px;
   }
+  /* fractional widths */
   .w34 { width: 75%; }
   .w12 { width: 50%; }
   .w14 { width: 25%; }
 }
+/* screen reader only */
 .sr {
   visibility: hidden;
   height: 0;
@@ -60,7 +67,46 @@ a[target="_blank"]:after {
 .alert { border: 2px solid red; }
 .il { display: inline; }
 
+/* extra padding on bottom only */
+.pb { margin: 0 0 1.5em; }
+
 /* User Content */
 .uc a {
   text-decoration: underline;
+}
+
+/**** pell edior ***/
+.pell {
+  border: 1px solid #888;
+}
+.pell * {
+  margin: unset;
+}
+
+.pell-content, .editor {
+  width: 100%;
+  height: 300px;
+  outline: 0;
+  overflow-y: auto;
+  padding: 10px;
+  margin: 0;
+}
+
+.pell-actionbar {
+  background-color: #fff;
+  border-bottom: 1px solid #888;
+}
+
+.pell-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  outline: 0;
+  width: 30px;
+  vertical-align: middle;
+}
+
+.pell-button-selected {
+  background-color: #ddd;
 }
