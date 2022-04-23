@@ -8,6 +8,7 @@ export const initState = state => {
   state.showNewPageField = false;
   state.edit = false;
   state.editStore = null;
+  state.showSource = false;
   state.help = {
     slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
     findPage: s => state.p.pages.find(p => p.slug === s),

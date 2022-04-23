@@ -4,7 +4,7 @@ import { editor } from './editor';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
-  const { editStore } = state;
+  const { editStore, showSource } = state;
 
   return html`<form onsubmit=${save}>
     <header>
@@ -20,7 +20,10 @@ export const pageEdit = (state, emit, page) => {
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
-    ${ editor(state) }
+    ${ editor(state, emit) }
+    <div class="w1 tr pb">
+      <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
+    </div>
     <footer class=r>
       <div class="c w34">
         <label for=tags>Page Tags</label>
@@ -50,6 +53,12 @@ export const pageEdit = (state, emit, page) => {
   function store (e) {
     const t = e.target;
     state.editStore[t.id] = t.value;
+    emit(state.events.RENDER);
+  }
+
+  function toggleShowSource (e) {
+    e.preventDefault();
+    state.showSource = !state.showSource;
     emit(state.events.RENDER);
   }
 

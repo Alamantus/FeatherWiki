@@ -81,6 +81,7 @@ export const initEmitter = (state, emitter) => {
     const { pg } = state;
     state.edit = true;
     state.editStore = { name: pg.name ?? '', slug: pg.slug ?? '', content: pg.content ?? '', tags: pg.tags ?? ''};
+    state.showSource = false;
     emitter.emit(events.RENDER);
   });
 
@@ -93,7 +94,7 @@ export const initEmitter = (state, emitter) => {
       p.pages.push(page);
     }
     state.edit = false;
-    state.editStore = false;
+    state.editStore = null;
     emitter.emit(events.COLLECT_TAGS)
     emitter.emit(events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
     emitter.emit(events.CHECK_CHANGED);
