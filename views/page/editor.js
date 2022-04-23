@@ -1,5 +1,6 @@
 import html from 'choo/html';
 import { init, exec } from 'pell';
+import { hashString } from '../../helpers/hashString';
 
 import { resizeImage } from '../../helpers/resizeImage';
 
@@ -53,28 +54,15 @@ export const editor = (state) => {
     function onChange(e) {
       const { files } = e.target;
       if (files.length > 0) {
-        if (validFileType(files[0])) {
-          resizeImage(files[0], result => {
-            if (result) exec('insertImage', result);
-            document.body.removeChild(input);
-          });
-        }
+        resizeImage(files[0], result => {
+          if (result) {
+            const id = hashString(result);
+            state.p.img[id.toString()] = result;
+            exec('insertHTML', `<img src=img:${id}:img>`);
+          }
+          document.body.removeChild(input);
+        });
       }
-    }
-
-    function validFileType(file) {
-      return [
-        'image/apng',
-        'image/bmp',
-        'image/gif',
-        'image/jpeg',
-        'image/pjpeg',
-        'image/png',
-        'image/svg+xml',
-        'image/tiff',
-        'image/webp',
-        'image/x-icon',
-      ].includes(file.type);
     }
   }
 }

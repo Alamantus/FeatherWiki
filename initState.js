@@ -34,7 +34,7 @@ export const initState = state => {
   try {
     state.p = decompress(JSON.parse(document.getElementById('p').innerHTML));
   } catch (e) {
-    state.p = {name:'New Wiki',desc:'',pages:[]};
+    state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
   state.pg = state.help.getPage();
   state.t = []; // all used tags

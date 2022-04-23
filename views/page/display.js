@@ -1,21 +1,11 @@
 import html from 'choo/html';
 import raw from 'choo/html/raw';
+import { injectImageById, injectPageLink } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
   const { content } = page;
-  let c = content ?? null;
-  if (c) {
-    (content ? content.match(/(\[\[.+\]\])?/g) : []).map(l => {
-      const match = l.replace('[[', '').replace(']]', '').split('|');
-      const slug = match[1] ? match[1].trim() : state.help.slugify(match[0]);
-      return {
-        match: l,
-        link: `<a href="${state.siteRoot}?page=${slug}">${match[0]}</a>`,
-      };
-    }).forEach(l => {
-      c = c.replace(l.match, l.link);
-    });
-  }
+  let c = injectPageLink(content, state);
+  c = injectImageById(c, state);
   return [
     html`<article class=uc>
       ${ c ? raw(c) : 'No Page Content' }
