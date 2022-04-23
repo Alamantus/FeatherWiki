@@ -1,5 +1,6 @@
-import { compress, pack } from 'json-compress';
+import { compress } from 'json-compress';
 
+import { hashObject } from './helpers/hashString';
 import { views } from './views';
 
 export const initEmitter = (state, emitter) => {
@@ -105,7 +106,7 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.CHECK_CHANGED, callback => {
-    state.currentState = pack(state.p);
+    state.currentState = hashObject(state.p);
     state.changedSinceSave = state.lastSave !== state.currentState;
     emitter.emit(events.RENDER, callback);
   });
@@ -135,7 +136,7 @@ export const initEmitter = (state, emitter) => {
     el.click();
     document.body.removeChild(el);
 
-    state.lastSave = pack(state.p);
+    state.lastSave = hashObject(state.p);
     emitter.emit(events.CHECK_CHANGED);
   });
 

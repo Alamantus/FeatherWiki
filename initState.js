@@ -1,4 +1,5 @@
-import { decompress, pack } from 'json-compress';
+import { decompress } from 'json-compress';
+import { hashObject } from './helpers/hashString';
 
 export const initState = state => {
   state.siteRoot = state.href.substring(state.href.lastIndexOf('/'));
@@ -37,7 +38,7 @@ export const initState = state => {
   }
   state.pg = state.help.getPage();
   state.t = []; // all used tags
-  state.lastSave = pack(state.p);
+  state.lastSave = hashObject(state.p);
   state.currentState = state.lastSave;
   state.changedSinceSave = false;
 
