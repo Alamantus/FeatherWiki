@@ -90,7 +90,7 @@ export const pageEdit = (state, emit, page) => {
     if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
     page.name = name;
     page.slug = slugify(slug);
-    page.content = state.editStore.content;
+    page.content = state.editStore.content.replace(/(?<=\<img src=").+#(.+)(?="\>)/g, 'img:$1:img');
     page.tags = getTagsArray().join(',');
     emit(state.events.UPDATE_PAGE, page);
   }

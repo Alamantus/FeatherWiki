@@ -66,7 +66,7 @@ export const editor = (state) => {
           if (result) {
             const id = hashString(result);
             state.p.img[id.toString()] = result;
-            exec('insertHTML', `<img src=img:${id}:img>`);
+            exec('insertHTML', `<img src="${result}#${id}">`);
           }
           document.body.removeChild(input);
         });
