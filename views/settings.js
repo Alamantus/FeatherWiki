@@ -20,6 +20,13 @@ export const settingsView = (state, emit) => {
             <input class=w1 id=wDesc value=${p.desc}>
           </div>
         </div>
+        <div class=r>
+          <label class="c tr w14" for=wPub>Publish</label>
+          <div class="c w34">
+            <input id=wPub type=checkbox checked=${p.published ?? false}>
+            <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
+          </div>
+        </div>
         <div class=tr>
           <button type="submit">Update</button>
         </div>
@@ -34,6 +41,7 @@ export const settingsView = (state, emit) => {
     if (title.length < 1) return alert('Title is required');
     state.p.name = title;
     state.p.desc = form.wDesc.value.trim();
+    state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
   }
 }

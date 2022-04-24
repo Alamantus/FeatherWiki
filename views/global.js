@@ -15,6 +15,8 @@ export const globalView = (state, emit) => {
     showNewPageField,
   } = state;
 
+  const showEditFields = !p.published || query.page === 's';
+
   let pageToRender = pg
     ? views.p.render(state, emit, pg)
     : views[query.page ?? 'h']?.render(state, emit);
@@ -28,22 +30,31 @@ export const globalView = (state, emit) => {
         <span><a href=${siteRoot} class="t sb">${p.name}</a></span>
         ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
       </div>
-      <div class="c w12 tr">
-        ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button>
-      </div>
+      ${
+        showEditFields
+        ? html`<div class="c w12 tr">
+          ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save</button>
+        </div>`
+        : ''
+      }
     </header>
     <main>
       <nav class="sb" hidden=${!showSidebar}>
         <ul>
-          <li><a href="${siteRoot}?page=s">${views.s.name}</a></li>
-          <li>
-            <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
-            <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
-              <label class="sr" for="newPageField">New Page Title</label>
-              <input id="newPageField" placeholder="New Page Title" autocomplete="off">
-              <button type="submit">Create</button>
-            </form>
-          </li>
+        ${
+          showEditFields
+          ? [
+            html`<li><a href="${siteRoot}?page=s">${views.s.name}</a></li>`,
+            html`<li>
+              <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
+              <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
+                <label class="sr" for="newPageField">New Page Title</label>
+                <input id="newPageField" placeholder="New Page Title" autocomplete="off">
+                <button type="submit">Create</button>
+              </form>
+            </li>`
+          ] : ''
+        }
           ${
             t.length > 0
             ? html`<li>
