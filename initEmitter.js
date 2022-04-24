@@ -103,7 +103,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.COLLECT_TAGS, () => {
     state.t = state.p.pages.reduce((r, p) => {
       return [...r, ...(p.tags?.split(',') ?? [])];
-    }, []).sort();
+    }, []).filter(t => !!t).sort();
   });
 
   emitter.on(events.CHECK_CHANGED, callback => {

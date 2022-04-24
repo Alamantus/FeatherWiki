@@ -6,7 +6,7 @@ html {
 html, input, select, option, text {
   font-size: 12pt;
 }
-body { padding: 0.5rem 1rem; }
+body { padding: 0 1rem; }
 
 * {
   box-sizing: border-box;
@@ -23,6 +23,8 @@ a[target="_blank"]:after {
   margin-left: 3px;
   content: "\29C9"; /* two joined squares for external link */
 }
+
+ul { padding: 0 0 0 1rem; }
 
 /* title */
 .t {
