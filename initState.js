@@ -16,6 +16,17 @@ export const initState = state => {
       const { query, help } = state;
       return help.findPage(query.page);
     },
+    getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
+    getChildren: p => state.p.pages.filter(pg => pg.parent === p?.id),
+    breadcrumb: p => {
+      const b = [];
+      let parent = state.help.getParent(p);
+      while (parent) {
+        b.push(parent);
+        parent = state.help.getParent(parent);
+      }
+      return b;
+    },
   };
 
   state.events = {

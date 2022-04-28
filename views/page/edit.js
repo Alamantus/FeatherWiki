@@ -4,7 +4,7 @@ import { editor } from './editor';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
-  const { editStore, showSource } = state;
+  const { editStore, showSource, p } = state;
 
   return html`<form onsubmit=${save}>
     <header>
@@ -25,11 +25,11 @@ export const pageEdit = (state, emit, page) => {
       <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
     </div>
     <footer class=r>
-      <div class="c w34">
+      <div class="c w13">
         <label for=tags>Page Tags</label>
         <input id=tags
           value=${ editStore.tags } placeholder="Comma, Separated, List" onchange=${store}>
-        <select id=allTags onchange=${addTag}>
+        <select onchange=${addTag}>
           <option value="" selected disabled>Add Existing Tag</option>
           ${
             state.t.filter(t => !editStore.tags.split(',').includes(t))
@@ -39,7 +39,19 @@ export const pageEdit = (state, emit, page) => {
           }
         </select>
       </div>
-      <div class="c w14 tr">
+      <div class="c w13">
+        <label for=parent>Parent</label>
+        <select id=parent onchange=${store}>
+          <option value="" selected=${editStore.parent === ''}>None</option>
+          ${
+            p.pages.filter(pg => pg.id !== page?.id)
+              .map(pg => {
+                return html`<option selected=${pg.id === editStore.parent} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
+              })
+          }
+        </select>
+      </div>
+      <div class="c w13 tr">
         <button type=submit>Save</button>
       </div>
     </footer>
@@ -92,6 +104,7 @@ export const pageEdit = (state, emit, page) => {
     page.slug = slugify(slug);
     page.content = state.editStore.content.replace(/(?<=<img src=")[^"]+#([-\d]+)(" style="font-size: \d+pt;)?(?=">)/g, 'img:$1:img');
     page.tags = getTagsArray().join(',');
+    page.parent = form.parent.value;
     emit(state.events.UPDATE_PAGE, page);
   }
 }

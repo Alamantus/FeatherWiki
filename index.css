@@ -26,6 +26,8 @@ a[target="_blank"]:after {
 
 ul { padding: 0 0 0 1rem; }
 
+label { display: block; }
+
 /* title */
 .t {
   font-size: 1.5em;
@@ -57,6 +59,7 @@ ul { padding: 0 0 0 1rem; }
   /* fractional widths */
   .w34 { width: 75%; }
   .w12 { width: 50%; }
+  .w13 { width: 33%; }
   .w14 { width: 25%; }
 }
 

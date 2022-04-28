@@ -80,7 +80,13 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.START_EDIT, () => {
     const { pg } = state;
     state.edit = true;
-    state.editStore = { name: pg.name ?? '', slug: pg.slug ?? '', content: pg.content ?? '', tags: pg.tags ?? '' };
+    state.editStore = {
+      name: pg.name ?? '',
+      slug: pg.slug ?? '',
+      content: pg.content ?? '',
+      tags: pg.tags ?? '',
+      parent: pg.parent ?? '',
+    };
     state.showSource = false;
     emitter.emit(events.RENDER);
   });
@@ -88,6 +94,9 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.UPDATE_PAGE, (page) => {
     const { p } = state;
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
+    Object.keys(page).forEach(key => {
+      if (page[key].length < 1) delete page[key];
+    })
     if (pIndex > -1) {
       p.pages[pIndex] = page;
     } else {
