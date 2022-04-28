@@ -64,6 +64,7 @@ export const editor = (state) => {
       if (files.length > 0) {
         resizeImage(files[0], result => {
           if (result) {
+            document.getElementsByClassName('pell-content')[0].focus();
             const id = hashString(result);
             state.p.img[id.toString()] = result;
             exec('insertHTML', `<img src="${result}#${id}">`);
