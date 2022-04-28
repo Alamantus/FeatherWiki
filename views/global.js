@@ -27,8 +27,9 @@ export const globalView = (state, emit) => {
   return html`<body>
     <header class="r">
       <div class="c w12">
-        <span><a href=${siteRoot} class="t sb">${p.name}</a></span>
+        <p><a href=${siteRoot} class="t sb">${p.name}</a></p>
         ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
+        <button class=sbt onclick=${() => toggleSidebar()}>${showSidebar ? 'Hide' : 'Show'} Menu</button>
       </div>
       ${
         showEditFields
@@ -79,5 +80,10 @@ export const globalView = (state, emit) => {
     const title = e.currentTarget.newPageField.value.trim();
     if (title.length < 2) return alert('Enter more than 1 character to create a new page.');
     emit(events.CREATE_PAGE, title.trim());
+  }
+
+  function toggleSidebar() {
+    state.showSidebar = !state.showSidebar;
+    emit(events.RENDER);
   }
 };

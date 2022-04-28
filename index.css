@@ -52,11 +52,14 @@ ul { padding: 0 0 0 1rem; }
     min-width: 200px;
     max-width: 500px;
   }
+  /* sidebar toggle */
+  .sbt { display: none; }
   /* fractional widths */
   .w34 { width: 75%; }
   .w12 { width: 50%; }
   .w14 { width: 25%; }
 }
+
 /* screen reader only */
 .sr {
   visibility: hidden;
