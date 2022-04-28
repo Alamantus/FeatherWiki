@@ -1,14 +1,16 @@
 import html from 'choo/html';
 import { init, exec } from 'pell';
-import { hashString } from '../../helpers/hashString';
 
+import { hashString } from '../../helpers/hashString';
+import { injectImageById } from '../../helpers/injection';
 import { resizeImage } from '../../helpers/resizeImage';
 
 export const editor = (state) => {
+  const c = injectImageById(state.editStore.content, state, true);
   let element;
+  const textChange = event => state.editStore.content = event.target.value;
   if (state.showSource) {
-    const textChange = event => state.editStore.content = event.target.value;
-    element = html`<textarea class=editor onchange=${textChange}>${state.editStore.content}</textarea>`;
+    element = html`<textarea class=editor onchange=${textChange}>${c}</textarea>`;
   } else {
     element = html`<article class=pell></article>`;
     const editor = init({
@@ -45,7 +47,7 @@ export const editor = (state) => {
         },
       ],
     });
-    editor.content.innerHTML = state.editStore.content;
+    editor.content.innerHTML = c;
   }
 
   element.isSameNode = target => {
@@ -64,10 +66,11 @@ export const editor = (state) => {
       if (files.length > 0) {
         resizeImage(files[0], result => {
           if (result) {
-            document.getElementsByClassName('pell-content')[0].focus();
+            const editor = document.getElementsByClassName('pell-content')[0];
+            if (document.activeElement !== editor) editor.focus();
             const id = hashString(result);
             state.p.img[id.toString()] = result;
-            exec('insertHTML', `<img src="${result}#${id}">`);
+            exec('insertHTML', `<p><img src="${result}#${id}"></p>`);
           }
           document.body.removeChild(input);
         });

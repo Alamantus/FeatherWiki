@@ -15,14 +15,14 @@ export function injectPageLink (content, state) {
   return c;
 }
 
-export function injectImageById (content, state) {
+export function injectImageById (content, state, includeId = false) {
   let c = content ?? null;
   if (c) {
     (content?.match(/(?<=img:).+?(?=:img)/g) ?? []).map(id => {
       const img = state.p.img[id];
       return {
         match: `img:${id}:img`,
-        link: img,
+        link: img + (includeId ? `#${id}` : ''),
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);
