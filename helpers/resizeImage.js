@@ -12,7 +12,7 @@ export function resizeImage(file, callback = () => {}, maxWidth = 400, maxHeight
       if (width > maxWidth || height > maxHeight) {
         const warning = `Your image will be resized to a maximum of ${maxWidth} pixels wide and ${maxHeight} pixels high to help reduce the file size of the wiki.`;
         if (!window.confirm(warning)) {
-          return callback(img.src);
+          return callback(null);
         }
       }
 
