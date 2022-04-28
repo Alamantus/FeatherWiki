@@ -17,6 +17,8 @@ export const globalView = (state, emit) => {
 
   const showEditFields = !p.published || query.page === 's';
 
+  const parents = p.pages.filter(page => !page.parent).sort((a, b) => a.name < b.name ? -1 : 1);
+
   let pageToRender = pg
     ? views.p.render(state, emit, pg)
     : views[query.page ?? 'h']?.render(state, emit);
@@ -56,16 +58,17 @@ export const globalView = (state, emit) => {
             </li>`
           ] : ''
         }
-          ${
-            t.length > 0
-            ? html`<li>
-              <b>Tags</b>
-              <ul>
-                ${ t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
-              </ul>
-            </li>`
-            : ''
-          }
+        ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
+        ${
+          t.length > 0
+          ? html`<li>
+            <b>Tags</b>
+            <ul>
+              ${ t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
+            </ul>
+          </li>`
+          : ''
+        }
         </ul>
       </nav>
       ${ pageToRender }
