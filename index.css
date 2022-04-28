@@ -68,6 +68,8 @@ ul { padding: 0 0 0 1rem; }
 .fr { float: right; }
 .alert { border: 2px solid red; }
 .il { display: inline; }
+.ib { display: inline-block; }
+.at { vertical-align: top; }
 
 /* field help */
 .h { font-size: 0.8em; }

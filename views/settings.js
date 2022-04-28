@@ -1,5 +1,7 @@
 import html from 'choo/html';
 
+import { gallery } from './gallery';
+
 export const settingsView = (state, emit) => {
   const { events, p } = state;
   return html`<section>
@@ -31,6 +33,7 @@ export const settingsView = (state, emit) => {
           <button type="submit">Update</button>
         </div>
       </form>
+      ${ gallery(state, emit, { showDelete: true, showUsed: true })}
     </article>
   </section>`;
 
