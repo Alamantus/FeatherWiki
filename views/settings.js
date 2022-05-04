@@ -23,6 +23,19 @@ export const settingsView = (state, emit) => {
           </div>
         </div>
         <div class=r>
+          <label class="c tr ml w14" for=home>Home Page</label>
+          <div class="c w34">
+            <select id=home>
+              <option value="" selected=${!p.home}>Default Page List</option>
+              ${
+                p.pages.map(pg => {
+                  return html`<option selected=${pg.id === p.home} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
+                })
+              }
+            </select>
+          </div>
+        </div>
+        <div class=r>
           <label class="c tr ml w14" for=wPub>Publish</label>
           <div class="c w34">
             <input id=wPub type=checkbox checked=${p.published ?? false}>
@@ -44,6 +57,11 @@ export const settingsView = (state, emit) => {
     if (title.length < 1) return alert('Title is required');
     state.p.name = title;
     state.p.desc = form.wDesc.value.trim();
+    if (form.home.value.length > 1) {
+      state.p.home = form.home.value;
+    } else {
+      delete state.p.home;
+    }
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
   }
