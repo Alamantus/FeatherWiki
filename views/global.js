@@ -27,19 +27,17 @@ export const globalView = (state, emit) => {
   }
   
   return html`<body>
-    <header class="r">
-      <div class="c w12">
-        <p><a href=${siteRoot} class="t sb">${p.name}</a></p>
-        ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
-        <button class=sbt onclick=${() => toggleSidebar()}>${showSidebar ? 'Hide' : 'Show'} Menu</button>
-      </div>
-      ${
-        showEditFields
-        ? html`<div class="c w12 tr">
-          ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
-        </div>`
-        : ''
-      }
+    <header>
+    <span class=db><a href=${siteRoot} class="t sb">${p.name}</a></span>
+    ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
+    ${
+      showEditFields
+      ? html`<div class="fr ml">
+      ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
+      </div>`
+      : ''
+    }
+    <button class=sbt onclick=${() => toggleSidebar()}>${showSidebar ? 'Hide' : 'Show'} Menu</button>
     </header>
     <main>
       <nav class="sb" hidden=${!showSidebar}>

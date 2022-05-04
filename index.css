@@ -16,6 +16,10 @@ body { padding: 0 1rem; }
   margin: .5em 0;
 }
 
+[hidden] {
+  display: none;
+}
+
 a { text-decoration: none; }
 a[target="_blank"]:after {
   font-size: 70%;
@@ -34,7 +38,7 @@ label { display: block; }
   font-weight: bold;
 }
 /* default width for all widths is 100% for small screens—no columns */
-.w1, w34, w12, w14, .r, main { width: 100%; }
+.w1, .w34, .w12, .w14, .r, main { width: 100%; }
 @media(min-width:35em) {
   body > header, body > footer { max-height: 5vh; }
   main { min-height: 90vh; }
@@ -54,13 +58,14 @@ label { display: block; }
     min-width: 200px;
     max-width: 500px;
   }
-  /* sidebar toggle */
-  .sbt { display: none; }
   /* fractional widths */
   .w34 { width: 75%; }
   .w12 { width: 50%; }
   .w13 { width: 33%; }
   .w14 { width: 25%; }
+  
+  .tr { text-align: right; }
+  .fr { float: right; }
 }
 
 /* screen reader only */
@@ -70,9 +75,11 @@ label { display: block; }
   width: 0;
   position: absolute;
 }
-.tr { text-align: right; }
-.fr { float: right; }
+/* Allow overriding on mobile */
+.tr:not(.ml) { text-align: right; }
+.fr:not(.ml) { float: right; }
 .alert { border: 2px solid red; }
+.db { display: block; }
 .il { display: inline; }
 .ib { display: inline-block; }
 .at { vertical-align: top; }

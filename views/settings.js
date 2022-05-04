@@ -11,19 +11,19 @@ export const settingsView = (state, emit) => {
     <article>
       <form onsubmit=${saveSettings}>
         <div class=r>
-          <label class="c tr w14" for=wTitle>Wiki Title</label>
+          <label class="c tr ml w14" for=wTitle>Wiki Title</label>
           <div class="c w34">
             <input class=w1 id=wTitle value=${p.name} minlength=1 required>
           </div>
         </div>
         <div class=r>
-          <label class="c tr w14" for=wDesc>Wiki Description</label>
+          <label class="c tr ml w14" for=wDesc>Wiki Description</label>
           <div class="c w34">
             <input class=w1 id=wDesc value=${p.desc}>
           </div>
         </div>
         <div class=r>
-          <label class="c tr w14" for=wPub>Publish</label>
+          <label class="c tr ml w14" for=wPub>Publish</label>
           <div class="c w34">
             <input id=wPub type=checkbox checked=${p.published ?? false}>
             <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
