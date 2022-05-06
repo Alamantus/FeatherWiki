@@ -9,8 +9,23 @@ export const homeView = (state, emit) => {
     <article>
       <p>This wiki has ${p.pages.length} page${p.pages.length !== 1 ? 's' : ''}:</p>
       <ul>
-        ${p.pages.map(page => html`<li><a href="?page=${page.slug}">${page.name}</a></li>`)}
+        ${
+          p.pages.filter(pg => !pg.parent)
+            .map(page => getChildrenList(page))
+        }
       </ul>
     </article>
   </section>`;
+
+  function getChildrenList(page) {
+    const children = p.pages.filter(pg => pg.parent === page.id);
+    return html`<li>
+      <a href="?page=${page.slug}">${page.name}</a>
+      ${
+        children.length > 0
+        ? html`<ul>${children.map(pg => getChildrenList(pg))}</ul>`
+        : ''
+      }
+    </li>`;
+  }
 }
