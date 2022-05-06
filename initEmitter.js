@@ -19,9 +19,9 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.HANDLE_404, () => {
     const { page } = state.query;
     if (page?.length > 1) {
-      const { help, events, siteRoot } = state;
+      const { help, events } = state;
       const slug = help.slugify(page);
-      const pg = help.findPage(slug);
+      const pg = help.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
         emitter.emit(events.CREATE_PAGE, name, false);

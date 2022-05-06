@@ -11,10 +11,10 @@ export const initState = state => {
   state.showSource = false;
   state.help = {
     slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
-    findPage: s => state.p.pages.find(p => p.slug === s),
+    find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
     getPage: () => {
-      const { query, help } = state;
-      return help.findPage(query.page);
+      const { query, help, p } = state;
+      return (!query.page && p.home) ? help.find(p.home, 'id') : help.find(query.page);
     },
     getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
     getChildren: p => state.p.pages.filter(pg => pg.parent === p?.id),
