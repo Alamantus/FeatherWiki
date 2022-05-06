@@ -2,7 +2,7 @@ import html from 'choo/html';
 
 export const taggedView = (state, emit) => {
   const { p, query } = state;
-  const pages = p.pages.filter(pg => pg.tags.includes(query.tag));
+  const pages = p.pages.filter(pg => pg.tags?.includes(query.tag));
   return html`<section>
     <header>
       <h1>Pages Tagged <code>${ query.tag }</code></h1>
