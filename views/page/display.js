@@ -3,11 +3,12 @@ import raw from 'choo/html/raw';
 import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
+  const { siteRoot, help, p, events } = state;
   const { content } = page;
   let c = injectTargetBlank(content);
   c = injectPageLink(c, state);
   c = injectImageById(c, state);
-  const children = state.help.getChildren(page);
+  const children = help.getChildren(page);
   return [
     html`<article class=uc>
       ${ c ? raw(c) : 'No Page Content' }
@@ -15,7 +16,7 @@ export const pageDisplay = (state, emit, page) => {
     children.length > 0 ? html`<aside>
       <h2>Sub Pages</h2>
       <ul>
-        ${children.map(c => html`<li><a href="${state.siteRoot}?page=${c.slug}">${c.name}</a></li>`)}
+        ${children.map(c => html`<li><a href="${siteRoot}?page=${c.slug}">${c.name}</a></li>`)}
       </ul>
     </aside>` : null,
     html`<footer>
@@ -31,9 +32,9 @@ export const pageDisplay = (state, emit, page) => {
           </dd>
         </dl>
         ${
-          page.id
+          !p.published
           ? html`<div class="c w14 tr">
-            <button onclick=${() => emit(state.events.START_EDIT)}>Edit</button>
+            <button onclick=${() => emit(events.START_EDIT)}>Edit</button>
           </div>`
           : ''
         }
