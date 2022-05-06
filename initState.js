@@ -6,6 +6,7 @@ export const initState = state => {
   if (state.siteRoot.length < 1) state.siteRoot = '/';
   state.showSidebar = false;
   state.sbTab = 'Pages';
+  state.recent = [];
   state.showNewPageField = false;
   state.edit = false;
   state.editStore = null;

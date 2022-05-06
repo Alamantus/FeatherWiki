@@ -36,6 +36,7 @@ export const initEmitter = (state, emitter) => {
     state.edit = false;
     state.editStore = '';
     state.pg = state.help.getPage();
+    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
     emitter.emit(events.HANDLE_404);
     emitter.emit(events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
   });

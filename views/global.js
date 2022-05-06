@@ -8,6 +8,7 @@ export const globalView = (state, emit) => {
     pg,
     p,
     t,
+    recent,
     events,
     query,
     changedSinceSave,
@@ -19,6 +20,7 @@ export const globalView = (state, emit) => {
   const showEditFields = !p.published || query.page === 's';
 
   const parents = p.pages.filter(page => !page.parent).sort((a, b) => a.name < b.name ? -1 : 1);
+  const recents = recent.sort((a, b) => a.t > b.t ? -1 : 1).map(r => p.pages.find(pp => pp.id === r.p));
 
   let pageToRender = pg
     ? views.p.render(state, emit, pg)
@@ -64,7 +66,7 @@ export const globalView = (state, emit) => {
         ${
           sbTab === 'Pages'
           ? html`<ul>
-            ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
+            ${parents.map(pp => html`<li><a href="${siteRoot}?page=${pp.slug}">${pp.name}</a></li>`)}
           </ul>` : ''
         }
         ${
@@ -75,9 +77,9 @@ export const globalView = (state, emit) => {
         }
         ${
           sbTab === 'Recent'
-          ? html`<ul>
-            ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
-          </ul>` : ''
+          ? html`<ol>
+            ${recents.map(pp => html`<li><a href="${siteRoot}?page=${pp.slug}">${pp.name}</a></li>`)}
+          </ol>` : ''
         }
       </nav>
       ${ pageToRender }
