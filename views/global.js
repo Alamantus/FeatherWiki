@@ -12,6 +12,7 @@ export const globalView = (state, emit) => {
     query,
     changedSinceSave,
     showSidebar,
+    sbTab,
     showNewPageField,
   } = state;
 
@@ -41,33 +42,43 @@ export const globalView = (state, emit) => {
     </header>
     <main>
       <nav class="sb" hidden=${!showSidebar}>
-        <ul>
         ${
           showEditFields
           ? [
-            html`<li><a href="${siteRoot}?page=s">${views.s.name}</a></li>`,
-            html`<li>
+            html`<p><a href="${siteRoot}?page=s">${views.s.name}</a></p>`,
+            html`<p>
               <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
               <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
                 <label class="sr" for="newPageField">New Page Title</label>
                 <input id="newPageField" placeholder="New Page Title" autocomplete="off">
                 <button type="submit">Create</button>
               </form>
-            </li>`
+            </p>`
           ] : ''
         }
-        ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
+        <div>
+          <button class=${sbTab === 'Pages' && 'a'} onclick=${changeTab}>Pages</button>
+          ${t.length > 0 ? html`<button class=${sbTab === 'Tags' && 'a'} onclick=${changeTab}>Tags</button>` : ''}
+          <button class=${sbTab === 'Recent' && 'a'} onclick=${changeTab}>Recent</button>
+        </div>
         ${
-          t.length > 0
-          ? html`<li>
-            <b>Tags</b>
-            <ul>
-              ${ t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
-            </ul>
-          </li>`
-          : ''
+          sbTab === 'Pages'
+          ? html`<ul>
+            ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
+          </ul>` : ''
         }
-        </ul>
+        ${
+          sbTab === 'Tags'
+          ? html`<ul>
+            ${t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
+          </ul>` : ''
+        }
+        ${
+          sbTab === 'Recent'
+          ? html`<ul>
+            ${parents.map(page => html`<li><a href="${siteRoot}?page=${page.slug}">${page.name}</a></li>`)}
+          </ul>` : ''
+        }
       </nav>
       ${ pageToRender }
     </main>
@@ -85,6 +96,11 @@ export const globalView = (state, emit) => {
 
   function toggleSidebar() {
     state.showSidebar = !state.showSidebar;
+    emit(events.RENDER);
+  }
+
+  function changeTab(e) {
+    state.sbTab = e.target.innerText;
     emit(events.RENDER);
   }
 };

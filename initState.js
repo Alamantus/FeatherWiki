@@ -5,6 +5,7 @@ export const initState = state => {
   state.siteRoot = state.href.substring(state.href.lastIndexOf('/'));
   if (state.siteRoot.length < 1) state.siteRoot = '/';
   state.showSidebar = false;
+  state.sbTab = 'Pages';
   state.showNewPageField = false;
   state.edit = false;
   state.editStore = null;
