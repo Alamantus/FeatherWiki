@@ -1,7 +1,7 @@
 import html from 'choo/html';
 
 export const homeView = (state, emit) => {
-  const { p } = state;
+  const { p, help } = state;
   return html`<section>
     <header>
       <h1>Welcome</h1>
@@ -18,7 +18,7 @@ export const homeView = (state, emit) => {
   </section>`;
 
   function getChildrenList(page) {
-    const children = p.pages.filter(pg => pg.parent === page.id);
+    const children = help.getChildren(page);
     return html`<li>
       <a href="?page=${page.slug}">${page.name}</a>
       ${

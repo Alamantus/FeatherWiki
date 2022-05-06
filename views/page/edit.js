@@ -4,7 +4,8 @@ import { editor } from './editor';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
-  const { editStore, showSource, p } = state;
+  const { editStore, showSource, p, help } = state;
+  const children = help.getChildren(page).map(c => c.id);
 
   return html`<form onsubmit=${save}>
     <header>
@@ -44,8 +45,9 @@ export const pageEdit = (state, emit, page) => {
         <select id=parent onchange=${store}>
           <option value="" selected=${editStore.parent === ''}>None</option>
           ${
-            p.pages.filter(pg => pg.id !== page?.id)
-              .map(pg => {
+            p.pages.filter(pg => {
+              return pg.id !== page?.id && !children.includes(pg.id);
+            }).map(pg => {
                 return html`<option selected=${pg.id === editStore.parent} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
               })
           }
