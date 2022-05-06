@@ -49,24 +49,33 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.CREATE_PAGE, (name, save = true) => {
     if (name.length < 1) return;
+    const { p, help, events, query, siteRoot } = state;
 
     const genId = () => {
       const s = [];
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 9; i++) {
         const code = Math.round(Math.random() * (126 - 32)) + 32;
         s.push(String.fromCharCode(code));
       }
       return s.join('');
     }
-    let id = genId();
-    while (state.p.pages.findIndex(p => p.id === id) >= 0) {
+    let id;
+    do {
       id = genId();
     }
-    const slug = state.help.slugify(name);
+    while (p.pages.findIndex(p => p.id === id) >= 0);
+    // Ensure unique slug
+    let d = 0,
+      s = help.slugify(name),
+      slug;
+    do {
+      slug = s + (d > 0 ? '_' + d : '');
+      d++;
+    }
+    while (p.pages.some(pp => pp.slug === slug))
     const newPg = { id, name, slug, };
     state.showNewPageField = false;
 
-    const { events, query, siteRoot } = state;
     if (save) {
       state.p.pages.push(newPg);
       emitter.emit(events.CHECK_CHANGED);
@@ -93,6 +102,9 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.UPDATE_PAGE, (page) => {
     const { p } = state;
+    if (p.pages.some(pg => pg.slug === page.slug && pg.id !== page.id)) {
+      return alert('A page with the slug "' + page.slug + '" already exists!');
+    }
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
     Object.keys(page).forEach(key => {
       if (page[key].length < 1) delete page[key];

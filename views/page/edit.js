@@ -100,11 +100,12 @@ export const pageEdit = (state, emit, page) => {
     if (name.length < 1) return alert('Page Title cannot be blank.');
     const slug = form.slug.value.trim();
     if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
-    page.name = name;
-    page.slug = slugify(slug);
-    page.content = state.editStore.content.replace(/(?<=<img src=")[^"]+#([-\d]+)(" style="font-size: \d+pt;)?(?=">)/g, 'img:$1:img');
-    page.tags = getTagsArray().join(',');
-    page.parent = form.parent.value;
-    emit(state.events.UPDATE_PAGE, page);
+    pg = { ...page };
+    pg.name = name;
+    pg.slug = slugify(slug);
+    pg.content = state.editStore.content.replace(/(?<=<img src=")[^"]+#([-\d]+)(" style="font-size: \d+pt;)?(?=">)/g, 'img:$1:img');
+    pg.tags = getTagsArray().join(',');
+    pg.parent = form.parent.value;
+    emit(state.events.UPDATE_PAGE, pg);
   }
 }
