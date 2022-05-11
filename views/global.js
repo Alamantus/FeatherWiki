@@ -28,14 +28,14 @@ export const globalView = (state, emit) => {
   if (query.tag) {
     pageToRender = views.t(state, emit);
   }
-  
+
   return html`<body>
     <header>
     <span class=db><a href=${siteRoot} class="t sb">${p.name}</a></span>
     ${ p.desc ? html`<p class=sb>${p.desc}</p>` : ''}
     ${
       showEditFields
-      ? html`<div class="fr ml">
+      ? html`<div class=sv>
       ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
       </div>`
       : ''
@@ -43,7 +43,7 @@ export const globalView = (state, emit) => {
     <button class=sbt onclick=${() => toggleSidebar()}>${showSidebar ? 'Hide' : 'Show'} Menu</button>
     </header>
     <main>
-      <nav class="sb" hidden=${!showSidebar}>
+      <nav class="sb ${!showSidebar ? 'n' : ''}">
         ${
           showEditFields
           ? [
