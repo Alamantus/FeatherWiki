@@ -26,7 +26,7 @@ export const settingsView = (state, emit) => {
           <label class="c tr ml w14" for=home>Home Page</label>
           <div class="c w34">
             <select id=home>
-              <option value="" selected=${!p.home}>Default Page List</option>
+              <option value="" selected=${!p.home}>All Pages (default)</option>
               ${
                 p.pages.map(pg => {
                   return html`<option selected=${pg.id === p.home} value=${pg.id}>${pg.name} (${pg.slug})</option>`;

@@ -2,7 +2,7 @@ import { decompress } from 'json-compress';
 import { hashObject } from './helpers/hashString';
 
 export const initState = state => {
-  state.siteRoot = state.href.substring(state.href.lastIndexOf('/'));
+  state.siteRoot = location.pathname;
   if (state.siteRoot.length < 1) state.siteRoot = '/';
   state.showSidebar = false;
   state.sbTab = 'Pages';
