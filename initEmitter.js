@@ -159,11 +159,11 @@ export const initEmitter = (state, emitter) => {
       <style id="s">${state.s}</style>
     </head>
     <body>
-      <script id="a">${state.a}</script>
       <script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script>
+      <script id="a">${state.a}</script>
     </body>
     </html>`;
-    const filename = /\/$/.test(window.location.pathname) ? 'index.html' : window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+    const filename = /\/$/.test(location.pathname) ? 'index.html' : location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
     el.setAttribute('download', filename);
