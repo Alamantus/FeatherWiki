@@ -26,6 +26,15 @@ a[target="_blank"]:after {
   margin-left: 3px;
   content: "\29C9"; /* two joined squares for external link */
 }
+a.e {
+  color: red;
+}
+a.e:after {
+  font-size: 70%;
+  vertical-align: top;
+  margin-left: 3px;
+  content: "!";
+}
 
 ul, ol { padding: 0 0 0 1rem; }
 

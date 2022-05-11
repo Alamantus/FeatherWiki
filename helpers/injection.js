@@ -4,9 +4,10 @@ export function injectPageLink (content, state) {
     (content?.match(/(?<=\[\[).+?(?=\]\])/g) ?? []).map(l => {
       const match = l.split('|');
       const slug = match[1] ? match[1].trim() : state.help.slugify(match[0]);
+      const exists = state.p.pages.some(pg => pg.slug === slug);
       return {
         match: `[[${l}]]`,
-        link: `<a href="${state.siteRoot}?page=${slug}">${match[0]}</a>`,
+        link: `<a href="${state.siteRoot}?page=${slug}"${!exists ? ' class=e' : ''}>${match[0]}</a>`,
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);
