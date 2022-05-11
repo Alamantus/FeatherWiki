@@ -1,10 +1,10 @@
 import html from 'choo/html';
 
-export const homeView = (state, emit) => {
+export const pagesView = (state, emit) => {
   const { p, help } = state;
   return html`<section>
     <header>
-      <h1>Welcome</h1>
+      <h1>All Pages</h1>
     </header>
     <article>
       <p>This wiki has ${p.pages.length} page${p.pages.length !== 1 ? 's' : ''}:</p>

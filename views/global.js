@@ -23,10 +23,10 @@ export const globalView = (state, emit) => {
   const recents = recent.sort((a, b) => a.t > b.t ? -1 : 1).map(r => p.pages.find(pp => pp.id === r.p));
 
   let pageToRender = pg
-    ? views.p.render(state, emit, pg)
-    : views[query.page ?? 'h']?.render(state, emit);
+    ? views.p(state, emit, pg)
+    : (views[query.page ?? 'a'] ?? (() => {}))(state, emit);
   if (query.tag) {
-    pageToRender = views.t.render(state, emit);
+    pageToRender = views.t(state, emit);
   }
   
   return html`<body>
@@ -47,7 +47,7 @@ export const globalView = (state, emit) => {
         ${
           showEditFields
           ? [
-            html`<p><a href="${siteRoot}?page=s">${views.s.name}</a></p>`,
+            html`<p><a href="${siteRoot}?page=s">Wiki Settings</a></p>`,
             html`<p>
               <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
               <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
@@ -67,6 +67,7 @@ export const globalView = (state, emit) => {
           sbTab === 'Pages'
           ? html`<ul>
             ${parents.map(pp => html`<li><a href="${siteRoot}?page=${pp.slug}">${pp.name}</a></li>`)}
+            <li><a href="${siteRoot}?page=a">All Pages</a></li>
           </ul>` : ''
         }
         ${

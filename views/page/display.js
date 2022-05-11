@@ -19,7 +19,7 @@ export const pageDisplay = (state, emit, page) => {
         ${children.map(c => html`<li><a href="${siteRoot}?page=${c.slug}">${c.name}</a></li>`)}
       </ul>
     </aside>` : null,
-    html`<footer>
+    !page.e ? html`<footer>
       <div class=r>
         <dl class="c w34 r">
           <dt class=c><b>Tagged:</b></dt>
@@ -39,6 +39,6 @@ export const pageDisplay = (state, emit, page) => {
           : ''
         }
       </div>
-    </footer>`
+    </footer>` : '',
   ];
 }

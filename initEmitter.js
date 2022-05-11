@@ -27,7 +27,7 @@ export const initEmitter = (state, emitter) => {
         emitter.emit(events.CREATE_PAGE, name, false);
       }
     } else if (page?.length > 0 && !views[page]) {
-      state.pg = { name: '404', content: '<p>Page not found</p>'};
+      state.pg = { e: true, name: '404', content: '<p>Page not found</p>'};
       emitter.emit(events.RENDER);
     }
   });
