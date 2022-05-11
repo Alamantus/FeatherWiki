@@ -34,7 +34,7 @@ export const editor = (state) => {
         {
           name: 'externalimage',
           title: 'Link External Image',
-          icon: '🖼',
+          icon: '🖼️',
           result: () => {
             const url = window.prompt('Enter the image URL');
             if (url) exec('insertImage', url);
@@ -43,13 +43,13 @@ export const editor = (state) => {
         {
           name: 'insertimage',
           title: 'Insert Image from File',
-          icon: '📷',
+          icon: '📸',
           result: promptImageUpload,
         },
         {
           name: 'addImage',
-          title: 'Add Existing Image in Wiki',
-          icon: '📸',
+          title: 'Add Existing Image',
+          icon: '📎',
           result: () => document.getElementById('gal').showModal(),
         },
       ],
@@ -72,6 +72,7 @@ export const editor = (state) => {
   ];
 
   function promptImageUpload () {
+    if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
     const input = html`<input type="file" hidden accept="image/*" onchange=${onChange} />`;
     document.body.appendChild(input);
     input.click();
