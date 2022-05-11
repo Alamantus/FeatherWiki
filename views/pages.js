@@ -2,11 +2,11 @@ import html from 'choo/html';
 
 export const pagesView = (state, emit) => {
   const { p, help } = state;
-  return html`<section>
-    <header>
+  return [
+    html`<header>
       <h1>All Pages</h1>
-    </header>
-    <article>
+    </header>`,
+    html`<article>
       <p>This wiki has ${p.pages.length} page${p.pages.length !== 1 ? 's' : ''}:</p>
       <ul>
         ${
@@ -14,8 +14,8 @@ export const pagesView = (state, emit) => {
             .map(page => getChildrenList(page))
         }
       </ul>
-    </article>
-  </section>`;
+    </article>`
+  ];
 
   function getChildrenList(page) {
     const children = help.getChildren(page);

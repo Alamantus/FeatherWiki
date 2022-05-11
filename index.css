@@ -1,12 +1,16 @@
 html {
   font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
-html, input, select, option, text {
+html, button, input, select, option, text {
   font-size: 12pt;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+}
 body {
-  padding: 0 1rem;
   max-width: 1200px;
+  background: #fafafa;
 }
 
 * {
@@ -18,7 +22,10 @@ body {
   margin: .5em 0;
 }
 
-.sb.n, dialog:not([open]) {
+main > * { padding: 1rem; }
+main > section { background: #fff; }
+
+.sb .n, dialog:not([open]) {
   display: none;
 }
 
@@ -43,6 +50,14 @@ ul, ol { padding: 0 0 0 1rem; }
 
 label { display: block; }
 
+/* button {
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: .1em;
+} */
+
 abbr[title] { cursor: help; }
 
 /* title */
@@ -54,18 +69,18 @@ abbr[title] { cursor: help; }
 .w1, .w34, .w12, .w14, .r, main { width: 100%; }
 /* tabs */
 .a {
-  background: #888;
+  background: #ccc;
 }
 @media(min-width:35em) {
-  body > header, body > footer { max-height: 5vh; }
-  main { min-height: 90vh; }
   /* row */
   .r, main {
       display: table;
       border-spacing: 1em 0;
   }
+  /* Row, no spacing */
+  .r.ns { border-spacing: 0; }
   /* column */
-  .c, main > nav.sb, main > section {
+  .c, main > .sb, main > section {
       display: table-cell !important;
       vertical-align: top;
   }
@@ -75,6 +90,7 @@ abbr[title] { cursor: help; }
     min-width: 200px;
     max-width: 500px;
   }
+  .sb .n { display: unset; }
   /* sidebar toggle */
   .sbt { display: none; }
   /* fractional widths */
@@ -85,12 +101,6 @@ abbr[title] { cursor: help; }
   
   .tr { text-align: right; }
   .fr { float: right; }
-  /* Save button */
-  .sv {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
 }
 
 /* screen reader only */
@@ -144,12 +154,11 @@ abbr[title] { cursor: help; }
 }
 
 .pell-actionbar {
-  background-color: #fff;
   border-bottom: 1px solid #888;
 }
 
 .pell-button {
-  background-color: transparent;
+  background: transparent;
   border: none;
   cursor: pointer;
   height: 30px;
@@ -159,5 +168,5 @@ abbr[title] { cursor: help; }
 }
 
 .pell-button-selected {
-  background-color: #ddd;
+  background: #ddd;
 }

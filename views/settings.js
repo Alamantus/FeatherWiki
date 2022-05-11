@@ -6,11 +6,11 @@ import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
   const { events, p } = state;
-  return html`<section>
-    <header>
+  return [
+    html`<header>
       <h1>Wiki Settings</h1>
-    </header>
-    <article>
+    </header>`,
+    html`<article>
       <form onsubmit=${saveSettings} class=pb>
         <div class=r>
           <label class="c tr ml w14" for=wTitle>Wiki Title</label>
@@ -52,8 +52,8 @@ export const settingsView = (state, emit) => {
         <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
       </div>
       ${ gallery(state, emit, { showDelete: true, showUsed: true })}
-    </article>
-  </section>`;
+    </article>`
+  ];
 
   function saveSettings(e) {
     e.preventDefault();
