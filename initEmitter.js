@@ -74,7 +74,7 @@ export const initEmitter = (state, emitter) => {
       d++;
     }
     while (p.pages.some(pp => pp.slug === slug))
-    const newPg = { id, name, slug, };
+    const newPg = { id, name, slug, cd: Date.now() };
     state.showNewPageField = false;
 
     if (save) {
@@ -110,6 +110,7 @@ export const initEmitter = (state, emitter) => {
     Object.keys(page).forEach(key => {
       if (page[key].length < 1) delete page[key];
     })
+    page.md = Date.now();
     if (pIndex > -1) {
       p.pages[pIndex] = page;
     } else {

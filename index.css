@@ -31,6 +31,8 @@ ul, ol { padding: 0 0 0 1rem; }
 
 label { display: block; }
 
+abbr[title] { cursor: help; }
+
 /* title */
 .t {
   font-size: 1.5em;

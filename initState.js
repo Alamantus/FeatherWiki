@@ -29,6 +29,10 @@ export const initState = state => {
       }
       return b;
     },
+    formatDate: d => {
+      const pad = s => s.toString().padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${d.getHours() % 12}:${pad(d.getMinutes())} ${d.getHours() / 12 < 1 ? 'a' : 'p'}m`;
+    }
   };
 
   state.events = {
