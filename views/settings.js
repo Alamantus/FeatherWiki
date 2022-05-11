@@ -1,6 +1,7 @@
 import html from 'choo/html';
 
 import { gallery } from './gallery';
+import { uploadFile } from '../helpers/uploadFile';
 import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
@@ -71,19 +72,14 @@ export const settingsView = (state, emit) => {
   }
 
   function promptOverwrite () {
-    const input = html`<input type="file" hidden accept="text/html" onchange=${onChange} />`;
-    document.body.appendChild(input);
-    input.click();
-
-    function onChange(e) {
-      const { files } = e.target;
-      if (files.length > 0) {
-        extractFeatherWikiData(files[0], result => {
+    uploadFile('text/html', file => {
+      extractFeatherWikiData(file, result => {
+        if (result) {
           state.p = result;
           emit(events.DOMCONTENTLOADED);
           emit(events.CHECK_CHANGED);
-        });
-      }
-    }
+        }
+      });
+    });
   }
 }

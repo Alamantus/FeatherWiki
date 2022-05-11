@@ -5,6 +5,7 @@ import { gallery } from '../gallery';
 import { hashString } from '../../helpers/hashString';
 import { injectImageById } from '../../helpers/injection';
 import { resizeImage } from '../../helpers/resizeImage';
+import { uploadFile } from '../../helpers/uploadFile';
 
 export const editor = (state) => {
   const c = injectImageById(state.editStore.content, state, true);
@@ -73,25 +74,17 @@ export const editor = (state) => {
 
   function promptImageUpload () {
     if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
-    const input = html`<input type="file" hidden accept="image/*" onchange=${onChange} />`;
-    document.body.appendChild(input);
-    input.click();
-
-    function onChange(e) {
-      const { files } = e.target;
-      if (files.length > 0) {
-        resizeImage(files[0], result => {
-          if (result) {
-            const editor = document.getElementsByClassName('pell-content')[0];
-            if (document.activeElement !== editor) editor.focus();
-            const id = hashString(result);
-            state.p.img[id.toString()] = result;
-            exec('insertHTML', `<p><img src="${result}#${id}"></p>`);
-          }
-          document.body.removeChild(input);
-        });
-      }
-    }
+    uploadFile('image/*', file => {
+      resizeImage(file, result => {
+        if (result) {
+          const editor = document.getElementsByClassName('pell-content')[0];
+          if (document.activeElement !== editor) editor.focus();
+          const id = hashString(result);
+          state.p.img[id.toString()] = result;
+          exec('insertHTML', `<p><img src="${result}#${id}"></p>`);
+        }
+      });
+    });
   }
 
   function insertImg (e, i) {
