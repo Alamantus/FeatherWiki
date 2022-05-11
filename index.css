@@ -4,7 +4,10 @@ html {
 html, input, select, option, text {
   font-size: 12pt;
 }
-body { padding: 0 1rem; }
+body {
+  padding: 0 1rem;
+  max-width: 1200px;
+}
 
 * {
   box-sizing: border-box;

@@ -15,16 +15,14 @@ export const pageDisplay = (state, emit, page) => {
   return [
     !page.e ? html`<aside>
       <div class=r>
-        <dl class="c w34 r">
-          <dt class=c><b>Tagged:</b></dt>
-          <dd class=c>
-            ${
-              page?.tags
-              ? page.tags.replace(/,/g, ', ')
-              : ''
-            }
-          </dd>
-        </dl>
+        ${page?.tags?.length
+          ? html`<dl class="c w34 r">
+            <dt class=c><b>Tagged:</b></dt>
+            <dd class=c>
+              ${page.tags.replace(/,/g, ', ')}
+            </dd>
+          </dl>` : ''
+        }
         <div class="c w14 tr">
           <time datetime=${modified.toISOString()}>
             ${
