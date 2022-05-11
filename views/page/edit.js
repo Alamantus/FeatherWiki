@@ -6,6 +6,7 @@ export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
   const { editStore, showSource, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
+  const isNew = !p.pages.some(pg => pg.id === page.id);
 
   return html`<form onsubmit=${save}>
     <header>
@@ -54,7 +55,12 @@ export const pageEdit = (state, emit, page) => {
         </select>
       </div>
       <div class="c w13 tr">
-        <button type=submit>Save</button>
+        <div class=pb><button type=submit>Save</button></div>
+        ${
+          !isNew
+          ? html`<div><button class=del onclick=${e => deletePage(e)}>Delete</button></div>`
+          : ''
+        }
       </div>
     </footer>
   </form>`;
@@ -109,5 +115,13 @@ export const pageEdit = (state, emit, page) => {
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
     emit(state.events.UPDATE_PAGE, pg);
+  }
+
+  function deletePage (e) {
+    e.preventDefault();
+    console.log(page);
+    if (confirm('You can\'t undo this after saving your wiki! Delete this page?')) {
+      emit(state.events.DELETE_PAGE, page.id);
+    }
   }
 }

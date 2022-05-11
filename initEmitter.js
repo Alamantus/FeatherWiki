@@ -117,8 +117,20 @@ export const initEmitter = (state, emitter) => {
     }
     state.edit = false;
     state.editStore = null;
-    emitter.emit(events.COLLECT_TAGS)
+    emitter.emit(events.COLLECT_TAGS);
     emitter.emit(events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
+    emitter.emit(events.CHECK_CHANGED);
+  });
+
+  emitter.on(events.DELETE_PAGE, id => {
+    state.p.pages = state.p.pages.map(pg => {
+      if (pg.parent === id) delete pg.parent;
+      return pg;
+    }).filter(pg => pg.id !== id);
+    state.edit = false;
+    state.editStore = null;
+    emitter.emit(events.COLLECT_TAGS);
+    emitter.emit(events.PUSHSTATE, state.siteRoot);
     emitter.emit(events.CHECK_CHANGED);
   });
 

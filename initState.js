@@ -38,6 +38,7 @@ export const initState = state => {
     CREATE_PAGE: 'cp',
     START_EDIT: 'se',
     UPDATE_PAGE: 'up',
+    DELETE_PAGE: 'dp',
     COLLECT_TAGS: 'ct',
     CHECK_CHANGED: 'cc',
     SAVE_WIKI: 'sw',

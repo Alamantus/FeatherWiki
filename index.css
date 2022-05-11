@@ -83,6 +83,12 @@ label { display: block; }
 .tr:not(.ml) { text-align: right; }
 .fr:not(.ml) { float: right; }
 .alert { border: 2px solid red; }
+.del {
+  background: red;
+  opacity: 0.8;
+  font-size: 0.8em;
+  color: #fff;
+}
 .db { display: block; }
 .il { display: inline; }
 .ib { display: inline-block; }
