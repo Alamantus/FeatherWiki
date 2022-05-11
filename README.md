@@ -5,4 +5,4 @@ The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as 
 ## To Do
 
 - Add sorting to sidebar (? Alphabetical may be sufficient)
-- Allow adding image from gallery
+- Allow adding/editing image alt text(?)

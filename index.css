@@ -16,7 +16,7 @@ body { padding: 0 1rem; }
   margin: .5em 0;
 }
 
-[hidden] {
+[hidden], dialog:not([open]) {
   display: none;
 }
 

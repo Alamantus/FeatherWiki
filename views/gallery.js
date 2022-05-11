@@ -5,6 +5,7 @@ export const gallery = (state, emit, options = {}) => {
   const {
     showDelete = false,
     showUsed = false,
+    insert = null,
   } = options;
   const images = getImageDetails();
 
@@ -14,8 +15,9 @@ export const gallery = (state, emit, options = {}) => {
         images.map(i => html`<div class="ib at pell w14">
           <div class=editor>
             <img src=${i.img} class=w1 /><br />
-            <button onclick=${() => viewImage(i.img)}>👁</button>
-            ${showDelete ? html`<button onclick=${() => deleteImage(i)}>❌</button>` : ''}
+            <button aria-label="View Image" onclick=${e => viewImage(e, i.img)}>👁</button>
+            ${showDelete ? html`<button aria-label="Delete Image" onclick=${e => deleteImage(e, i)}>❌</button>` : ''}
+            ${insert ? html`<button aria-label="Insert Image" onclick=${e => insert(e, i)}>✅</button>` : ''}
             ${
               showUsed
               ? [
@@ -46,7 +48,8 @@ export const gallery = (state, emit, options = {}) => {
     });
   }
 
-  function viewImage(img) {
+  function viewImage(e, img) {
+    e.preventDefault();
     var image = new Image();
     image.src = img;
 
@@ -54,7 +57,8 @@ export const gallery = (state, emit, options = {}) => {
     w.document.write(image.outerHTML);
   }
 
-  function deleteImage(i) {
+  function deleteImage(e, i) {
+    e.preventDefault();
     if (!confirm('Permanently delete image from all pages in wiki?')) return false;
     delete state.p.img[i.id];
     if (i.pgs.length > 0) {

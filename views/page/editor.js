@@ -1,6 +1,7 @@
 import html from 'choo/html';
 import { init, exec } from 'pell';
 
+import { gallery } from '../gallery';
 import { hashString } from '../../helpers/hashString';
 import { injectImageById } from '../../helpers/injection';
 import { resizeImage } from '../../helpers/resizeImage';
@@ -45,6 +46,12 @@ export const editor = (state) => {
           icon: '📷',
           result: promptImageUpload,
         },
+        {
+          name: 'addImage',
+          title: 'Add Existing Image in Wiki',
+          icon: '📸',
+          result: () => document.getElementById('gal').showModal(),
+        },
       ],
     });
     editor.content.innerHTML = c;
@@ -54,7 +61,15 @@ export const editor = (state) => {
     return target?.nodeName === element?.nodeName;
   };
 
-  return element;
+  return [
+    element,
+    html`<dialog id=gal>
+      <form class=fr method=dialog>
+        <button>Close</button>
+      </form>
+      ${ gallery(state, () => {}, { insert: (e, i) => insertImg(e, i) }) }
+    </dialog>`,
+  ];
 
   function promptImageUpload () {
     const input = html`<input type="file" hidden accept="image/*" onchange=${onChange} />`;
@@ -76,5 +91,15 @@ export const editor = (state) => {
         });
       }
     }
+
+  }
+
+  function insertImg (e, i) {
+    e.preventDefault();
+    document.getElementById('gal').close();
+    const editor = document.getElementsByClassName('pell-content')[0];
+    if (document.activeElement !== editor) editor.focus();
+    const { id, img } = i;
+    exec('insertHTML', `<p><img src="${img}#${id}"></p>`);
   }
 }
