@@ -60,7 +60,9 @@ async function handleBuildResult (result) {
     if (/\.css$/.test(out.path)) {
       html = html.replace('{{cssOutput}}', output);
     } else if (/\.js$/.test(out.path)) {
-      html = html.replace('{{jsOutput}}', output);
+      // Since there's regex stuff in here, I can't do replace!
+      const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
+      html = htmlParts[0] + output + htmlParts[1];
     }
   }
   
