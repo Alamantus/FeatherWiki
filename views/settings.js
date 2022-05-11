@@ -1,6 +1,7 @@
 import html from 'choo/html';
 
 import { gallery } from './gallery';
+import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
   const { events, p } = state;
@@ -9,7 +10,7 @@ export const settingsView = (state, emit) => {
       <h1>Wiki Settings</h1>
     </header>
     <article>
-      <form onsubmit=${saveSettings}>
+      <form onsubmit=${saveSettings} class=pb>
         <div class=r>
           <label class="c tr ml w14" for=wTitle>Wiki Title</label>
           <div class="c w34">
@@ -46,6 +47,9 @@ export const settingsView = (state, emit) => {
           <button type="submit">Update</button>
         </div>
       </form>
+      <div class=tr>
+        <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
+      </div>
       ${ gallery(state, emit, { showDelete: true, showUsed: true })}
     </article>
   </section>`;
@@ -64,5 +68,22 @@ export const settingsView = (state, emit) => {
     }
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
+  }
+
+  function promptOverwrite () {
+    const input = html`<input type="file" hidden accept="text/html" onchange=${onChange} />`;
+    document.body.appendChild(input);
+    input.click();
+
+    function onChange(e) {
+      const { files } = e.target;
+      if (files.length > 0) {
+        extractFeatherWikiData(files[0], result => {
+          state.p = result;
+          emit(events.DOMCONTENTLOADED);
+          emit(events.CHECK_CHANGED);
+        });
+      }
+    }
   }
 }

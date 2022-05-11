@@ -92,7 +92,6 @@ export const editor = (state) => {
         });
       }
     }
-
   }
 
   function insertImg (e, i) {
