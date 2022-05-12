@@ -1,12 +1,12 @@
 export function injectPageLink (content, state) {
   let c = content ?? null;
   if (c) {
-    (content?.match(/(?<=\[\[).+?(?=\]\])/g) ?? []).map(l => {
-      const match = l.split('|');
+    (content?.match(/\[\[.+?(?=\]\])/g) ?? []).map(l => {
+      const match = l.replace('[[', '').split('|');
       const slug = match[1] ? match[1].trim() : state.help.slugify(match[0]);
       const exists = state.p.pages.some(pg => pg.slug === slug);
       return {
-        match: `[[${l}]]`,
+        match: `${l}]]`,
         link: `<a href="${state.siteRoot}?page=${slug}"${!exists ? ' class=e' : ''}>${match[0]}</a>`,
       };
     }).forEach(l => {
@@ -19,7 +19,8 @@ export function injectPageLink (content, state) {
 export function injectImageById (content, state, includeId = false) {
   let c = content ?? null;
   if (c) {
-    (content?.match(/(?<=img:).+?(?=:img)/g) ?? []).map(id => {
+    (content?.match(/img:.+?(?=:img)/g) ?? []).map(id => {
+      id = id.replace('img:', '');
       const img = state.p.img[id];
       return {
         match: `img:${id}:img`,
@@ -35,10 +36,10 @@ export function injectImageById (content, state, includeId = false) {
 export function injectTargetBlank (content) {
   let c = content ?? null;
   if (c) {
-    (content?.match(/(?<=<a href=").+?(?=")/g) ?? []).map(url => {
+    (content?.match(/<a href=".+?(?=")/g) ?? []).map(url => {
       return {
-        match: `<a href="${url}"`,
-        link: `<a href="${url}" target="_blank" rel="noopener noreferrer"`,
+        match: `${url}"`,
+        link: `${url}" target="_blank" rel="noopener noreferrer"`,
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);
