@@ -41,13 +41,13 @@ export const settingsView = (state, emit) => {
         <div class=r>
           <label class="c tr ml w14" for=wPo>Page Order</label>
           <div class="c w34">
-            <textarea class=editor id=wPo>${o}</textarea>
+            <textarea id=wPo>${o}</textarea>
           </div>
         </div>
         <div class=r>
           <label class="c tr ml w14" for=wCss>Custom CSS</label>
           <div class="c w34">
-            <textarea class=editor id=wCss>${c}</textarea>
+            <textarea id=wCss>${c}</textarea>
           </div>
         </div>
         <div class=r>

@@ -13,7 +13,7 @@ export const gallery = (state, emit, options = {}) => {
       <h1>Existing Images</h1>
       ${
         images.map(i => html`<div class="ib at pell w14">
-          <div class=editor>
+          <div class=g>
             <img src=${i.img} class=w1 /><br />
             <button aria-label="View Image" onclick=${e => viewImage(e, i.img)}>👁</button>
             ${showDelete ? html`<button aria-label="Delete Image" onclick=${e => deleteImage(e, i)}>❌</button>` : ''}

@@ -12,7 +12,7 @@ export const editor = (state) => {
   let element;
   const textChange = event => state.editStore.content = event.target.value;
   if (state.showSource) {
-    element = html`<textarea class=editor onchange=${textChange}>${c}</textarea>`;
+    element = html`<textarea onchange=${textChange}>${c}</textarea>`;
   } else {
     element = html`<article class=pell></article>`;
     const fb = 'formatBlock';

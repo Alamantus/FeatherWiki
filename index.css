@@ -144,7 +144,7 @@ abbr[title] { cursor: help; }
   margin: unset;
 }
 
-.pell-content, .editor {
+.pell-content, textarea, .g { /* g here stands for gallery :) */
   width: 100%;
   height: 300px;
   outline: 0;
