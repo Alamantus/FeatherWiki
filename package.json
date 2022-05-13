@@ -1,8 +1,8 @@
 {
   "name": "featherwiki",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "title": "Feather Wiki",
-  "description": "It's like TiddlyWiki but as small as possible!",
+  "description": "A lightweight quine for simple, self-contained wikis",
   "homepage": "https://alamantus.codeberg.page/FeatherWiki",
   "scripts": {
     "start": "node scripts/develop.js",

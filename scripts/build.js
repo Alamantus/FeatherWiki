@@ -127,7 +127,7 @@ esbuild.build({
     return result;
   }
 }).then(async html => {
-  const outputDir = path.resolve(process.cwd(), 'docs');
+  const outputDir = process.cwd();
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
