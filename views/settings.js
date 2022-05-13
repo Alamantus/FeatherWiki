@@ -6,6 +6,7 @@ import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
   const { events, p, c } = state;
+  const o = p.pages.map(pg => pg.slug).join('\n');
   return [
     html`<header>
       <h1>Wiki Settings</h1>
@@ -35,6 +36,12 @@ export const settingsView = (state, emit) => {
                 })
               }
             </select>
+          </div>
+        </div>
+        <div class=r>
+          <label class="c tr ml w14" for=wPo>Page Order</label>
+          <div class="c w34">
+            <textarea class=editor id=wPo>${o}</textarea>
           </div>
         </div>
         <div class=r>
@@ -73,6 +80,9 @@ export const settingsView = (state, emit) => {
     } else {
       delete state.p.home;
     }
+    // Sort pages in the specified order. Missing slugs go to the top.
+    const sort = form.wPo.value.split('\n').map(s => s.trim());
+    state.p.pages.sort((a, b) => sort.indexOf(a.slug) < sort.indexOf(b.slug) ? -1 : 1);
     handleCustomCss(form.wCss.value);
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);

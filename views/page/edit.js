@@ -119,7 +119,6 @@ export const pageEdit = (state, emit, page) => {
 
   function deletePage (e) {
     e.preventDefault();
-    console.log(page);
     if (confirm('You can\'t undo this after saving your wiki! Delete this page?')) {
       emit(state.events.DELETE_PAGE, page.id);
     }

@@ -19,7 +19,7 @@ export const globalView = (state, emit) => {
 
   const showEditFields = !p.published || query.page === 's';
 
-  const parents = p.pages.filter(page => !page.parent).sort((a, b) => a.name < b.name ? -1 : 1);
+  const parents = p.pages.filter(page => !page.parent);
   const recents = recent.sort((a, b) => a.t > b.t ? -1 : 1).map(r => p.pages.find(pp => pp.id === r.p));
 
   let pageToRender = pg
