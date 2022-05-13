@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import http from 'http';
 import esbuild from 'esbuild';
-import babel from 'esbuild-plugin-babel';
 
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
@@ -29,11 +28,9 @@ esbuild.build({
       }
     },
   },
-  plugins: [
-    babel(),
-  ],
+  plugins: [],
   platform: 'browser',
-  // target: [ 'es5' ],
+  target: [ 'es2018' ],
   outdir: 'build',
 })
   .then(handleBuildResult)

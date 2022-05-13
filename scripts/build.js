@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import esbuild from 'esbuild';
-import babel from 'esbuild-plugin-babel';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
 
@@ -49,6 +48,17 @@ const minifyHTMLLiteralsPlugin = {
   }
 };
 
+const letsVarConstsPlugin = {
+  name: 'letsVarConstsPlugin',
+  setup(build) {
+    build.onLoad({ filter: /\.js$/ }, async (args) => {
+      const source = await fs.promises.readFile(args.path, 'utf8');
+
+      return { contents: source.replace(/(let|const)\s/g, 'var ') };
+    })
+  }
+};
+
 esbuild.build({
   entryPoints: ['index.js'],
   define: {
@@ -61,10 +71,10 @@ esbuild.build({
   treeShaking: true,
   plugins: [
     minifyHTMLLiteralsPlugin,
-    babel(),
+    letsVarConstsPlugin,
   ],
   platform: 'browser',
-  // target: [ 'es5' ],
+  target: [ 'es2018' ],
   outdir: 'build',
 }).then(async result => {
   const fileName = path.relative(process.cwd(), 'index.html');

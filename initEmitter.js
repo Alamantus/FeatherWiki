@@ -160,6 +160,7 @@ export const initEmitter = (state, emitter) => {
       <style id="s">${state.s}</style>
     </head>
     <body>
+      <a href="https://codeberg.org/Alamantus/FeatherWiki#supported-browsers">JavaScript</a> is required
       <script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script>
       <script id="a">${state.a}</script>
     </body>
