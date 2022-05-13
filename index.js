@@ -17,6 +17,6 @@ export default (() => {
 function run(app) {
 	app.use(initState);
 	app.use(initEmitter);
-	app.route('/:pageSlug', globalView);
+	app.route('/', globalView);
 	app.mount('body');
 }

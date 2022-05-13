@@ -24,6 +24,5 @@ supports features from ECMAScript 2018. 💻
 
 ## Possible Ideas
 
-- Custom CSS field
 - Add sorting to sidebar (? Alphabetical may be sufficient)
 - Allow adding/editing image alt text(?)

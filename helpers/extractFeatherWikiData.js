@@ -3,15 +3,20 @@ import { decompress } from 'json-compress';
 export function extractFeatherWikiData(file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = function (e) {
-    const s = '<script id=p type=application/json>'; // Start of regular expression
-    const matches = e.target.result.match(new RegExp(s + '.+?(?=</script>)', 'g'));
-    if ((matches ?? []).length < 1) return alert('Could not find importable {{package.json:title}} data.');
-    matches.forEach(m => {
-      m = m.replace(s, '');
-      console.log(m);
+    const p = '<script id=p type=application/json>'; // Start of regular expression
+    const pm = e.target.result.match(new RegExp(p + '.+?(?=</script>)', 'g'));
+    if ((pm ?? []).length < 1) return alert('Could not find {{package.json:title}} data.');
+    let pd;
+    pm.forEach(m => {
+      m = m.replace(p, '');
       if (m[0] !== '{') return;
-      callback(decompress(JSON.parse(m)));
+      pd = decompress(JSON.parse(m));
     });
+    const c = '<style id=c>'; // Start of regular expression
+    const cm = e.target.result.match(new RegExp(c + '.+?(?=</style>)', 'g'));
+    let cd = '';
+    if ((cm ?? []).length > 0) cd = cm[0].replace(c, '');
+    callback([pd, cd]);
   };
   reader.onerror = function (e) {
     console.error(e);

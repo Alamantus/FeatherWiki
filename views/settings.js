@@ -5,7 +5,7 @@ import { uploadFile } from '../helpers/uploadFile';
 import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
-  const { events, p } = state;
+  const { events, p, c } = state;
   return [
     html`<header>
       <h1>Wiki Settings</h1>
@@ -38,6 +38,12 @@ export const settingsView = (state, emit) => {
           </div>
         </div>
         <div class=r>
+          <label class="c tr ml w14" for=wCss>Custom CSS</label>
+          <div class="c w34">
+            <textarea class=editor id=wCss>${c}</textarea>
+          </div>
+        </div>
+        <div class=r>
           <label class="c tr ml w14" for=wPub>Publish</label>
           <div class="c w34">
             <input id=wPub type=checkbox checked=${p.published ?? false}>
@@ -67,6 +73,7 @@ export const settingsView = (state, emit) => {
     } else {
       delete state.p.home;
     }
+    handleCustomCss(form.wCss.value);
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
   }
@@ -75,11 +82,24 @@ export const settingsView = (state, emit) => {
     uploadFile('text/html', file => {
       extractFeatherWikiData(file, result => {
         if (result) {
-          state.p = result;
+          state.p = result[0];
+          handleCustomCss(result[1]);
           emit(events.DOMCONTENTLOADED);
           emit(events.CHECK_CHANGED);
         }
       });
     });
+  }
+
+  function handleCustomCss (content) {
+    const style = document.getElementById('c');
+    if (content.trim()) {
+      state.c = content;
+      if (style) style.innerHTML = content;
+      else document.head.innerHTML += `<style id=c>${content}</style>`;
+    } else {
+      delete state.c;
+      if (style) document.head.removeChild(style);
+    }
   }
 }

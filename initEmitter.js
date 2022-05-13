@@ -149,20 +149,22 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.SAVE_WIKI, async () => {
+    const { a, s, c, p } = state;
     const output = `<!DOCTYPE html>
     <html lang=en>
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>${state.p.name}</title>
-      ${state.p.desc ? '<meta name="description" content="' + state.p.desc.replace(/"/g, '\\"') + '">' : ''}
+      <title>${p.name}</title>
+      ${p.desc ? '<meta name="description" content="' + p.desc.replace(/"/g, '\\"') + '">' : ''}
       <meta name="version" content="{{package.json:version}}" />
-      <style id="s">${state.s}</style>
+      <style id="s">${s}</style>
+      ${c ? `<style id=c>${c}</style>` : '' }
     </head>
     <body>
       <a href="https://codeberg.org/Alamantus/FeatherWiki#supported-browsers">JavaScript</a> is required
-      <script id="p" type="application/json">${JSON.stringify(compress(state.p))}</script>
-      <script id="a">${state.a}</script>
+      <script id="p" type="application/json">${JSON.stringify(compress(p))}</script>
+      <script id="a">${a}</script>
     </body>
     </html>`;
     const filename = /\/$/.test(location.pathname) ? 'index.html' : location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
@@ -174,7 +176,7 @@ export const initEmitter = (state, emitter) => {
     el.click();
     document.body.removeChild(el);
 
-    state.lastSave = hashObject(state.p);
+    state.lastSave = hashObject(p);
     emitter.emit(events.CHECK_CHANGED);
   });
 
