@@ -22,7 +22,6 @@ browser versions should definitely be able to run Feather Wiki without issues:
 If your browser is older than any of these, you _might_ still be able to run Feather Wiki, but you'll have to check yourself if it
 supports features from ECMAScript 2018. 💻
 
-## Possible Ideas
+## Possible ideas for future updates
 
-- Add sorting to sidebar (? Alphabetical may be sufficient)
 - Allow adding/editing image alt text(?)
