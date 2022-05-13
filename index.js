@@ -17,6 +17,6 @@ export default (() => {
 function run(app) {
 	app.use(initState);
 	app.use(initEmitter);
-	app.route('/', globalView);
+	app.route('/:p', globalView);
 	app.mount('body');
 }
