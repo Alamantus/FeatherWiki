@@ -4,7 +4,7 @@ export function extractFeatherWikiData(file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = function (e) {
     const p = '<script id=p type=application/json>'; // Start of regular expression
-    const pm = e.target.result.match(new RegExp(p + '.+?(?=</script>)', 'g'));
+    const pm = e.target.result.match(new RegExp(p + '.+?(?=</script>)', 'gs'));
     if ((pm ?? []).length < 1) return alert('Could not find {{package.json:title}} data.');
     let pd;
     pm.forEach(m => {
@@ -13,7 +13,7 @@ export function extractFeatherWikiData(file, callback = () => {}) {
       pd = decompress(JSON.parse(m));
     });
     const c = '<style id=c>'; // Start of regular expression
-    const cm = e.target.result.match(new RegExp(c + '.+?(?=</style>)', 'g'));
+    const cm = e.target.result.match(new RegExp(c + '.+?(?=</style>)', 'gs'));
     let cd = '';
     if ((cm ?? []).length > 0) cd = cm[0].replace(c, '');
     callback([pd, cd]);
