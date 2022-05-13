@@ -15,6 +15,7 @@ export const editor = (state) => {
     element = html`<textarea class=editor onchange=${textChange}>${c}</textarea>`;
   } else {
     element = html`<article class=pell></article>`;
+    const fb = 'formatBlock';
     const editor = init({
       element,
       onChange: html => state.editStore.content = html,
@@ -24,16 +25,22 @@ export const editor = (state) => {
         'italic',
         'underline',
         'strikethrough',
-        'heading1',
-        'heading2',
+        {
+          title: 'Heading',
+          icon: '<b>H</b>',
+          result: () => exec(fb, '<h2>'),
+        },
+        {
+          title: 'Sub-Heading',
+          icon: '<b>H<sub>2</sub></b>',
+          result: () => exec(fb, '<h3>'),
+        },
         'paragraph',
-        'quote',
         'olist',
         'ulist',
-        'code',
+        'line',
         'link',
         {
-          name: 'externalimage',
           title: 'Link External Image',
           icon: '🖼️',
           result: () => {
@@ -42,13 +49,11 @@ export const editor = (state) => {
           },
         },
         {
-          name: 'insertimage',
           title: 'Insert Image from File',
           icon: '📸',
           result: promptImageUpload,
         },
         {
-          name: 'addImage',
           title: 'Add Existing Image',
           icon: '📎',
           result: () => document.getElementById('gal').showModal(),

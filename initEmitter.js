@@ -5,10 +5,11 @@ import { views } from './views';
 
 export const initEmitter = (state, emitter) => {
   const { events } = state;
+  const title = () => emitter.emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
 
   emitter.on(events.DOMCONTENTLOADED, () => {
     emitter.emit(events.HANDLE_404);
-    emitter.emit(events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
+    title();
     emitter.emit(events.COLLECT_TAGS);
   });
 
@@ -38,7 +39,7 @@ export const initEmitter = (state, emitter) => {
     state.pg = state.help.getPage();
     state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
     emitter.emit(events.HANDLE_404);
-    emitter.emit(events.DOMTITLECHANGE, state.pg?.name ?? state.p.name);
+    title();
   });
 
   emitter.on(events.SHOW_NEW_PAGE_FIELD, () => {

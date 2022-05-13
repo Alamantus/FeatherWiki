@@ -152,6 +152,9 @@ abbr[title] { cursor: help; }
   padding: 10px;
   margin: 0;
 }
+.pell-content > *:not(:first-child) {
+  margin: 0.5em 0;
+}
 
 .pell-actionbar {
   border-bottom: 1px solid #888;
