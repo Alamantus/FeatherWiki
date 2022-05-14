@@ -83,10 +83,7 @@ export const pageEdit = (state, emit, page) => {
   }
 
   function getTagsArray () {
-    const tags = document.getElementById('tags').value.split(',').map(t => t.trim());
-    return tags.filter((t, i) => {
-      return t.length > 0 && tags.indexOf(t) === i;
-    }).sort();
+    return help.tidyArray(document.getElementById('tags').value.split(','));
   }
   
   function addTag (e) {

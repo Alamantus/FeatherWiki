@@ -137,9 +137,9 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.COLLECT_TAGS, () => {
-    state.t = state.p.pages.reduce((r, p) => {
+    state.t = state.help.tidyArray(state.p.pages.reduce((r, p) => {
       return [...r, ...(p.tags?.split(',') ?? [])];
-    }, []).filter(t => !!t).sort();
+    }, []));
   });
 
   emitter.on(events.CHECK_CHANGED, callback => {
@@ -148,8 +148,8 @@ export const initEmitter = (state, emitter) => {
     emitter.emit(events.RENDER, callback);
   });
 
-  emitter.on(events.SAVE_WIKI, async () => {
-    const { a, s, c, p } = state;
+  emitter.on(events.SAVE_WIKI, () => {
+    const { a, s, c, p, siteRoot } = state;
     const output = `<!DOCTYPE html>
     <html lang=en>
     <head>
@@ -167,11 +167,10 @@ export const initEmitter = (state, emitter) => {
       <script id="a">${a}</script>
     </body>
     </html>`;
-    const filename = /\/$/.test(location.pathname) ? 'index.html' : location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+    const filename = /\/$/.test(siteRoot) ? 'index.html' : siteRoot.substring(siteRoot.lastIndexOf('/') + 1);
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
     el.setAttribute('download', filename);
-    el.style.display = 'none';
     document.body.appendChild(el);
     el.click();
     document.body.removeChild(el);
