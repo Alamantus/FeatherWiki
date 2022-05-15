@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A lightweight quine for simple wikis! The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A lightweight quine for simple, self-contained wikis! The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://alamantus.codeberg.page/FeatherWiki/) to see it in action and learn how to use it!
 
