@@ -11,6 +11,7 @@ export const initState = state => {
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
   state.src = false; // Show HTML in editor
+  state.showPutSave = false; // Show "Save Wiki to Server" button
   state.help = { // Helper functions that use state to do various things
     find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
     getPage: () => {
@@ -40,6 +41,8 @@ export const initState = state => {
     COLLECT_TAGS: 'ct',
     CHECK_CHANGED: 'cc',
     SAVE_WIKI: 'sw',
+    PUT_SAVE_WIKI: 'psw',
+    DETECT_PUT_SUPPORT: 'dps',
   };
 
   state.a = document.getElementById('a').innerHTML;

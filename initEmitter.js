@@ -17,6 +17,7 @@ export const initEmitter = (state, emitter) => {
     emit(events.HANDLE_404);
     title();
     emit(events.COLLECT_TAGS);
+    emit(events.DETECT_PUT_SUPPORT);
   });
 
   emitter.on(events.RENDER, callback => {
@@ -177,8 +178,47 @@ export const initEmitter = (state, emitter) => {
     el.click();
     document.body.removeChild(el);
 
-    state.prev = hashObject(p);
-    emit(events.CHECK_CHANGED);
+    if (!state.showPutSave) {
+      // Only clear the "save needed" indicator on server save
+      state.prev = hashObject(p);
+      emit(events.CHECK_CHANGED);
+    }
+  });
+
+  emitter.on(events.PUT_SAVE_WIKI, () => {
+    const output = generateWikiHtml(state);
+    const { p, root } = state;
+    fetch(root, { method: 'PUT', body: output })
+      .then(resp => resp.text()
+        .then(text => ({ ok: resp.ok, status: resp.status, text: text }))
+      )
+      .then(result => {
+        if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
+        alert('Save complete.')
+
+        state.prev = hashObject(p);
+        emitter.emit(events.CHECK_CHANGED);
+      })
+      .catch(err => {
+        alert(`Save failed! ${err}`);
+      });
+  });
+
+  emitter.on(events.DETECT_PUT_SUPPORT, () => {
+    // Assumptions:
+    // * state.showPutSave is false to begin with
+    // * This only needs to run once at startup
+    // * There's no need to turn it off again once it's set
+    // * If any 'dav' header is present then a put save could work
+    if (!location.protocol.startsWith('http')) return;
+    fetch(state.root, { method: 'OPTIONS' })
+      .then(resp => {
+        if (resp.ok && resp.headers.get('dav')) {
+          state.showPutSave = true;
+          emitter.emit(events.RENDER);
+        }
+      })
+      .catch(err => {})
   });
 
   return emitter;

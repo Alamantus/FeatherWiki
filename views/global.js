@@ -15,6 +15,7 @@ export const globalView = (state, emit) => {
     sb,
     sbTab,
     showNewPageField,
+    showPutSave,
   } = state;
 
   const showEditFields = !p.published || query.page === 's';
@@ -36,10 +37,13 @@ export const globalView = (state, emit) => {
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${
           showEditFields
-          ? html`<div>
-          ${changed ? 'Wiki has changed!' : ''} <button class=${changed ? 'chg' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
-          </div>`
-          : ''
+          ? [
+            changed ? html`<div>Wiki has changed!</div>` : '',
+            showPutSave
+              ? html`<div><button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button></div>`
+              : '',
+            html`<div><button class=${!showPutSave && changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki${showPutSave ? ' Locally' : ''}</button></div>`
+          ] : ''
         }
         <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>
         <nav class=${!sb ? 'n' : ''}>
