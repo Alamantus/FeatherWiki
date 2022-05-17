@@ -91,13 +91,17 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.START_EDIT, () => {
     const { pg } = state;
     state.edit = true;
-    state.editStore = {
+    const store = {
       name: pg.name ?? '',
       slug: pg.slug ?? '',
       content: pg.content ?? '',
       tags: pg.tags ?? '',
       parent: pg.parent ?? '',
     };
+    if (process.env.EDITOR !== 'html') {
+      state.editStore.useMd = pg.editor === 'md';
+    }
+    state.editStore = store;
     state.showSource = false;
     emitter.emit(events.RENDER);
   });

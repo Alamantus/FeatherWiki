@@ -2,17 +2,15 @@ import html from 'choo/html';
 import { init, exec } from 'pell';
 
 import { gallery } from '../gallery';
-import { hashString } from '../../helpers/hashString';
-import { injectImageById } from '../../helpers/injection';
-import { resizeImage } from '../../helpers/resizeImage';
-import { uploadFile } from '../../helpers/uploadFile';
+import { injectImageById, truncateImages } from '../../helpers/injection';
+import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 
-export const editor = (state) => {
-  const c = injectImageById(state.editStore.content, state, true);
+export const editor = (state, emit) => {
+  const { showSource, editStore } = state;
+  const c = injectImageById(editStore.content, state, true);
   let element;
-  const textChange = event => state.editStore.content = event.target.value;
-  if (state.showSource) {
-    element = html`<textarea onchange=${textChange}>${c}</textarea>`;
+  if (showSource) {
+    element = html`<textarea onchange=${e => state.editStore.content = e.target.value}>${truncateImages(editStore.content)}</textarea>`;
   } else {
     element = html`<article class=pell></article>`;
     const fb = 'formatBlock';
@@ -52,7 +50,7 @@ export const editor = (state) => {
         {
           title: 'Insert Image from File',
           icon: '📸',
-          result: promptImageUpload,
+          result: () => promptImageUpload(state, insert),
         },
         {
           title: 'Add Existing Image',
@@ -70,11 +68,14 @@ export const editor = (state) => {
 
   return [
     element,
+    html`<div class="w1 tr pb">
+      <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
+    </div>`,
     html`<dialog id=gal>
       <form class=fr method=dialog>
         <button>Close</button>
       </form>
-      ${ gallery(state, () => {}, { insert: (e, i) => insertImg(e, i) }) }
+      ${ gallery(state, () => {}, { insert: (e, i) => insertImg(e, i, insert) }) }
     </dialog>`,
   ];
 
@@ -84,26 +85,9 @@ export const editor = (state) => {
     exec('insertHTML', `<p><img src="${i.img}#${i.id}"></p>`);
   }
 
-  function promptImageUpload () {
-    if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
-    uploadFile('image/*', file => {
-      resizeImage(file, (img, w, h) => {
-        if (img) {
-          const id = hashString(img);
-          state.p.img[id.toString()] = {
-            alt: prompt('Set alt text', file.name),
-            size: [w, h],
-            img,
-          };
-          insert({ img, id });
-        }
-      });
-    });
-  }
-
-  function insertImg (e, i) {
+  function toggleShowSource (e) {
     e.preventDefault();
-    document.getElementById('gal').close();
-    insert(i);
+    state.showSource = !showSource;
+    emit(state.events.RENDER);
   }
 }

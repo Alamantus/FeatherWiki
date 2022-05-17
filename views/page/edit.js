@@ -1,12 +1,28 @@
 import html from 'choo/html';
-// import { editor } from './pell-editor';
-import { editor } from './md-editor';
+import md from 'snarkdown';
+
+import { truncateImages } from '../../helpers/injection';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
-  const { editStore, showSource, p, help } = state;
+  const { editStore, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
+
+  let editor;
+  if (process.env.EDITOR === 'md') {
+    editor = require('./md-editor').editor(state, emit);
+  } else if (process.env.EDITOR === 'html') {
+    editor = require('./pell-editor').editor(state, emit);
+  } else {
+    const { useMd } = editStore;
+    editor = [
+      html`<div class="w1 tr">
+        <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
+      </div>`,
+      require(useMd ? './md-editor' : './pell-editor').editor(state, emit),
+    ];
+  }
 
   return html`<form onsubmit=${save}>
     <header>
@@ -22,10 +38,7 @@ export const pageEdit = (state, emit, page) => {
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
-    ${ editor(state, emit) }
-    <div class="w1 tr pb">
-      <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
-    </div>
+    ${ editor }
     <footer class=r>
       <div class="c w13">
         <label for=tags>Page Tags</label>
@@ -70,15 +83,22 @@ export const pageEdit = (state, emit, page) => {
     document.getElementById('slug').value = slugify(document.getElementById('name').value.trim());
   }
 
+  function toggleEditor (e) {
+    if (process.env.EDITOR === '') {
+      e.preventDefault();
+      const { useMd, content } = editStore;
+      if (useMd) {
+        if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
+        state.editStore.content = md(content);
+      }
+      state.editStore.useMd = !useMd;
+      emit(state.events.RENDER);
+    }
+  }
+
   function store (e) {
     const t = e.target;
     state.editStore[t.id] = t.value;
-    emit(state.events.RENDER);
-  }
-
-  function toggleShowSource (e) {
-    e.preventDefault();
-    state.showSource = !state.showSource;
     emit(state.events.RENDER);
   }
 
@@ -108,9 +128,10 @@ export const pageEdit = (state, emit, page) => {
     pg = { ...page };
     pg.name = name;
     pg.slug = slugify(slug);
-    pg.content = state.editStore.content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
+    pg.content = truncateImages(state.editStore.content);
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
+    if (process.env.EDITOR !== 'html' && editStore.useMd) pg.editor = 'md'; else delete pg.editor;
     emit(state.events.UPDATE_PAGE, pg);
   }
 

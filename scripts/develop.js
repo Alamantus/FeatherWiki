@@ -11,6 +11,7 @@ esbuild.build({
   define: {
     'process.env.NODE_ENV': '"development"',
     'process.env.NODE_DEBUG': '"debug"',
+    'process.env.EDITOR': '"' + process.argv[2] + '"',
   },
   sourcemap: 'inline',
   write: false,

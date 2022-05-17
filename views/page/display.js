@@ -1,14 +1,21 @@
 import html from 'choo/html';
 import raw from 'choo/html/raw';
-import md from 'snarkdown';
 import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
   const { siteRoot, help } = state;
   const { content } = page;
-  let c = injectTargetBlank(content);
-  c = injectPageLink(c, state);
-  c = injectImageById(c, state);
+  let c = content;
+  if (process.env.EDITOR !== 'html') {
+    c = page.editor === 'md' ? require('snarkdown')(content) : content;
+  }
+  c = injectImageById(
+    injectPageLink(
+      injectTargetBlank(c),
+      state
+    ),
+    state
+  );
   const children = help.getChildren(page);
   return [
     !page?.e && page?.tags?.length
@@ -22,7 +29,7 @@ export const pageDisplay = (state, emit, page) => {
       </aside>`
       : '',
     html`<article class=uc>
-      ${ c ? raw(md(c)) : 'No Page Content' }
+      ${ c ? raw(c) : 'No Page Content' }
     </article>`,
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>

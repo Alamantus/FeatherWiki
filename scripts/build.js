@@ -63,6 +63,7 @@ esbuild.build({
   entryPoints: ['index.js'],
   define: {
     'process.env.NODE_ENV': '"production"',
+    'process.env.EDITOR': '"' + process.argv[2] + '"',
   },
   sourcemap: false,
   write: false,

@@ -1,3 +1,29 @@
+import { uploadFile } from "./uploadFile";
+import { hashString } from "./hashString";
+
+export function promptImageUpload (state, insert = () => {}) {
+  if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
+  uploadFile('image/*', file => {
+    resizeImage(file, (img, w, h) => {
+      if (img) {
+        const id = hashString(img);
+        state.p.img[id.toString()] = {
+          alt: prompt('Set alt text', file.name),
+          size: [w, h],
+          img,
+        };
+        insert({ img, id });
+      }
+    });
+  });
+}
+
+export function insertImg (e, i, insert = () => {}) {
+  e.preventDefault();
+  document.getElementById('gal').close();
+  insert(i);
+}
+
 // Adapted from https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf
 export function resizeImage(file, callback = () => {}) {
   const reader = new FileReader();

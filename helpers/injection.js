@@ -33,6 +33,10 @@ export function injectImageById (content, state, includeId = false) {
   return c;
 }
 
+export function truncateImages (content) {
+  return content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
+}
+
 export function injectTargetBlank (content) {
   let c = content ?? null;
   if (c) {
