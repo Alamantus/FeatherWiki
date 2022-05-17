@@ -1,5 +1,4 @@
 import html from 'choo/html';
-import md from 'snarkdown';
 
 import { truncateImages } from '../../helpers/injection';
 
@@ -89,7 +88,7 @@ export const pageEdit = (state, emit, page) => {
       const { useMd, content } = editStore;
       if (useMd) {
         if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.editStore.content = md(content);
+        state.editStore.content = require('snarkdown')(content);
       }
       state.editStore.useMd = !useMd;
       emit(state.events.RENDER);
@@ -131,7 +130,9 @@ export const pageEdit = (state, emit, page) => {
     pg.content = truncateImages(state.editStore.content);
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
-    if (process.env.EDITOR !== 'html' && editStore.useMd) pg.editor = 'md'; else delete pg.editor;
+    if (process.env.EDITOR !== 'html') {
+      if (editStore.useMd) pg.editor = 'md'; else delete pg.editor;
+    }
     emit(state.events.UPDATE_PAGE, pg);
   }
 

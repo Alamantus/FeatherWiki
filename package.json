@@ -1,12 +1,16 @@
 {
   "name": "featherwiki",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "title": "Feather Wiki",
   "description": "A lightweight quine for simple, self-contained wikis",
   "homepage": "https://alamantus.codeberg.page/FeatherWiki",
   "scripts": {
     "start": "node scripts/develop.js",
     "build": "node scripts/build.js",
+    "build:all": "npm run build -- all",
+    "build:both": "npm run build -- both",
+    "build:html": "npm run build -- html",
+    "build:md": "npm run build -- md",
     "test": "npm run build && node scripts/test-build.js"
   },
   "type": "module",

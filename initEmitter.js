@@ -99,7 +99,7 @@ export const initEmitter = (state, emitter) => {
       parent: pg.parent ?? '',
     };
     if (process.env.EDITOR !== 'html') {
-      state.editStore.useMd = pg.editor === 'md';
+      state.editStore.useMd = pg.editor === 'md' || state.useMd;
     }
     state.editStore = store;
     state.showSource = false;
@@ -123,6 +123,7 @@ export const initEmitter = (state, emitter) => {
     }
     state.edit = false;
     state.editStore = null;
+    if (process.env.EDITOR !== 'html') state.useMd = page.editor === 'md';
     emitter.emit(events.COLLECT_TAGS);
     emitter.emit(events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
     emitter.emit(events.CHECK_CHANGED);

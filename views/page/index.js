@@ -1,12 +1,11 @@
 import html from 'choo/html';
-import raw from 'choo/html/raw';
 
 import { pageDisplay } from './display';
 import { pageEdit } from './edit';
 
 export const pageView = (state, emit, page) => {
   const { edit, help, p, events } = state;
-  const { cd, md } = page;
+  const { cd, md } = page; // created date & modified date
 
   if (edit) {
     return pageEdit(state, emit, page);

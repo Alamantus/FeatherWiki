@@ -59,88 +59,117 @@ const letsVarConstsPlugin = {
   }
 };
 
-esbuild.build({
-  entryPoints: ['index.js'],
-  define: {
-    'process.env.NODE_ENV': '"production"',
-    'process.env.EDITOR': '"' + process.argv[2] + '"',
-  },
-  sourcemap: false,
-  write: false,
-  bundle: true,
-  minify: true,
-  treeShaking: true,
-  plugins: [
-    minifyHTMLLiteralsPlugin,
-    letsVarConstsPlugin,
-  ],
-  platform: 'browser',
-  target: [ 'es2015' ],
-  outdir: 'build',
-}).then(async result => {
-  const fileName = path.relative(process.cwd(), 'index.html');
-  let html = await fs.promises.readFile(fileName, 'utf8');
-  const cssResult = esbuild.buildSync({
-    entryPoints: ['index.css'],
+const cuteNames = {
+  'both_es2015': 'Dove',
+  'both_es2022': 'Robin',
+  'md_es2015': 'Chickadee',
+  'md_es2022': 'Hummingbird',
+  'html_es2015': 'Finch',
+  'html_es2022': 'Sparrow',
+};
+
+const version = process.argv[2];
+const target = process.argv[3];
+
+// This is me spending way too much time just to be lazy
+const buildVersions = Object.keys(cuteNames);
+(
+  !version && !target
+  ? buildVersions[0]
+  : (
+    version === 'all'
+    ? buildVersions
+    : buildVersions.filter(cuteName => cuteName.includes(version) || cuteName.includes(target))
+  )
+).forEach(cuteName => {
+  const args = cuteName.split('_');
+  build(args[0], args[1]);
+});
+
+function build(buildVersion = 'both', buildTarget = 'es2015') {
+  const cuteName = cuteNames[buildVersion + '_' + buildTarget];
+  esbuild.build({
+    entryPoints: ['index.js'],
+    define: {
+      'process.env.NODE_ENV': '"production"',
+      'process.env.EDITOR': '"' + buildVersion + '"',
+    },
+    sourcemap: false,
     write: false,
     bundle: true,
     minify: true,
+    treeShaking: true,
+    plugins: [
+      minifyHTMLLiteralsPlugin,
+      letsVarConstsPlugin,
+    ],
+    platform: 'browser',
+    target: [ buildTarget ],
     outdir: 'build',
-  });
-  for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
-    const output = new TextDecoder().decode(out.contents);
-    const outputKb = out.contents.byteLength * 0.000977;
-    console.info(out.path, outputKb.toFixed(3) + ' kb');
-    if (/\.css$/.test(out.path)) {
-      html = html.replace('{{cssOutput}}', output);
-    } else if (/\.js$/.test(out.path)) {
-      // Since there's regex stuff in here, I can't do replace!
-      const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
-      html = htmlParts[0] + output + htmlParts[1];
-    }
-  }
-  return html;
-}).then(async html => {
-  const fileName = path.relative(process.cwd(), 'package.json');
-  const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
-  const packageJson = JSON.parse(packageJsonFile);
-
-  const matches = html.match(/(?<={{)package\.json:.+?(?=}})/g);
-
-  if (matches?.length > 0) {
-    let result = html;
-    matches.map(match => {
-      const value = match.replace('package.json:', '').trim();
-      const replace = value.split('.').reduce((result, current) => {
-        if (result === null) {
-          return packageJson[current] ?? '';
-        }
-        return result[current] ?? '';
-      }, null);
-      return {
-        match: `{{${match}}}`,
-        replace,
-      };
-    }).forEach(m => {
-      result = result.replace(m.match, m.replace);
+  }).then(async result => {
+    const fileName = path.relative(process.cwd(), 'index.html');
+    let html = await fs.promises.readFile(fileName, 'utf8');
+    const cssResult = esbuild.buildSync({
+      entryPoints: ['index.css'],
+      write: false,
+      bundle: true,
+      minify: true,
+      outdir: 'build',
     });
+    for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
+      const output = new TextDecoder().decode(out.contents);
+      // const outputKb = out.contents.byteLength * 0.000977;
+      // console.info(`${out.path} (${cuteName})`, outputKb.toFixed(3) + ' kb');
+      if (/\.css$/.test(out.path)) {
+        html = html.replace('{{cssOutput}}', output);
+      } else if (/\.js$/.test(out.path)) {
+        // Since there's regex stuff in here, I can't do replace!
+        const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
+        html = htmlParts[0] + output + htmlParts[1];
+      }
+    }
+    return html;
+  }).then(async html => {
+    const fileName = path.relative(process.cwd(), 'package.json');
+    const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
+    const packageJson = JSON.parse(packageJsonFile);
 
-    return result;
-  }
-}).then(async html => {
-  const outputDir = process.cwd();
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
-  }
-  const filePath = path.resolve(outputDir, 'FeatherWiki.html');
-  const outHtml = minify(html, minifyOptions);
-  await fs.writeFile(filePath, outHtml, (err) => {
-    if (err) throw err;
-    const outputKb = Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977;
-    console.info(filePath, outputKb.toFixed(3) + ' kb');
-  });
-})
-  .catch((e) => {
+    const matches = html.match(/(?<={{)package\.json:.+?(?=}})/g);
+
+    if (matches?.length > 0) {
+      let result = html;
+      matches.map(match => {
+        const value = match.replace('package.json:', '').trim();
+        const replace = value.split('.').reduce((result, current) => {
+          if (result === null) {
+            return packageJson[current] ?? '';
+          }
+          return result[current] ?? '';
+        }, null);
+        return {
+          match: `{{${match}}}`,
+          replace,
+        };
+      }).forEach(m => {
+        result = result.replace(m.match, m.replace);
+      });
+
+      return result;
+    }
+  }).then(async html => {
+    const outputDir = process.cwd();
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir);
+    }
+    const filePath = path.resolve(outputDir, `FeatherWiki_${cuteName}.html`);
+    const outHtml = minify(html, minifyOptions);
+    await fs.writeFile(filePath, outHtml, (err) => {
+      if (err) throw err;
+      const outputKb = Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977;
+      console.info(filePath, outputKb.toFixed(3) + ' kb');
+    });
+  }).catch((e) => {
     console.error(e);
     process.exit(1)
   });
+}
