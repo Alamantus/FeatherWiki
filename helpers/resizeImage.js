@@ -29,7 +29,7 @@ export function resizeImage(file, callback = () => {}) {
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-      callback(canvas.toDataURL(file.type));
+      callback(canvas.toDataURL(file.type), width, height);
     };
   };
   reader.onerror = function (e) {

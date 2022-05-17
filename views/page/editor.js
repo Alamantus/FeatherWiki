@@ -87,10 +87,14 @@ export const editor = (state) => {
   function promptImageUpload () {
     if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
     uploadFile('image/*', file => {
-      resizeImage(file, img => {
+      resizeImage(file, (img, w, h) => {
         if (img) {
           const id = hashString(img);
-          state.p.img[id.toString()] = img;
+          state.p.img[id.toString()] = {
+            alt: prompt('Set alt text', file.name),
+            size: [w, h],
+            img,
+          };
           insert({ img, id });
         }
       });

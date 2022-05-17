@@ -21,10 +21,10 @@ export function injectImageById (content, state, includeId = false) {
   if (c) {
     (content?.match(/img:.+?(?=:img)/g) ?? []).map(id => {
       id = id.replace('img:', '');
-      const img = state.p.img[id];
+      const i = state.p.img[id];
       return {
         match: `img:${id}:img`,
-        link: img + (includeId ? `#${id}` : ''),
+        link: i.img + (includeId ? `#${id}` : '') + `" alt="${i.alt}`,
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);
