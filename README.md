@@ -6,19 +6,20 @@ Check out the [Documentation](https://alamantus.codeberg.page/FeatherWiki/) to s
 
 ## Versions
 
-As of version 1.2.0, there are now a few different versions of Feather Wiki with cute bird names depending on the kinds of functionality you're
-looking for. Specifically, there are differences in _browser compatibility_ and _content editor_ for each version. Below is a breakdown of each
+As of version 1.2.0, there are now a few different versions of Feather Wiki depending on the kinds of functionality you're looking for, each
+with its own cute bird name to indicate its size _(and to maybe help make up for the fact that there are 6 versions as a result 😵)_.
+Specifically, there are differences in _browser compatibility_ and _content editor_ for each version. Below is a breakdown of each
 version.
 
 ### Most Compatible
 
 These versions will run on browsers running JavaScript with at least ECMAScript 2015 (also known as ES6) features.
 
-- **Dove:** `81.222 kb`
+- **Dove:** `81.690 kb`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `78.130 kb`
+- **Finch:** `78.598 kb`
   - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `76.217 kb`
+- **Chickadee:** `76.685 kb`
   - Includes _only_ Markdown editor.
 
 <details>
@@ -45,11 +46,11 @@ you'll have to check yourself if it supports features from ECMAScript 2015 (also
 
 These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2022 features.
 
-- **Robin:** `80.112 kb`
+- **Robin:** `80.331 kb`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Sparrow:** `77.021 kb`
+- **Sparrow:** `77.240 kb`
   - Includes _only_ WYSIWYG editor.
-- **Hummingbird:** `75.152 kb`
+- **Hummingbird:** `75.371 kb`
   - Includes _only_ Markdown editor. The smallest it gets!
 
 <details>
