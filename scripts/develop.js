@@ -30,7 +30,7 @@ esbuild.build({
   },
   plugins: [],
   platform: 'browser',
-  target: [ 'es2018' ],
+  target: [ 'es2015' ],
   outdir: 'build',
 })
   .then(handleBuildResult)

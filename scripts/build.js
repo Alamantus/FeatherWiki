@@ -74,7 +74,7 @@ esbuild.build({
     letsVarConstsPlugin,
   ],
   platform: 'browser',
-  target: [ 'es2018' ],
+  target: [ 'es2015' ],
   outdir: 'build',
 }).then(async result => {
   const fileName = path.relative(process.cwd(), 'index.html');
