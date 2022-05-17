@@ -27,7 +27,7 @@ export function insertImg (e, i, insert = () => {}) {
 // Adapted from https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf
 export function resizeImage(file, callback = () => {}) {
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = e => {
     const img = new Image();
     img.src = e.target.result;
     img.onload = () => {
@@ -58,7 +58,7 @@ export function resizeImage(file, callback = () => {}) {
       callback(canvas.toDataURL(file.type), width, height);
     };
   };
-  reader.onerror = function (e) {
+  reader.onerror = e => {
     if (process.env.NODE_ENV !== 'production') console.error(e);
     callback(null);
   };
