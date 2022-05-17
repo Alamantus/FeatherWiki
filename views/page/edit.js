@@ -108,7 +108,7 @@ export const pageEdit = (state, emit, page) => {
     pg = { ...page };
     pg.name = name;
     pg.slug = slugify(slug);
-    pg.content = state.editStore.content.replace(/(?:<img src=")[^"]+#([-\d]+)(?:" style="font-size: \d+pt;)?(?=">)/g, '<img src="img:$1:img');
+    pg.content = state.editStore.content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
     emit(state.events.UPDATE_PAGE, pg);

@@ -1,5 +1,5 @@
 // Adapted from https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf
-export function resizeImage(file, callback = () => {}, maxWidth = 400, maxHeight = 350) {
+export function resizeImage(file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = function (e) {
     const img = new Image();
@@ -9,12 +9,10 @@ export function resizeImage(file, callback = () => {}, maxWidth = 400, maxHeight
       let width = img.width;
       let height = img.height;
 
-      if (width > maxWidth || height > maxHeight) {
-        const warning = `Your image will be resized to a maximum of ${maxWidth} pixels wide and ${maxHeight} pixels high to help reduce the file size of the wiki.`;
-        if (!window.confirm(warning)) {
-          return callback(null);
-        }
-      }
+      let maxWidth = prompt('Set max width pixels:', '400');
+      maxWidth = maxWidth?.length ? parseInt(maxWidth) : 400;
+      let maxHeight = prompt('Set max height pixels:', '350');
+      maxHeight = maxHeight?.length ? parseInt(maxHeight) : 350;
 
       if (width > height) {
         if (width > maxWidth) {
@@ -31,11 +29,11 @@ export function resizeImage(file, callback = () => {}, maxWidth = 400, maxHeight
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-      callback(canvas.toDataURL(file.type));
+      callback(canvas.toDataURL(file.type), width, height);
     };
   };
   reader.onerror = function (e) {
-    console.error(e);
+    if (process.env.NODE_ENV !== 'production') console.error(e);
     callback(null);
   };
   reader.readAsDataURL(file);

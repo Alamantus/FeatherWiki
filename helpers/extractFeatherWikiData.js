@@ -19,7 +19,7 @@ export function extractFeatherWikiData(file, callback = () => {}) {
     callback([pd, cd]);
   };
   reader.onerror = function (e) {
-    console.error(e);
+    if (process.env.NODE_ENV !== 'production') console.error(e);
     callback(null);
   };
   reader.readAsText(file);

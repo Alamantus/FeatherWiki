@@ -14,8 +14,10 @@ export const gallery = (state, emit, options = {}) => {
       ${
         images.map(i => html`<div class="ib at pell w14">
           <div class=g>
-            <img src=${i.img} class=w1 /><br />
+            <img src=${i.img} class=w1 aria-describedby=alt />
+            <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
             <button aria-label="View Image" onclick=${e => viewImage(e, i.img)}>👁</button>
+            ${showDelete ? html`<button aria-label="Edit Alt Text" onclick=${e => editAlt(e, i)}>📝</button>` : ''}
             ${showDelete ? html`<button aria-label="Delete Image" onclick=${e => deleteImage(e, i)}>❌</button>` : ''}
             ${insert ? html`<button aria-label="Insert Image" onclick=${e => insert(e, i)}>✅</button>` : ''}
             ${
@@ -40,7 +42,7 @@ export const gallery = (state, emit, options = {}) => {
     return Object.keys(img).map(id => {
       return {
         id,
-        img: img[id],
+        ...img[id],
         pgs: showUsed ? pages.filter(pg => {
           return pg.content?.includes(`img:${id}:img`);
         }) : [],
@@ -55,6 +57,12 @@ export const gallery = (state, emit, options = {}) => {
 
     var w = window.open('');
     w.document.write(image.outerHTML);
+  }
+
+  function editAlt(e, i) {
+    e.preventDefault();
+    state.p.img[i.id].alt = prompt('Set alt text', i.alt);
+    emit(events.CHECK_CHANGED);
   }
 
   function deleteImage(e, i) {
