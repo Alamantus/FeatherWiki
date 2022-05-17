@@ -73,22 +73,34 @@ const target = process.argv[3];
 
 // This is me spending way too much time just to be lazy
 const buildVersions = Object.keys(cuteNames);
-(
+const builds = (
   !version && !target
-  ? buildVersions[0]
+  ? [buildVersions[0]]
   : (
     version === 'all'
     ? buildVersions
-    : buildVersions.filter(cuteName => cuteName.includes(version) || cuteName.includes(target))
+    : buildVersions.filter(nameKey => nameKey.includes(version) || nameKey.includes(target))
   )
-).forEach(cuteName => {
-  const args = cuteName.split('_');
-  build(args[0], args[1]);
+).map(nameKey => {
+  const args = nameKey.split('_');
+  return build(args[0], args[1]);
 });
+Promise.all(builds).then(async results => {
+  const filePath = path.resolve(process.cwd(), 'README.md');
+  let readme = await fs.promises.readFile(filePath, 'utf8');
+  results.forEach(result => {
+    const regex = new RegExp(`${result.version}:\\*\\* \`[\\d.]+ kb\``);
+    readme = readme.replace(regex, `${result.version}:** \`${result.size}\``);
+  });
+  await fs.writeFile(filePath, readme, (err) => {
+    if (err) throw err;
+    console.info('README.md updated for versions:', results.map(r => r.version));
+  });
+})
 
 function build(buildVersion = 'both', buildTarget = 'es2015') {
   const cuteName = cuteNames[buildVersion + '_' + buildTarget];
-  esbuild.build({
+  return esbuild.build({
     entryPoints: ['index.js'],
     define: {
       'process.env.NODE_ENV': '"production"',
@@ -157,17 +169,18 @@ function build(buildVersion = 'both', buildTarget = 'es2015') {
       return result;
     }
   }).then(async html => {
-    const outputDir = process.cwd();
+    const outputDir = path.resolve(process.cwd(), 'builds');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
     }
     const filePath = path.resolve(outputDir, `FeatherWiki_${cuteName}.html`);
     const outHtml = minify(html, minifyOptions);
+    const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kb';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
-      const outputKb = Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977;
-      console.info(filePath, outputKb.toFixed(3) + ' kb');
+      console.info(filePath, outputKb);
     });
+    return { version: cuteName, size: outputKb };
   }).catch((e) => {
     console.error(e);
     process.exit(1)

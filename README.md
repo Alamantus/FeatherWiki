@@ -4,6 +4,34 @@ A lightweight quine for simple, self-contained wikis! The idea is that it's like
 
 Check out the [Documentation](https://alamantus.codeberg.page/FeatherWiki/) to see it in action and learn how to use it!
 
+## Versions
+
+As of version 1.2.0, there are now a few different versions of Feather Wiki with cute bird names depending on the kinds of functionality you're
+looking for. Specifically, there are differences in _browser compatibility_ and _content editor_ for each version. Here is a breakdown of each
+of the different versions available:
+
+### Most Compatible
+
+These versions will run on browsers running JavaScript with at least ECMAScript 2015 (also known as ES6) features.
+
+- **Dove:** `81.217 kb`
+  - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
+- **Finch:** `78.124 kb`
+  - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
+- **Chickadee:** `76.207 kb`
+  - Includes _only_ Markdown editor.
+
+### Least Compatible
+
+These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2022 features.
+
+- **Robin:** `80.106 kb`
+  - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
+- **Sparrow:** `77.013 kb`
+  - Includes _only_ WYSIWYG editor.
+- **Hummingbird:** `75.140 kb`
+  - Includes _only_ Markdown editor. The smallest it gets!
+
 ## Supported Browsers
 
 🤖 Technical Talk 👨‍💻 Feather Wiki uses various JavaScript features that are as new as having been added to the ECMAScript specification
