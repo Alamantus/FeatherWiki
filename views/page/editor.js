@@ -78,16 +78,20 @@ export const editor = (state) => {
     </dialog>`,
   ];
 
+  function insert (i) {
+    const editor = element.children[1];
+    if (document.activeElement !== editor) editor.focus();
+    exec('insertHTML', `<p><img src="${i.img}#${i.id}"></p>`);
+  }
+
   function promptImageUpload () {
     if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
     uploadFile('image/*', file => {
-      resizeImage(file, result => {
-        if (result) {
-          const editor = document.getElementsByClassName('pell-content')[0];
-          if (document.activeElement !== editor) editor.focus();
-          const id = hashString(result);
-          state.p.img[id.toString()] = result;
-          exec('insertHTML', `<p><img src="${result}#${id}"></p>`);
+      resizeImage(file, img => {
+        if (img) {
+          const id = hashString(img);
+          state.p.img[id.toString()] = img;
+          insert({ img, id });
         }
       });
     });
@@ -96,9 +100,6 @@ export const editor = (state) => {
   function insertImg (e, i) {
     e.preventDefault();
     document.getElementById('gal').close();
-    const editor = document.getElementsByClassName('pell-content')[0];
-    if (document.activeElement !== editor) editor.focus();
-    const { id, img } = i;
-    exec('insertHTML', `<p><img src="${img}#${id}"></p>`);
+    insert(i);
   }
 }
