@@ -38,6 +38,7 @@ export const editor = (state) => {
         'paragraph',
         'olist',
         'ulist',
+        'quote',
         'line',
         'link',
         {

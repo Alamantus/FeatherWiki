@@ -50,13 +50,11 @@ ul, ol { padding: 0 0 0 1rem; }
 
 label { display: block; }
 
-/* button {
-  cursor: pointer;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  margin: .1em;
-} */
+blockquote {
+  margin-left: 2em;
+  padding-left: 1em;
+  border-left: 3px solid #888;
+}
 
 abbr[title] { cursor: help; }
 
