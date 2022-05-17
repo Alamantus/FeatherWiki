@@ -1,5 +1,6 @@
 import html from 'choo/html';
 import raw from 'choo/html/raw';
+import md from 'snarkdown';
 import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
@@ -21,7 +22,7 @@ export const pageDisplay = (state, emit, page) => {
       </aside>`
       : '',
     html`<article class=uc>
-      ${ c ? raw(c) : 'No Page Content' }
+      ${ c ? raw(md(c)) : 'No Page Content' }
     </article>`,
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>

@@ -1,6 +1,6 @@
 import html from 'choo/html';
-// import { Editor } from '../../components/editor';
-import { editor } from './editor';
+// import { editor } from './pell-editor';
+import { editor } from './md-editor';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
