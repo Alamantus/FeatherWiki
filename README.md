@@ -14,22 +14,22 @@ of the different versions available:
 
 These versions will run on browsers running JavaScript with at least ECMAScript 2015 (also known as ES6) features.
 
-- **Dove:** `81.217 kb`
+- **Dove:** `81.222 kb`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `78.124 kb`
+- **Finch:** `78.130 kb`
   - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `76.207 kb`
+- **Chickadee:** `76.217 kb`
   - Includes _only_ Markdown editor.
 
 ### Least Compatible
 
 These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2022 features.
 
-- **Robin:** `80.106 kb`
+- **Robin:** `80.112 kb`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Sparrow:** `77.013 kb`
+- **Sparrow:** `77.021 kb`
   - Includes _only_ WYSIWYG editor.
-- **Hummingbird:** `75.140 kb`
+- **Hummingbird:** `75.152 kb`
   - Includes _only_ Markdown editor. The smallest it gets!
 
 ## Supported Browsers
