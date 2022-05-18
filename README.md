@@ -1,8 +1,9 @@
 # Feather Wiki
 
-A lightweight quine for simple, self-contained wikis! The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A lightweight [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+[TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
-Check out the [Documentation](https://alamantus.codeberg.page/FeatherWiki/) to see it in action and learn how to use it!
+Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
 ## Versions
 
@@ -13,7 +14,8 @@ version.
 
 ### Most Compatible
 
-These versions will run on browsers running JavaScript with at least ECMAScript 2015 (also known as ES6) features.
+In _most_ cases, this is the section you want to choose from. These versions will run on browsers running JavaScript with at least
+ECMAScript 2015 (also known as ES6) features.
 
 - **Dove:** `81.690 kb`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
@@ -44,7 +46,9 @@ you'll have to check yourself if it supports features from ECMAScript 2015 (also
 
 ### Least Compatible
 
-These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2022 features.
+These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2020 features. As such, these
+are much more symbolic than actually recommended for use; _Only use these if you use a modern, up-to-date web browser and don't plan on
+publishing your Feather Wiki for other to see._
 
 - **Robin:** `80.331 kb`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
@@ -52,23 +56,6 @@ These versions are smaller, but will only run on newer browsers running JavaScri
   - Includes _only_ WYSIWYG editor.
 - **Hummingbird:** `75.371 kb`
   - Includes _only_ Markdown editor. The smallest it gets!
-
-<details>
-<summary>👨‍💻 Technical Talk: Supported Browsers</summary>
-
-According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es2016plus/), the following
-browser versions should definitely be able to run the Robin, Sparrow, and Hummingbird versions of Feather Wiki without issues:
-
-- Chrome 86+
-- Edge 87+
-- Firefox 88+
-- iOS Safari 12+
-- Opera 73+
-- Opera Mobile 62+
-- Safari 13+
-- Samsung Internet for Android 12+
-
-</details>
 
 ## Contribution
 
