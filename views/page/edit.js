@@ -83,7 +83,7 @@ export const pageEdit = (state, emit, page) => {
   }
 
   function toggleEditor (e) {
-    if (process.env.EDITOR === '') {
+    if (process.env.EDITOR === 'both') {
       e.preventDefault();
       const { useMd, content } = editStore;
       if (useMd) {
