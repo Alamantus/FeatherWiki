@@ -6,13 +6,12 @@ import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 export const editor = (state) => {
   const textChange = event => state.editStore.content = event.target.value;
   const element = html`<textarea onchange=${textChange}>${state.editStore.content}</textarea>`;
-  const gal = () => document.getElementById('gal');
 
   return [
     element,
     html`<button onclick=${e => {e.preventDefault(); promptImageUpload(state, insert)}}>Insert Image from File</button>`,
-    html`<button onclick=${e => {e.preventDefault(); gal().showModal()}}>Add Existing Image</button>`,
-    html`<dialog id=gal>
+    html`<button onclick=${e => {e.preventDefault(); document.getElementById('g').showModal()}}>Add Existing Image</button>`,
+    html`<dialog id=g>
       <form class=fr method=dialog>
         <button>Close</button>
       </form>

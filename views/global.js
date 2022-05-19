@@ -37,7 +37,7 @@ export const globalView = (state, emit) => {
         ${
           showEditFields
           ? html`<div>
-          ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'alert' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
+          ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'chg' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
           </div>`
           : ''
         }
@@ -47,17 +47,17 @@ export const globalView = (state, emit) => {
             showEditFields
             ? [
               html`<p><a href="${siteRoot}?page=s">Wiki Settings</a></p>`,
-              html`<p>
+              html`<div class=pb>
                 <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
                 <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
-                  <label class="sr" for="newPageField">New Page Title</label>
-                  <input id="newPageField" placeholder="New Page Title" autocomplete="off">
-                  <button type="submit">Create</button>
+                  <label class=sr for=np>New Page Title</label>
+                  <input id=np placeholder="New Page Title" autocomplete=off>
+                  <button type=submit>Create</button>
                 </form>
-              </p>`
+              </div>`
             ] : ''
           }
-          <div>
+          <div class=tabs>
             <button class=${sbTab === 'Pages' && 'a'} onclick=${changeTab}>Pages</button>
             ${t.length > 0 ? html`<button class=${sbTab === 'Tags' && 'a'} onclick=${changeTab}>Tags</button>` : ''}
             <button class=${sbTab === 'Recent' && 'a'} onclick=${changeTab}>Recent</button>
@@ -92,7 +92,7 @@ export const globalView = (state, emit) => {
 
   function createNewPage(e) {
     e.preventDefault();
-    const title = e.currentTarget.newPageField.value.trim();
+    const title = e.currentTarget.np.value.trim();
     if (title.length < 2) return alert('Enter more than 1 character to create a new page.');
     emit(events.CREATE_PAGE, title.trim());
   }

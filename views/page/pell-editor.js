@@ -12,7 +12,7 @@ export const editor = (state, emit) => {
   if (showSource) {
     element = html`<textarea onchange=${e => state.editStore.content = e.target.value}>${truncateImages(editStore.content)}</textarea>`;
   } else {
-    element = html`<article class=pell></article>`;
+    element = html`<article class=ed></article>`;
     const fb = 'formatBlock';
     const editor = init({
       element,
@@ -55,7 +55,7 @@ export const editor = (state, emit) => {
         {
           title: 'Add Existing Image',
           icon: '📎',
-          result: () => document.getElementById('gal').showModal(),
+          result: () => document.getElementById('g').showModal(),
         },
       ],
     });
@@ -71,7 +71,7 @@ export const editor = (state, emit) => {
     html`<div class="w1 tr pb">
       <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
     </div>`,
-    html`<dialog id=gal>
+    html`<dialog id=g>
       <form class=fr method=dialog>
         <button>Close</button>
       </form>

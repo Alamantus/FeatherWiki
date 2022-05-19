@@ -1,16 +1,18 @@
 html {
   font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
-html, button, input, select, option, text {
+html, button, input, select, option, textarea {
   font-size: 12pt;
+  background: #fff;
+  color: #000;
 }
 html, body {
   margin: 0;
   padding: 0;
 }
-body {
-  max-width: 1200px;
-  background: #fafafa;
+
+:focus {
+  outline: 2px solid #000;
 }
 
 * {
@@ -23,30 +25,48 @@ body {
 }
 
 main > * { padding: 1rem; }
-main > section { background: #fff; }
 
-.sb .n, dialog:not([open]) {
+#g:not([open]), .sb .n {
   display: none;
 }
 
-a { text-decoration: none; }
-a[target="_blank"]:after {
-  font-size: 70%;
-  vertical-align: top;
-  margin-left: 3px;
-  content: "\29C9"; /* two joined squares for external link */
+input, select, textarea {
+  padding: .5em;
+}
+
+button {
+  text-align: center;
+  color: #fff;
+  padding: 5px 12px;
+  background-color: #65A;
+  border: 0;
+  border-radius: 1em;
+}
+a, button { cursor: pointer; }
+a {
+  text-decoration: none;
+  color: #65A;
+}
+:is(a, button):is(:hover, :active, :visited) {
+  opacity: .8;
 }
 a.e {
   color: red;
 }
-a.e:after {
+a:is([target="_blank"], .e):after {
   font-size: 70%;
   vertical-align: top;
   margin-left: 3px;
+}
+a[target="_blank"]:after {
+  content: "\29C9"; /* two joined squares for external link */
+}
+a.e:after {
   content: "!";
 }
 
-ul, ol { padding: 0 0 0 1rem; }
+nav ul { list-style: none; }
+ul, ol { padding: 0 0 0 1em; }
 
 label { display: block; }
 
@@ -63,11 +83,18 @@ abbr[title] { cursor: help; }
   font-size: 1.5em;
   font-weight: bold;
 }
+.sb { background: #ddd; }
 /* default width for all widths is 100% for small screens—no columns */
 .w1, .w34, .w12, .w14, .r, main { width: 100%; }
 /* tabs */
+.tabs > * {
+  border: 2px solid #65A;
+  border-bottom: 0;
+  border-radius: .5em .5em 0 0;
+  margin: 0;
+}
 .a {
-  background: #ccc;
+  background: #87C;
 }
 @media(min-width:35em) {
   /* row */
@@ -76,9 +103,9 @@ abbr[title] { cursor: help; }
       border-spacing: 1em 0;
   }
   /* Row, no spacing */
-  .r.ns { border-spacing: 0; }
+  .r.ns, main { border-spacing: 0; }
   /* column */
-  .c, main > .sb, main > section {
+  .c, main > * {
       display: table-cell !important;
       vertical-align: top;
   }
@@ -87,6 +114,8 @@ abbr[title] { cursor: help; }
     width: 20%;
     min-width: 200px;
     max-width: 500px;
+    height: 100vh;
+    overflow-y: auto;
   }
   .sb .n { display: unset; }
   /* sidebar toggle */
@@ -96,6 +125,11 @@ abbr[title] { cursor: help; }
   .w12 { width: 50%; }
   .w13 { width: 33%; }
   .w14 { width: 25%; }
+
+  body > footer {
+    position: absolute;
+    inset: auto 0 0 0;
+  }
   
   .tr { text-align: right; }
   .fr { float: right; }
@@ -111,11 +145,19 @@ abbr[title] { cursor: help; }
 /* Allow overriding on mobile (mobile left) */
 .tr:not(.ml) { text-align: right; }
 .fr:not(.ml) { float: right; }
-.alert { border: 2px solid red; }
+.chg {
+  background: red;
+  animation: ping 2s infinite;
+}
+@keyframes ping {
+  0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, .7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
 .del {
   background: red;
-  opacity: 0.8;
-  font-size: 0.8em;
+  opacity: .8;
+  font-size: .9em;
   color: #fff;
 }
 .db { display: block; }
@@ -124,7 +166,7 @@ abbr[title] { cursor: help; }
 .at { vertical-align: top; }
 
 /* field help */
-.h { font-size: 0.8em; }
+.h { font-size: .8em; }
 
 /* extra padding on bottom only */
 .pb { margin: 0 0 1.5em; }
@@ -134,37 +176,39 @@ abbr[title] { cursor: help; }
   text-decoration: underline;
 }
 
+form { max-width: 1000px; }
 /**** pell edior ***/
-.pell {
-  border: 1px solid #888;
+#g, input, select, textarea, .ed {
+  border: 1px solid #000;
+  border-radius: 3px;
+  max-width: 1000px;
 }
-.pell * {
+.ed * {
   margin: unset;
 }
 
-.pell-content, textarea, .g { /* g here stands for gallery :) */
+.pell-content, textarea, #g, .g { /* g here stands for gallery :) */
   width: 100%;
-  height: 300px;
-  outline: 0;
   overflow-y: auto;
   padding: 10px;
-  margin: 0;
+  margin: 0 auto;
+}
+.pell-content, textarea {
+  height: 50vh;
+  min-height: 300px;
+  max-height: 600px;
 }
 .pell-content > *:not(:first-child) {
-  margin: 0.5em 0;
+  margin: .5em 0;
 }
 
 .pell-actionbar {
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid #000;
 }
 
 .pell-button {
   background: transparent;
-  border: none;
-  cursor: pointer;
-  height: 30px;
-  outline: 0;
-  width: 30px;
+  color: #000;
   vertical-align: middle;
 }
 

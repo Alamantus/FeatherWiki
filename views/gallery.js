@@ -12,14 +12,14 @@ export const gallery = (state, emit, options = {}) => {
   return html`<section>
       <h1>Existing Images</h1>
       ${
-        images.map(i => html`<div class="ib at pell w14">
+        images.map(i => html`<div class="ib at ed w14">
           <div class=g>
             <img src=${i.img} class=w1 aria-describedby=alt />
             <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
-            <button aria-label="View Image" onclick=${e => viewImage(e, i.img)}>👁</button>
-            ${showDelete ? html`<button aria-label="Edit Alt Text" onclick=${e => editAlt(e, i)}>📝</button>` : ''}
-            ${showDelete ? html`<button aria-label="Delete Image" onclick=${e => deleteImage(e, i)}>❌</button>` : ''}
-            ${insert ? html`<button aria-label="Insert Image" onclick=${e => insert(e, i)}>✅</button>` : ''}
+            <button onclick=${e => viewImage(e, i.img)}>View</button>
+            ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
+            ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
+            ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
             ${
               showUsed
               ? [
