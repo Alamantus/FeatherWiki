@@ -13,7 +13,7 @@ export const pageView = (state, emit, page) => {
   const breadcrumb = state.help.breadcrumb(page);
   
   const crFormat = help.formatDate(new Date(cd));
-  const modified = new Date(md);
+  const modified = new Date(md ?? cd); // If no modified date, use created
   const mdFormat = help.formatDate(modified);
   return [
     html`<header>

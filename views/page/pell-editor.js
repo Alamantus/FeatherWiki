@@ -7,10 +7,11 @@ import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 
 export const editor = (state, emit) => {
   const { showSource, editStore } = state;
-  const c = injectImageById(editStore.content, state, true);
+  const { content } = editStore;
+  const c = injectImageById(content, state, true);
   let element;
   if (showSource) {
-    element = html`<textarea onchange=${e => state.editStore.content = e.target.value}>${truncateImages(editStore.content)}</textarea>`;
+    element = html`<textarea onchange=${e => state.editStore.content = e.target.value}>${truncateImages(content)}</textarea>`;
   } else {
     element = html`<article class=ed></article>`;
     const fb = 'formatBlock';
@@ -63,7 +64,7 @@ export const editor = (state, emit) => {
   }
 
   element.isSameNode = target => {
-    return target?.nodeName === element?.nodeName;
+    return target?.nodeName === element?.nodeName && content.length;
   };
 
   return [
