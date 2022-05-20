@@ -20,18 +20,18 @@ html, body {
   position: relative;
 }
 
-* + *, p {
-  margin: .5em 0;
+* + *, p, .pell-content > *:not(:first-child) { /* Consolidating .pell-content here to reduce repetition */
+  margin: .5rem 0;
 }
 
-main > * { padding: 1rem; }
+main > * { padding: 1rem 1.5rem; }
 
 #g:not([open]), .sb .n {
   display: none;
 }
 
 input, select, textarea {
-  padding: .5em;
+  padding: .5rem;
 }
 
 button {
@@ -40,7 +40,7 @@ button {
   padding: 5px 12px;
   background-color: #65A;
   border: 0;
-  border-radius: 1em;
+  border-radius: 1rem;
 }
 a, button { cursor: pointer; }
 a {
@@ -66,13 +66,13 @@ a.e:after {
 }
 
 nav ul { list-style: none; }
-ul, ol { padding: 0 0 0 1em; }
+ul, ol { padding: 0 0 0 1rem; }
 
 label { display: block; }
 
 blockquote {
-  margin-left: 2em;
-  padding-left: 1em;
+  margin-left: 2rem;
+  padding-left: 1rem;
   border-left: 3px solid #888;
 }
 
@@ -80,7 +80,7 @@ abbr[title] { cursor: help; }
 
 /* title */
 .t {
-  font-size: 1.5em;
+  font-size: 1.5rem;
   font-weight: bold;
 }
 .sb { background: #ddd; }
@@ -90,17 +90,17 @@ abbr[title] { cursor: help; }
 .tabs > * {
   border: 2px solid #65A;
   border-bottom: 0;
-  border-radius: .5em .5em 0 0;
+  border-radius: .5rem .5rem 0 0;
   margin: 0;
 }
 .a {
   background: #87C;
 }
-@media(min-width:35em) {
+@media(min-width:35rem) {
   /* row */
   .r, main {
       display: table;
-      border-spacing: 1em 0;
+      border-spacing: 1rem 0;
   }
   /* Row, no spacing */
   .r.ns, main { border-spacing: 0; }
@@ -128,7 +128,7 @@ abbr[title] { cursor: help; }
 
   body > footer {
     position: absolute;
-    inset: auto 0 0 0;
+    inset: auto 1.5rem 0;
   }
   
   .tr { text-align: right; }
@@ -157,7 +157,6 @@ abbr[title] { cursor: help; }
 .del {
   background: red;
   opacity: .8;
-  font-size: .9em;
   color: #fff;
 }
 .db { display: block; }
@@ -166,10 +165,10 @@ abbr[title] { cursor: help; }
 .at { vertical-align: top; }
 
 /* field help */
-.h { font-size: .8em; }
+.h, .del { font-size: .8rem; }
 
 /* extra padding on bottom only */
-.pb { margin: 0 0 1.5em; }
+.pb { margin: 0 0 1.5rem; }
 
 /* User Content */
 .uc a {
@@ -197,9 +196,6 @@ form { max-width: 1000px; }
   height: 50vh;
   min-height: 300px;
   max-height: 600px;
-}
-.pell-content > *:not(:first-child) {
-  margin: .5em 0;
 }
 
 .pell-actionbar {
