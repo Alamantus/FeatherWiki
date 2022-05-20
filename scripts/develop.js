@@ -6,12 +6,14 @@ import esbuild from 'esbuild';
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
 
+const editor = process.argv[2] ?? 'both';
+
 esbuild.build({
   entryPoints: ['index.js'],
   define: {
     'process.env.NODE_ENV': '"development"',
     'process.env.NODE_DEBUG': '"debug"',
-    'process.env.EDITOR': '"' + process.argv[2] + '"',
+    'process.env.EDITOR': '"' + editor + '"',
   },
   sourcemap: 'inline',
   write: false,
