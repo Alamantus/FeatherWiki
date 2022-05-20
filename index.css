@@ -20,7 +20,7 @@ html, body {
   position: relative;
 }
 
-* + * {
+* + *, p {
   margin: .5em 0;
 }
 
