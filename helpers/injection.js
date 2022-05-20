@@ -7,7 +7,7 @@ export function injectPageLink (content, state) {
       const exists = state.p.pages.some(pg => pg.slug === slug);
       return {
         match: `${l}]]`,
-        link: `<a href="${state.siteRoot}?page=${slug}"${!exists ? ' class=e' : ''}>${match[0]}</a>`,
+        link: `<a href="${state.root}?page=${slug}"${!exists ? ' class=e' : ''}>${match[0]}</a>`,
       };
     }).forEach(l => {
       c = c.replace(l.match, l.link);

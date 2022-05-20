@@ -6,10 +6,10 @@ export const initEmitter = (state, emitter) => {
   const { events } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
-  const keepEditing = () => state.editStore && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
+  const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
-    state.editStore = null;
+    state.edits = null;
   };
 
   emitter.on(events.DOMCONTENTLOADED, () => {
@@ -59,7 +59,7 @@ export const initEmitter = (state, emitter) => {
     if (name.length < 2) return;
     if (keepEditing()) return;
     stopEdit();
-    const { p, help, events, query, siteRoot } = state;
+    const { p, help, events, query, root } = state;
 
     const genId = () => {
       const s = [];
@@ -89,7 +89,7 @@ export const initEmitter = (state, emitter) => {
     if (save) {
       state.p.pages.push(newPg);
       emit(events.CHECK_CHANGED);
-      emit(events[query.page !== slug ? 'REPLACESTATE' : 'PUSHSTATE'], siteRoot + '?page=' + slug);
+      emit(events[query.page !== slug ? 'REPLACESTATE' : 'PUSHSTATE'], root + '?page=' + slug);
     } else {
       state.pg = newPg;
     }
@@ -109,8 +109,8 @@ export const initEmitter = (state, emitter) => {
     if (process.env.EDITOR !== 'html') {
       store.useMd = pg.editor === 'md' || state.useMd;
     }
-    state.editStore = store;
-    state.showSource = false;
+    state.edits = store;
+    state.src = false;
     emit(events.RENDER);
   });
 
@@ -134,7 +134,7 @@ export const initEmitter = (state, emitter) => {
       state.useMd = page.editor === 'md';
     }
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.siteRoot + '?page=' + page.slug);
+    emit(events.PUSHSTATE, state.root + '?page=' + page.slug);
     emit(events.CHECK_CHANGED);
   });
 
@@ -145,7 +145,7 @@ export const initEmitter = (state, emitter) => {
     }).filter(pg => pg.id !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.siteRoot);
+    emit(events.PUSHSTATE, state.root);
     emit(events.CHECK_CHANGED);
   });
 
@@ -156,15 +156,15 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.CHECK_CHANGED, callback => {
-    state.currentState = hashObject(state.p);
-    state.changedSinceSave = state.lastSave !== state.currentState;
+    state.now = hashObject(state.p);
+    state.changed = state.prev !== state.now;
     emit(events.RENDER, callback);
   });
 
   emitter.on(events.SAVE_WIKI, () => {
     const output = generateWikiHtml(state);
-    const { p, siteRoot } = state;
-    const filename = /\/$/.test(siteRoot) ? 'index.html' : siteRoot.substring(siteRoot.lastIndexOf('/') + 1);
+    const { p, root } = state;
+    const filename = /\/$/.test(root) ? 'index.html' : root.substring(root.lastIndexOf('/') + 1);
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
     el.setAttribute('download', filename);
@@ -172,7 +172,7 @@ export const initEmitter = (state, emitter) => {
     el.click();
     document.body.removeChild(el);
 
-    state.lastSave = hashObject(p);
+    state.prev = hashObject(p);
     emit(events.CHECK_CHANGED);
   });
 

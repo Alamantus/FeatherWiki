@@ -4,7 +4,7 @@ import { truncateImages } from '../../helpers/injection';
 
 export const pageEdit = (state, emit, page) => {
   const { slugify } = state.help;
-  const { editStore, p, help } = state;
+  const { edits, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
@@ -14,7 +14,7 @@ export const pageEdit = (state, emit, page) => {
   } else if (process.env.EDITOR === 'html') {
     editor = require('./pell-editor').editor(state, emit);
   } else {
-    const { useMd } = editStore;
+    const { useMd } = edits;
     editor = [
       html`<div class="w1 tr">
         <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
@@ -29,11 +29,11 @@ export const pageEdit = (state, emit, page) => {
       <div class=r>
         <div class="c w12">
           <label for=name>Page Title</label>
-          <input id=name value=${editStore.name} required minlength=2 onchange=${store}>
+          <input id=name value=${edits.name} required minlength=2 onchange=${store}>
         </div>
         <div class="c w12">
           <label for=slug>Page Slug</label>
-          <input id=slug value=${editStore.slug} required minlength=2 onchange=${store}>
+          <input id=slug value=${edits.slug} required minlength=2 onchange=${store}>
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
@@ -42,11 +42,11 @@ export const pageEdit = (state, emit, page) => {
       <div class="c w13">
         <label for=tags>Page Tags</label>
         <input id=tags
-          value=${ editStore.tags } placeholder="Comma, Separated, List" onchange=${store}>
+          value=${ edits.tags } placeholder="Comma, Separated, List" onchange=${store}>
         <select onchange=${addTag}>
           <option value="" selected disabled>Add Existing Tag</option>
           ${
-            state.t.filter(t => !editStore.tags.split(',').includes(t))
+            state.t.filter(t => !edits.tags.split(',').includes(t))
               .map(t => {
                 return html`<option>${t}</option>`;
               })
@@ -56,12 +56,12 @@ export const pageEdit = (state, emit, page) => {
       <div class="c w13">
         <label for=parent>Parent</label>
         <select id=parent onchange=${store}>
-          <option value="" selected=${editStore.parent === ''}>None</option>
+          <option value="" selected=${edits.parent === ''}>None</option>
           ${
             p.pages.filter(pg => {
               return pg.id !== page?.id && !children.includes(pg.id);
             }).map(pg => {
-                return html`<option selected=${pg.id === editStore.parent} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
+                return html`<option selected=${pg.id === edits.parent} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
               })
           }
         </select>
@@ -85,19 +85,19 @@ export const pageEdit = (state, emit, page) => {
   function toggleEditor (e) {
     if (process.env.EDITOR === 'both') {
       e.preventDefault();
-      const { useMd, content } = editStore;
+      const { useMd, content } = edits;
       if (useMd) {
         if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.editStore.content = require('../../helpers/snarkdownEnhanced').default(content);
+        state.edits.content = require('../../helpers/snarkdownEnhanced').default(content);
       }
-      state.editStore.useMd = !useMd;
+      state.edits.useMd = !useMd;
       emit(state.events.RENDER);
     }
   }
 
   function store (e) {
     const t = e.target;
-    state.editStore[t.id] = t.value;
+    state.edits[t.id] = t.value;
     emit(state.events.RENDER);
   }
 
@@ -110,7 +110,7 @@ export const pageEdit = (state, emit, page) => {
     if (tag.length > 0) {
       const tags = getTagsArray();
       if (!tags.includes(tag)) {
-        editStore.tags += (tags.length > 0 ? ',' : '') + tag;
+        edits.tags += (tags.length > 0 ? ',' : '') + tag;
         emit(state.events.RENDER);
       }
     }
@@ -127,11 +127,11 @@ export const pageEdit = (state, emit, page) => {
     pg = { ...page };
     pg.name = name;
     pg.slug = slugify(slug);
-    pg.content = truncateImages(state.editStore.content);
+    pg.content = truncateImages(state.edits.content);
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
     if (process.env.EDITOR !== 'html') {
-      if (editStore.useMd) pg.editor = 'md'; else delete pg.editor;
+      if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
     }
     emit(state.events.UPDATE_PAGE, pg);
   }

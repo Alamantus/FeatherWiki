@@ -1,7 +1,7 @@
 import html from 'choo/html';
 
 export const gallery = (state, emit, options = {}) => {
-  const { events, siteRoot } = state;
+  const { events, root } = state;
   const {
     showDelete = false,
     showUsed = false,
@@ -26,7 +26,7 @@ export const gallery = (state, emit, options = {}) => {
                 html`<details>
                   <summary>Used in ${i.pgs.length} pages</summary>
                   <ul>
-                    ${ i.pgs.map(pg => html`<li><a href="${siteRoot}?page=${pg.slug}">${pg.name}</a></li>`) }
+                    ${ i.pgs.map(pg => html`<li><a href="${root}?page=${pg.slug}">${pg.name}</a></li>`) }
                   </ul>
                 </details>`
               ] : ''

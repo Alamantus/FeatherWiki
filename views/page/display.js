@@ -3,7 +3,7 @@ import raw from 'choo/html/raw';
 import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
-  const { siteRoot, help } = state;
+  const { root, help } = state;
   const { content } = page;
   let c = content;
   if (process.env.EDITOR !== 'html') {
@@ -35,7 +35,7 @@ export const pageDisplay = (state, emit, page) => {
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>
       <ul>
-        ${children.map(c => html`<li><a href="${siteRoot}?page=${c.slug}">${c.name}</a></li>`)}
+        ${children.map(c => html`<li><a href="${root}?page=${c.slug}">${c.name}</a></li>`)}
       </ul>
     </footer>` : null,
   ];

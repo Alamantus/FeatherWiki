@@ -17,7 +17,7 @@ export const pageView = (state, emit, page) => {
   const mdFormat = help.formatDate(modified);
   return [
     html`<header>
-      ${breadcrumb.map(p => [html`<a href="${state.siteRoot}?page=${p.slug}">${p.name}</a>`, ' / '])}
+      ${breadcrumb.map(p => [html`<a href="${state.root}?page=${p.slug}">${p.name}</a>`, ' / '])}
       <div class="r ns">
         <h1 class=c>${page.name}</h1>
         ${

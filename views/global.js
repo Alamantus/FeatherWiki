@@ -4,15 +4,15 @@ import { views } from './index';
 
 export const globalView = (state, emit) => {
   const {
-    siteRoot,
+    root,
     pg,
     p,
     t,
     recent,
     events,
     query,
-    changedSinceSave,
-    showSidebar,
+    changed,
+    sb,
     sbTab,
     showNewPageField,
   } = state;
@@ -32,21 +32,21 @@ export const globalView = (state, emit) => {
   return html`<body>
     <main>
       <div class=sb>
-        <span class=db><a href=${siteRoot} class=t>${p.name}</a></span>
+        <span class=db><a href=${root} class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${
           showEditFields
           ? html`<div>
-          ${changedSinceSave ? 'Wiki has changed!' : ''} <button class=${changedSinceSave ? 'chg' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
+          ${changed ? 'Wiki has changed!' : ''} <button class=${changed ? 'chg' : null} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button>
           </div>`
           : ''
         }
-        <button class=sbt onclick=${() => toggleSidebar()}>${showSidebar ? 'Hide' : 'Show'} Menu</button>
-        <nav class=${!showSidebar ? 'n' : ''}>
+        <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>
+        <nav class=${!sb ? 'n' : ''}>
           ${
             showEditFields
             ? [
-              html`<p><a href="${siteRoot}?page=s">Wiki Settings</a></p>`,
+              html`<p><a href="${root}?page=s">Wiki Settings</a></p>`,
               html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
                 <summary class=ib>New Page</summary>
                 <form onsubmit=${createNewPage}>
@@ -65,20 +65,20 @@ export const globalView = (state, emit) => {
           ${
             sbTab === 'Pages'
             ? html`<ul>
-              ${parents.map(pp => html`<li><a href="${siteRoot}?page=${pp.slug}">${pp.name}</a></li>`)}
-              <li><a href="${siteRoot}?page=a">All Pages</a></li>
+              ${parents.map(pp => html`<li><a href="${root}?page=${pp.slug}">${pp.name}</a></li>`)}
+              <li><a href="${root}?page=a">All Pages</a></li>
             </ul>` : ''
           }
           ${
             sbTab === 'Tags'
             ? html`<ul>
-              ${t.map(tag => html`<li><a href="${siteRoot}?tag=${tag}">${tag}</a></li>`)}
+              ${t.map(tag => html`<li><a href="${root}?tag=${tag}">${tag}</a></li>`)}
             </ul>` : ''
           }
           ${
             sbTab === 'Recent'
             ? html`<ol>
-              ${recents.map(pp => html`<li><a href="${siteRoot}?page=${pp.slug}">${pp.name}</a></li>`)}
+              ${recents.map(pp => html`<li><a href="${root}?page=${pp.slug}">${pp.name}</a></li>`)}
             </ol>` : ''
           }
         </nav>
@@ -98,7 +98,7 @@ export const globalView = (state, emit) => {
   }
 
   function toggleSidebar() {
-    state.showSidebar = !state.showSidebar;
+    state.sb = !state.sb;
     emit(events.RENDER);
   }
 

@@ -2,16 +2,15 @@ import { decompress } from 'json-compress';
 import { hashObject } from './helpers/hashString';
 
 export const initState = state => {
-  state.siteRoot = location.pathname;
-  if (state.siteRoot.length < 1) state.siteRoot = '/';
-  state.showSidebar = false;
+  state.root = location.pathname; // Site Root
+  if (state.root.length < 1) state.root = '/';
+  state.sb = false; // show sidebar
   state.sbTab = 'Pages';
   state.recent = [];
-  state.showNewPageField = false;
   state.edit = false;
-  state.editStore = null;
-  state.keep = false;
-  state.showSource = false;
+  state.edits = null; // Edit store
+  state.keep = false; // Keep Editor, Prevent navigation if editing
+  state.src = false; // Show HTML in editor
   state.help = {
     slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
     find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
@@ -62,9 +61,9 @@ export const initState = state => {
   }
   state.pg = state.help.getPage();
   state.t = []; // all used tags
-  state.lastSave = hashObject(state.p);
-  state.currentState = state.lastSave;
-  state.changedSinceSave = false;
+  state.prev = hashObject(state.p); // Hash of state at last save
+  state.now = state.prev; // Hash of current state
+  state.changed = false; // Changed since last save?
 
   return state;
 }

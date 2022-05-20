@@ -4,8 +4,8 @@ import { gallery } from '../gallery';
 import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 
 export const editor = (state) => {
-  const textChange = event => state.editStore.content = event.target.value;
-  const element = html`<textarea onchange=${textChange}>${state.editStore.content}</textarea>`;
+  const textChange = event => state.edits.content = event.target.value;
+  const element = html`<textarea onchange=${textChange}>${state.edits.content}</textarea>`;
 
   return [
     element,

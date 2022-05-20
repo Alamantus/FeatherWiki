@@ -6,18 +6,18 @@ import { injectImageById, truncateImages } from '../../helpers/injection';
 import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 
 export const editor = (state, emit) => {
-  const { showSource, editStore } = state;
-  const { content } = editStore;
+  const { src, edits } = state;
+  const { content } = edits;
   const c = injectImageById(content, state, true);
   let element;
-  if (showSource) {
-    element = html`<textarea onchange=${e => state.editStore.content = e.target.value}>${truncateImages(content)}</textarea>`;
+  if (src) {
+    element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${truncateImages(content)}</textarea>`;
   } else {
     element = html`<article class=ed></article>`;
     const fb = 'formatBlock';
     const editor = init({
       element,
-      onChange: html => state.editStore.content = html,
+      onChange: html => state.edits.content = html,
       defaultParagraphSeparator: 'p',
       actions: [
         'bold',
@@ -70,7 +70,7 @@ export const editor = (state, emit) => {
   return [
     element,
     html`<div class="w1 tr pb">
-      <button onclick=${toggleShowSource}>${showSource ? 'Show Editor' : 'Show HTML'}</button>
+      <button onclick=${toggleShowSource}>${src ? 'Show Editor' : 'Show HTML'}</button>
     </div>`,
     html`<dialog id=g>
       <form class=fr method=dialog>
@@ -88,7 +88,7 @@ export const editor = (state, emit) => {
 
   function toggleShowSource (e) {
     e.preventDefault();
-    state.showSource = !showSource;
+    state.src = !src;
     emit(state.events.RENDER);
   }
 }
