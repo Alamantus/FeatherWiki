@@ -11,8 +11,7 @@ export const initState = state => {
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
   state.src = false; // Show HTML in editor
-  state.help = {
-    slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
+  state.help = { // Helper functions that use state to do various things
     find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
     getPage: () => {
       const { query, help, p } = state;
@@ -29,14 +28,6 @@ export const initState = state => {
       }
       return b;
     },
-    formatDate: d => {
-      const pad = s => s.toString().padStart(2, '0');
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${d.getHours() % 12}:${pad(d.getMinutes())} ${d.getHours() / 12 < 1 ? 'a' : 'p'}m`;
-    },
-    tidyArray: ar => { // For arrays of strings (like tags) only
-      const a = ar.map(v => v.trim());
-      return a.filter((v, i) => v.length && a.indexOf(v) === i).sort();
-    }
   };
 
   state.events = {

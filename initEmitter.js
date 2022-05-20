@@ -1,5 +1,6 @@
 import { generateWikiHtml } from './helpers/generateWikiHtml';
 import { hashObject } from './helpers/hashString';
+import { slugify, tidyArray } from './helpers/formatting';
 import { views } from './views';
 
 export const initEmitter = (state, emitter) => {
@@ -26,7 +27,7 @@ export const initEmitter = (state, emitter) => {
     const { page } = state.query;
     if (page?.length > 1) {
       const { help, events } = state;
-      const slug = help.slugify(page);
+      const slug = slugify(page);
       const pg = help.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
@@ -76,7 +77,7 @@ export const initEmitter = (state, emitter) => {
     while (p.pages.findIndex(p => p.id === id) >= 0);
     // Ensure unique slug
     let d = 0,
-      s = help.slugify(name),
+      s = slugify(name),
       slug;
     do {
       slug = s + (d > 0 ? '_' + d : '');
@@ -154,7 +155,7 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.COLLECT_TAGS, () => {
-    state.t = state.help.tidyArray(state.p.pages.reduce((r, p) => {
+    state.t = tidyArray(state.p.pages.reduce((r, p) => {
       return [...r, ...(p.tags?.split(',') ?? [])];
     }, []));
   });

@@ -1,9 +1,9 @@
 import html from 'choo/html';
 
+import { slugify, tidyArray } from '../../helpers/formatting';
 import { truncateImages } from '../../helpers/injection';
 
 export const pageEdit = (state, emit, page) => {
-  const { slugify } = state.help;
   const { edits, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
@@ -102,7 +102,7 @@ export const pageEdit = (state, emit, page) => {
   }
 
   function getTagsArray () {
-    return help.tidyArray(document.getElementById('tags').value.split(','));
+    return tidyArray(document.getElementById('tags').value.split(','));
   }
   
   function addTag (e) {

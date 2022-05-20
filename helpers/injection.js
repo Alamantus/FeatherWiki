@@ -1,9 +1,11 @@
+import { slugify } from "./formatting";
+
 export function injectPageLink (content, state) {
   let c = content ?? null;
   if (c) {
     (content?.match(/\[\[.+?(?=\]\])/g) ?? []).map(l => {
       const match = l.replace('[[', '').split('|');
-      const slug = match[1] ? match[1].trim() : state.help.slugify(match[0]);
+      const slug = match[1] ? match[1].trim() : slugify(match[0]);
       const exists = state.p.pages.some(pg => pg.slug === slug);
       return {
         match: `${l}]]`,
