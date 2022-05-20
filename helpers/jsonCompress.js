@@ -1,7 +1,6 @@
 // A modified version of https://github.com/Alamantus/JSON-Compress that
 // only includes what is used in Feather Wiki (i.e. compress & decompress)
 // and replaces some workarounds with ES6 options
-import { tidyArray } from "./formatting";
 
 var _nCode = -1;
 
@@ -51,6 +50,40 @@ export function decompress (json) {
   }
   return str ? JSON.parse(str) : jsonCopy;
 };
+
+/**
+ * Checks if the value exist in the array.
+ * @param arr
+ * @param v
+ * @returns {boolean}
+ */
+ function contains(arr, v) {
+  var nIndex,
+    nLen = arr.length;
+  for (nIndex = 0; nIndex < nLen; nIndex++) {
+    if (arr[nIndex][1] === v) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Removes duplicated values in an array
+ * @param oldArray
+ * @returns {Array}
+ */
+ function unique(oldArray) {
+  var nIndex,
+    nLen = oldArray.length,
+    aArr = [];
+  for (nIndex = 0; nIndex < nLen; nIndex++) {
+    if (!contains(aArr, oldArray[nIndex][1])) {
+      aArr.push(oldArray[nIndex]);
+    }
+  }
+  return aArr;
+}
 
 /**
  * Escapes a RegExp
@@ -142,10 +175,10 @@ function _getKeys(json, aKeys) {
     if (typeof json[sKey] !== 'undefined') {
       oItem = json[sKey];
       if (_isObject(oItem) || _isArray(oItem)) {
-        aKeys = aKeys.concat(tidyArray(_getKeys(oItem, aKeys)));
+        aKeys = aKeys.concat(unique(_getKeys(oItem, aKeys)));
       }
       if (isNaN(Number(sKey))) {
-        if (!aKeys.includes(sKey)) {
+        if (!contains(aKeys, sKey)) {
           _nCode += 1;
           aKey = [_getSpecialKey(_numberToKey(_nCode)), sKey];
           aKeys.push(aKey);
@@ -213,7 +246,7 @@ function _compressOther(json, aKeys, checkForCollision) {
     nLenKeys,
     nIndex,
     obj;
-  aKeys = tidyArray(_getKeys(json, aKeys));
+  aKeys = unique(_getKeys(json, aKeys));
   if (checkForCollision === true) {
     aKeys = _correctCollision(aKeys);
   }
