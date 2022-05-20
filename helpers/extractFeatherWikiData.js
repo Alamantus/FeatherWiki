@@ -1,4 +1,4 @@
-import { decompress } from 'json-compress';
+import { decompress } from './jsonCompress';
 
 export function extractFeatherWikiData(file, callback = () => {}) {
   const reader = new FileReader();

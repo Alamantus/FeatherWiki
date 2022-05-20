@@ -20,7 +20,6 @@
   "type": "module",
   "dependencies": {
     "choo": "^7.1.0",
-    "json-compress": "github:Alamantus/JSON-Compress",
     "pell": "^1.0.6",
     "snarkdown": "^2.0.0"
   },

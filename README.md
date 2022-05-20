@@ -94,7 +94,7 @@ If you only want to make changes to one version of an editor, you can use
 
 ### Details
 
-Feather Wiki uses [Choo](https://choo.io) as its base JavaScript framework, [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
+Feather Wiki uses [Choo](https://choo.io) as its base JavaScript framework, a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
 minifying JSON output, [pell](https://jaredreich.com/pell/) for its HTML editor, and [Snarkdown](https://github.com/developit/snarkdown) for
 its Markdown parsing.
 

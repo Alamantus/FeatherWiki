@@ -1,4 +1,4 @@
-import { compress } from 'json-compress';
+import { compress } from './jsonCompress';
 
 // Generate full html doc for saving. See also index.html
 export function generateWikiHtml(state) {

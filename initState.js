@@ -1,5 +1,5 @@
-import { decompress } from 'json-compress';
 import { hashObject } from './helpers/hashString';
+import { decompress } from './helpers/jsonCompress';
 
 export const initState = state => {
   state.root = location.pathname; // Site Root
