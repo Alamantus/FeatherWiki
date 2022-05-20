@@ -20,21 +20,25 @@ export const pageView = (state, emit, page) => {
       ${breadcrumb.map(p => [html`<a href="${state.siteRoot}?page=${p.slug}">${p.name}</a>`, ' / '])}
       <div class="r ns">
         <h1 class=c>${page.name}</h1>
-        <div class="c w14 tr">
-          <time datetime=${modified.toISOString()}>
-            ${
-              crFormat !== mdFormat
-              ? html`<abbr title="Created: ${crFormat}">${mdFormat}</abbr>`
-              : mdFormat
-            }
-          </time>
         ${
-          !p.published
-          ? html`<button onclick=${() => emit(events.START_EDIT)}>Edit</button>
-          `
-          : ''
+          page.e
+          ? ''
+          : html`<div class="c w14 tr">
+            <time datetime=${modified.toISOString()}>
+              ${
+                crFormat !== mdFormat
+                ? html`<abbr title="Created: ${crFormat}">${mdFormat}</abbr>`
+                : mdFormat
+              }
+            </time>
+          ${
+            !p.published
+            ? html`<button onclick=${() => emit(events.START_EDIT)}>Edit</button>
+            `
+            : ''
+          }
+          </div>`
         }
-        </div>
       </div>
     </header>`,
     pageDisplay(state, emit, page)
