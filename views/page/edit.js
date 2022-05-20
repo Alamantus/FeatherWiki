@@ -88,7 +88,7 @@ export const pageEdit = (state, emit, page) => {
       const { useMd, content } = editStore;
       if (useMd) {
         if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.editStore.content = require('snarkdown')(content);
+        state.editStore.content = require('../../helpers/snarkdownEnhanced').default(content);
       }
       state.editStore.useMd = !useMd;
       emit(state.events.RENDER);

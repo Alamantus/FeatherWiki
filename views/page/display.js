@@ -8,7 +8,7 @@ export const pageDisplay = (state, emit, page) => {
   let c = content;
   if (process.env.EDITOR !== 'html') {
     // Only include snarkdown in the build if the editor is not html
-    c = page.editor === 'md' ? require('snarkdown')(content) : content;
+    c = page.editor === 'md' ? require('../../helpers/snarkdownEnhanced').default(content) : content;
   }
   c = injectImageById(
     injectPageLink(
