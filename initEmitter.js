@@ -6,6 +6,11 @@ export const initEmitter = (state, emitter) => {
   const { events } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const keepEditing = () => state.editStore && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
+  const stopEdit = () => { // Shave off more bytes
+    state.edit = false;
+    state.editStore = null;
+  };
 
   emitter.on(events.DOMCONTENTLOADED, () => {
     emit(events.HANDLE_404);
@@ -34,16 +39,26 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.NAVIGATE, () => {
-    state.edit = false;
-    state.editStore = '';
-    state.pg = state.help.getPage();
-    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
-    emit(events.HANDLE_404);
-    title();
+    // Prevent navigation if editing and they don't confirm
+    if (!state.keep && keepEditing()) {
+      state.keep = true;
+      return history.go(-1);
+    }
+    if (!state.keep) {
+      stopEdit();
+      state.pg = state.help.getPage();
+      state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
+      emit(events.HANDLE_404);
+      title();
+    } else {
+      state.keep = false;
+    }
   });
 
   emitter.on(events.CREATE_PAGE, (name, save = true) => {
-    if (name.length < 1) return;
+    if (name.length < 2) return;
+    if (keepEditing()) return;
+    stopEdit();
     const { p, help, events, query, siteRoot } = state;
 
     const genId = () => {
@@ -114,8 +129,7 @@ export const initEmitter = (state, emitter) => {
     } else {
       p.pages.push(page);
     }
-    state.edit = false;
-    state.editStore = null;
+    stopEdit();
     if (process.env.EDITOR !== 'html') {
       state.useMd = page.editor === 'md';
     }
@@ -129,8 +143,7 @@ export const initEmitter = (state, emitter) => {
       if (pg.parent === id) delete pg.parent;
       return pg;
     }).filter(pg => pg.id !== id);
-    state.edit = false;
-    state.editStore = null;
+    stopEdit();
     emit(events.COLLECT_TAGS);
     emit(events.PUSHSTATE, state.siteRoot);
     emit(events.CHECK_CHANGED);

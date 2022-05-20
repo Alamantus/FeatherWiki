@@ -10,6 +10,7 @@ export const initState = state => {
   state.showNewPageField = false;
   state.edit = false;
   state.editStore = null;
+  state.keep = false;
   state.showSource = false;
   state.help = {
     slugify: s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-'),
