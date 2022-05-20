@@ -3,7 +3,11 @@
   "version": "1.2.0",
   "title": "Feather Wiki",
   "description": "A lightweight quine for simple, self-contained wikis",
-  "homepage": "https://alamantus.codeberg.page/FeatherWiki",
+  "homepage": "https://feather.wiki",
+  "repository": {
+    "type": "git",
+    "url": "https://codeberg.org/Alamantus/FeatherWiki.git"
+  },
   "scripts": {
     "start": "node scripts/develop.js",
     "build": "node scripts/build.js",

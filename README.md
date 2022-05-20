@@ -40,13 +40,13 @@ browser versions should definitely be able to run the Dove, Finch, and Chickadee
 - Samsung Internet for Android 12+
 
 The chart linked above is incomplete, so if your browser is older than any of these, you _might_ still be able to run Feather Wiki, but
-you'll have to check yourself if it supports features from ECMAScript 2015 (also known as ES6).
+you'll have to check yourself if it supports [features from ECMAScript 2015](https://caniuse.com/es6) (also known as ES6).
 
 </details>
 
 ### Least Compatible
 
-These versions are smaller, but will only run on newer browsers running JavaScript with up to ECMAScript 2020 features. As such, these
+These versions are smaller, but will only run on newer browsers running JavaScript with up to [ECMAScript 2020 features](https://caniuse.com/es6,array-includes,async-functions,pad-start-end,mdn-javascript_operators_optional_chaining,mdn-javascript_operators_nullish_coalescing). As such, these
 are much more symbolic than actually recommended for use; _Only use these if you use a modern, up-to-date web browser and don't plan on
 publishing your Feather Wiki for other to see._
 
