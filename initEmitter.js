@@ -45,7 +45,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.SHOW_NEW_PAGE_FIELD, () => {
     state.showNewPageField = true;
     emitter.emit(events.RENDER, () => {
-      document.getElementById('newPageField').focus();
+      document.getElementById('np').focus();
     });
   });
 
