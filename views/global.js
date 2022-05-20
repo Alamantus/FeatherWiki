@@ -47,14 +47,14 @@ export const globalView = (state, emit) => {
             showEditFields
             ? [
               html`<p><a href="${siteRoot}?page=s">Wiki Settings</a></p>`,
-              html`<div class=pb>
-                <button onclick=${() => emit(events.SHOW_NEW_PAGE_FIELD)}>New Page</button>
-                <form hidden=${!showNewPageField} onsubmit=${createNewPage}>
+              html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
+                <summary class=ib>New Page</summary>
+                <form onsubmit=${createNewPage}>
                   <label class=sr for=np>New Page Title</label>
                   <input id=np placeholder="New Page Title" autocomplete=off>
                   <button type=submit>Create</button>
                 </form>
-              </div>`
+              </details>`
             ] : ''
           }
           <div class=tabs>

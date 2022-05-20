@@ -42,7 +42,6 @@ export const initState = state => {
   state.events = {
     ...state.events,
     HANDLE_404: '404',
-    SHOW_NEW_PAGE_FIELD: 'snpf',
     CREATE_PAGE: 'cp',
     START_EDIT: 'se',
     UPDATE_PAGE: 'up',

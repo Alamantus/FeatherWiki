@@ -43,13 +43,6 @@ export const initEmitter = (state, emitter) => {
     title();
   });
 
-  emitter.on(events.SHOW_NEW_PAGE_FIELD, () => {
-    state.showNewPageField = true;
-    emitter.emit(events.RENDER, () => {
-      document.getElementById('np').focus();
-    });
-  });
-
   emitter.on(events.CREATE_PAGE, (name, save = true) => {
     if (name.length < 1) return;
     const { p, help, events, query, siteRoot } = state;
