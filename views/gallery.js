@@ -16,10 +16,12 @@ export const gallery = (state, emit, options = {}) => {
           <div class=g>
             <img src=${i.img} class=w1 aria-describedby=alt />
             <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
-            <button onclick=${e => viewImage(e, i.img)}>View</button>
-            ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
-            ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
-            ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
+            <div class=pb>
+              <button onclick=${e => viewImage(e, i.img)}>View</button>
+              ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
+              ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
+              ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
+            </div>
             ${
               showUsed
               ? [

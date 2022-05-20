@@ -168,14 +168,14 @@ abbr[title] { cursor: help; }
 .h, .del { font-size: .8rem; }
 
 /* extra padding on bottom only */
-.pb { margin: 0 0 1.5rem; }
+.pb { margin: 0 0 1.5rem !important; }
 
 /* User Content */
 .uc a {
   text-decoration: underline;
 }
 
-form { max-width: 1000px; }
+form, .mw { max-width: 1000px; }
 /**** pell edior ***/
 #g, input, select, textarea, .ed {
   border: 1px solid #000;

@@ -61,7 +61,7 @@ export const settingsView = (state, emit) => {
           <button type="submit">Update</button>
         </div>
       </form>
-      <div class=tr>
+      <div class="mw tr">
         <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
       </div>
       ${ gallery(state, emit, { showDelete: true, showUsed: true })}
