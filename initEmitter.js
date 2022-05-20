@@ -107,7 +107,11 @@ export const initEmitter = (state, emitter) => {
       parent: pg.parent ?? '',
     };
     if (process.env.EDITOR !== 'html') {
-      store.useMd = pg.editor === 'md' || state.useMd;
+      if (process.env.EDITOR === 'md') {
+        store.useMd = true;
+      } else {
+        store.useMd = pg.editor === 'md' || state.useMd;
+      }
     }
     state.edits = store;
     state.src = false;
