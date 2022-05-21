@@ -10,7 +10,7 @@ export function generateWikiHtml(state) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${p.name}</title>
   ${p.desc ? `<meta name="description" content="${p.desc.replace(/"/g, '\\"')}">` : ''}
-  <meta name="version" content="{{package.json:version}}" />
+  <meta name="version" content="{{buildVersion}}_{{package.json:version}}" />
   <style id="s">${s}</style>
   ${c ? `<style id=c>${c}</style>` : ''}
 </head>
