@@ -169,7 +169,7 @@ function build(buildVersion = 'both', buildTarget = 'es2015') {
       return result;
     }
   }).then(async html => {
-    html = html.replace('{{buildVersion}}', cuteName);
+    html = html.replace(/{{buildVersion}}/g, cuteName);
     const outputDir = path.resolve(process.cwd(), 'builds');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
