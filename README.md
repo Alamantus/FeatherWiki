@@ -112,6 +112,11 @@ If you only want to make changes to one version of an editor, you can use
 - `npm run build:html` to build the Finch & Sparrow versions
 - `npm run build:md` to build the Chickadee & Hummingbird versions
 
+To test a build, you can use `npm test` to build all versions and serve Tern on a local server. You can choose a specific
+build version to test by specifying the build name like `npm test -- Swallow`. The test script will allow server-focused
+versions of Feather Wiki to use the "Save Wiki to Server" button—the output gets saved to `develop/put-save.html` if you need
+to check it.
+
 ### Details
 
 Feather Wiki uses [Choo](https://choo.io) as its base JavaScript framework, a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
