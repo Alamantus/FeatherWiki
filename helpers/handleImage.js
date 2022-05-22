@@ -20,7 +20,7 @@ export function promptImageUpload (state, insert = () => {}) {
 
 export function insertImg (e, i, insert = () => {}) {
   e.preventDefault();
-  document.getElementById('gal').close();
+  document.getElementById('g').close();
   insert(i);
 }
 
