@@ -11,7 +11,7 @@ export function generateWikiHtml(state) {
   <title>${p.name}</title>
   ${p.desc ? `<meta name="description" content="${p.desc.replace(/"/g, '\\"')}">` : ''}
   <meta name="version" content="{{buildVersion}}_{{package.json:version}}" />
-  <meta name="application-name" content="{{package.json:title}}" />
+  <meta name="application-name" content="{{package.json: title}}" />
   <style id="s">${s}</style>
   ${c ? `<style id=c>${c}</style>` : ''}
 </head>
