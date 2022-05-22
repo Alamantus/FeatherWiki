@@ -48,7 +48,7 @@ export const globalView = (state, emit) => {
             ? [
               html`<p><a href="${root}?page=s">Wiki Settings</a></p>`,
               html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
-                <summary class=ib>New Page</summary>
+                <summary class=np>New Page</summary>
                 <form onsubmit=${createNewPage}>
                   <label class=sr for=np>New Page Title</label>
                   <input id=np placeholder="New Page Title" autocomplete=off>

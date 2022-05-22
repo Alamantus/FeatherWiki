@@ -34,6 +34,7 @@ input, select, textarea {
   padding: .5rem;
 }
 
+.np { max-width: 8rem; }
 button, summary {
   text-align: center;
   color: #fff;
