@@ -96,7 +96,7 @@ abbr[title] { cursor: help; }
 .a {
   background: #87C;
 }
-@media(min-width:35rem) {
+@media(min-width:50rem) {
   /* row */
   .r, main {
       display: table;
