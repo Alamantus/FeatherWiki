@@ -15,9 +15,13 @@ export function extractFeatherWikiData(file, callback = () => {}) {
     const c = '<style id=c>'; // Start of regular expression
     const cm = e.target.result.match(new RegExp(c + '.+?(?=</style>)', 'gs'));
     let cd = '';
-    if ((cm ?? []).length > 0) cd = cm[0].replace(c, '');
+    if ((cm ?? []).length) cd = cm[0].replace(c, '');
+    const j = '<script id=j>'; // Start of regular expression
+    const jm = e.target.result.match(new RegExp(j + '.+?(?=</script>)', 'gs'));
+    let jd = '';
+    if ((jm ?? []).length) jd = jm[0].replace(j, '');
     pd.img = await migrateImg(pd.img);
-    callback([pd, cd]);
+    callback([pd, cd, jd]);
   };
   reader.onerror = function (e) {
     if (process.env.NODE_ENV !== 'production') console.error(e);

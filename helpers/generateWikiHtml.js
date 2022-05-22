@@ -2,7 +2,7 @@ import { compress } from './jsonCompress';
 
 // Generate full html doc for saving. See also index.html
 export function generateWikiHtml(state) {
-  const { a, s, c, p } = state;
+  const { a, s, c, p, j } = state;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +19,7 @@ export function generateWikiHtml(state) {
   <a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript is required</a>
   <script id="p" type="application/json">${JSON.stringify(compress(p))}</script>
   <script id="a">${a}</script>
+  ${j ? `<script id=j>${j}</script>` : ''}
 </body>
 </html>`;
 }

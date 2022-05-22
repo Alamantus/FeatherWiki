@@ -19,4 +19,5 @@ function run(app) {
 	app.use(initEmitter);
 	app.route('/:p', globalView);
 	app.mount('body');
+	window.choo = app;
 }

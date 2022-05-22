@@ -63,7 +63,7 @@ export const initEmitter = (state, emitter) => {
     if (name.length < 2) return;
     if (keepEditing()) return;
     stopEdit();
-    const { p, help, events, query, root } = state;
+    const { p, events, query, root } = state;
 
     const genId = () => {
       const s = [];

@@ -5,7 +5,7 @@ import { uploadFile } from '../helpers/uploadFile';
 import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
-  const { events, p, c } = state;
+  const { events, p, c, j } = state;
   const o = p.pages.map(pg => pg.slug).join('\n');
   return [
     html`<header>
@@ -51,6 +51,13 @@ export const settingsView = (state, emit) => {
           </div>
         </div>
         <div class=r>
+          <label class="c tr ml w14" for=wJs>Custom JS</label>
+          <div class="c w34">
+            <span class=h>Only runs once on wiki load. To test, save your wiki & load that file.</span>
+            <textarea id=wJs>${j}</textarea>
+          </div>
+        </div>
+        <div class=r>
           <label class="c tr ml w14" for=wPub>Publish</label>
           <div class="c w34">
             <input id=wPub type=checkbox checked=${p.published ?? false}>
@@ -84,6 +91,7 @@ export const settingsView = (state, emit) => {
     const sort = form.wPo.value.split('\n').map(s => s.trim());
     state.p.pages.sort((a, b) => sort.indexOf(a.slug) < sort.indexOf(b.slug) ? -1 : 1);
     handleCustomCss(form.wCss.value);
+    handleCustomJs(form.wJs.value);
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
   }
@@ -94,6 +102,7 @@ export const settingsView = (state, emit) => {
         if (result) {
           state.p = result[0];
           handleCustomCss(result[1]);
+          handleCustomJs(result[2]);
           emit(events.DOMCONTENTLOADED);
           emit(events.CHECK_CHANGED);
         }
@@ -110,6 +119,14 @@ export const settingsView = (state, emit) => {
     } else {
       delete state.c;
       if (style) document.head.removeChild(style);
+    }
+  }
+
+  function handleCustomJs (content) {
+    if (content.trim()) {
+      state.j = content;
+    } else {
+      delete state.j;
     }
   }
 }
