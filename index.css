@@ -145,27 +145,19 @@ abbr[title] { cursor: help; }
 /* Allow overriding on mobile (mobile left) */
 .tr:not(.ml) { text-align: right; }
 .fr:not(.ml) { float: right; }
-.chg {
+.chg, .del {
   background: red;
-  animation: ping 2s infinite;
-}
-@keyframes ping {
-  0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, .7); }
-  70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
 }
 .del {
-  background: red;
   opacity: .8;
-  color: #fff;
 }
+/* field help */
+.h, .del { font-size: .8rem; }
 .db { display: block; }
 .il { display: inline; }
 .ib { display: inline-block; }
 .at { vertical-align: top; }
 
-/* field help */
-.h, .del { font-size: .8rem; }
 
 /* extra padding on bottom only */
 .pb { margin: 0 0 1.5rem !important; }
