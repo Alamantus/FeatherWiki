@@ -17,11 +17,11 @@ version.
 In _most_ cases, this is the section you want to choose from. These versions will run on browsers running JavaScript with at least
 ECMAScript 2015 (also known as ES6) features.
 
-- **Dove:** `63.631 kb`
+- **Dove:** `63.504 kb`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `59.852 kb`
+- **Finch:** `59.725 kb`
   - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `58.405 kb`
+- **Chickadee:** `58.278 kb`
   - Includes _only_ Markdown editor.
 
 <details>
@@ -50,11 +50,11 @@ These versions are smaller, but will only run on newer browsers running JavaScri
 are much more symbolic than actually recommended for use; _Only use these if you use a modern, up-to-date web browser and don't plan on
 publishing your Feather Wiki for other to see._
 
-- **Robin:** `62.245 kb`
+- **Robin:** `62.118 kb`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Sparrow:** `58.484 kb`
+- **Sparrow:** `58.357 kb`
   - Includes _only_ WYSIWYG editor.
-- **Hummingbird:** `57.061 kb`
+- **Hummingbird:** `56.934 kb`
   - Includes _only_ Markdown editor. The smallest it gets!
 
 ## Contribution
