@@ -62,10 +62,13 @@ const letsVarConstsPlugin = {
 const cuteNames = {
   'both_es2015': 'Dove',
   'both_es2022': 'Robin',
+  'both_server': 'Tern',
   'md_es2015': 'Chickadee',
   'md_es2022': 'Hummingbird',
+  'md_server': 'Bluethroat',
   'html_es2015': 'Finch',
   'html_es2022': 'Sparrow',
+  'html_server': 'Swallow',
 };
 
 const version = process.argv[2];
@@ -98,13 +101,14 @@ Promise.all(builds).then(async results => {
   });
 })
 
-function build(buildVersion = 'both', buildTarget = 'es2015') {
-  const cuteName = cuteNames[buildVersion + '_' + buildTarget];
+function build(buildEditor = 'both', buildTarget = 'es2015') {
+  const cuteName = cuteNames[buildEditor + '_' + buildTarget];
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
       'process.env.NODE_ENV': '"production"',
-      'process.env.EDITOR': '"' + buildVersion + '"',
+      'process.env.EDITOR': '"' + buildEditor + '"',
+      'process.env.SERVER': (buildTarget === 'server').toString(),
     },
     sourcemap: false,
     write: false,
@@ -116,7 +120,7 @@ function build(buildVersion = 'both', buildTarget = 'es2015') {
       letsVarConstsPlugin,
     ],
     platform: 'browser',
-    target: [ buildTarget ],
+    target: [ buildTarget === 'server' ? 'es2015' : buildTarget ],
     outdir: 'build',
   }).then(async result => {
     const fileName = path.relative(process.cwd(), 'index.html');

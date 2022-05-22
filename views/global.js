@@ -14,8 +14,6 @@ export const globalView = (state, emit) => {
     changed,
     sb,
     sbTab,
-    showNewPageField,
-    showPutSave,
   } = state;
 
   const showEditFields = !p.published || query.page === 's';
@@ -30,21 +28,28 @@ export const globalView = (state, emit) => {
     pageToRender = views.t(state, emit);
   }
 
+  let saveButton = [
+    changed ? html`<div>Wiki has changed!</div>` : '',
+  ];
+  if (process.env.SERVER && state.canSave) {
+    saveButton = [
+      ...saveButton,
+      html`<div><button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button></div>`,
+      html`<div><button title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki Locally</button></div>`,
+    ]
+  } else {
+    saveButton = [
+      ...saveButton,
+      html`<div><button class=${changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button></div>`,
+    ]
+  }
+
   return html`<body>
     <main>
       <div class=sb>
         <span class=db><a href=${root} class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
-        ${
-          showEditFields
-          ? [
-            changed ? html`<div>Wiki has changed!</div>` : '',
-            showPutSave
-              ? html`<div><button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button></div>`
-              : '',
-            html`<div><button class=${!showPutSave && changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki${showPutSave ? ' Locally' : ''}</button></div>`
-          ] : ''
-        }
+        ${ showEditFields ? saveButton : '' }
         <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>
         <nav class=${!sb ? 'n' : ''}>
           ${
