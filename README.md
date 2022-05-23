@@ -123,3 +123,30 @@ use `process.env.EDITOR === 'md'` in an `if` statement to ensure that esbuild re
 
 The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's
 a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
+
+## License Clarification
+
+Feather Wiki is an HTML document containing a self-replicating JavaScript application for creating wiki-style websites whose content is also stored in the output.  
+Copyright (C) 2022 [Robbie Antenesse](https://robbie.antenesse.net) \<dev@alamantus.com\>
+
+Feather Wiki is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+Any content created by a user using any version of Feather Wiki is
+the property of its creator. User-created data and the replicated
+copies of Feather Wiki containing user-created data can be used and
+distributed however their creator see fit. The GNU Affero General
+Public License applies to the code that constitutes the Feather Wiki
+application and NOT the content created by users of Feather Wiki
+unless explicitly stated by the user within their own content.
+
+Feather Wiki is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+A [copy of the GNU Affero General Public License](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/LICENSE)
+is included in the source code of Feather Wiki. If not, see
+https://www.gnu.org/licenses/.
