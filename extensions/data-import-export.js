@@ -1,4 +1,7 @@
-window.choo.use((state, emitter) => {
+// This is a basic example that throws import/export buttons to the Wiki Settings page and an export button each edit page. 
+// Since I don't know what specific use cases you might have for importing and exporting specific data, please feel free
+// to submit expanded/improved versions of this Feather Wiki extension.
+choo.use((state, emitter) => {
   emitter.on(state.events.RENDER, () => {
     setTimeout(() => {
       if (state.query.page === 's') {
@@ -24,9 +27,8 @@ window.choo.use((state, emitter) => {
   });
 
   function createImportButton () {
-    const button = document.createElement('button');
-    button.id = 'importButton';
-    button.onclick = e => {
+    const button = html`<button id=importButton onclick=${e => importClick(e)}>Import Page</button>`;
+    function importClick (e) {
       e.preventDefault();
       uploadFile(file => {
         console.info('selected file:', file);
@@ -67,14 +69,12 @@ window.choo.use((state, emitter) => {
         reader.readAsText(file);
       });
     };
-    button.innerHTML = 'Import Page';
     return button;
   }
   
   function createExportPageButton () {
-    const button = document.createElement('button');
-    button.id = 'exportPage';
-    button.onclick = e => {
+    const button = html`<button id=exportPage onclick=${e => exportPage(e)}>Export Page</button>`;
+    function exportPage (e) {
       e.preventDefault();
       console.log(state);
       const filename = state.pg.slug + '.json';
@@ -87,14 +87,12 @@ window.choo.use((state, emitter) => {
       el.click();
       document.body.removeChild(el);
     };
-    button.innerHTML = 'Export Page';
     return button;
   }
   
   function createExportWikiDataButton () {
-    const button = document.createElement('button');
-    button.id = 'exportWikiData';
-    button.onclick = e => {
+    const button = html`<button id=exportWikiData onclick=${e => exportWikiData(e)}>Export Wiki Data</button>`;
+    function exportWikiData (e) {
       e.preventDefault();
       const filename = state.p.name + '.json';
       const el = document.createElement('a');
@@ -104,18 +102,14 @@ window.choo.use((state, emitter) => {
       el.click();
       document.body.removeChild(el);
     };
-    button.innerHTML = 'Export Wiki Data';
     return button;
   }
   
   function uploadFile (cb) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'text/html,application/json';
-    input.onchange = e => {
+    const input = html`<input type=file accept="text/html,application/json" onchange=${e => {
       const { files } = e.target;
       if (files.length > 0) cb(files[0]);
-    };
+    }} />`;
     document.body.appendChild(input);
     input.click();
     document.body.removeChild(input);
