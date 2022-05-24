@@ -9,6 +9,7 @@ html, button, input, select, option, textarea {
 html, body {
   margin: 0;
   padding: 0;
+  max-width: 100vw;
 }
 
 :focus {
@@ -75,6 +76,13 @@ blockquote {
   margin-left: 2rem;
   padding-left: 1rem;
   border-left: 3px solid #888;
+}
+.uc pre {
+  font-size: 80%;
+  padding: 1em;
+  border-radius: 6px;
+  background-color: #eee;
+  line-height: 1.5;
 }
 
 abbr[title] { cursor: help; }
@@ -190,6 +198,7 @@ form, .mw { max-width: 1000px; }
   min-height: 300px;
   max-height: 600px;
 }
+:is(.pell-content, textarea, .uc) * { max-width: 100%; }
 
 .pell-actionbar {
   border-bottom: 1px solid #000;
