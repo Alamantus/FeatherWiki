@@ -53,6 +53,7 @@ export const initEmitter = (state, emitter) => {
       state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
       emit(events.HANDLE_404);
       title();
+      window.scroll(0, 0);
     } else {
       state.keep = false;
     }
