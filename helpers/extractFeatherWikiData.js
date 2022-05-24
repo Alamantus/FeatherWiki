@@ -3,23 +3,20 @@ import { decompress } from './jsonCompress';
 export function extractFeatherWikiData(file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = async e => {
-    const p = '<script id=p type=application/json>'; // Start of regular expression
+    // The '\\s' in each regex start string makes sure it doesn't match *that* line.
+    // Feather Wiki's HTML output has spaces between elements, which is important in this case because it helps us match the content.
+    const p = '\\s<script id=p type=application/json>'; // Start of wiki data regular expression
     const pm = e.target.result.match(new RegExp(p + '.+?(?=</script>)', 'gs'));
     if ((pm ?? []).length < 1) return alert('Could not find {{package.json:title}} data.');
-    let pd;
-    pm.forEach(m => {
-      m = m.replace(p, '');
-      if (m[0] !== '{') return;
-      pd = decompress(JSON.parse(m));
-    });
-    const c = '<style id=c>'; // Start of regular expression
+    const pd = decompress(JSON.parse(pm[0].replace(p.replace('\\s', ''), '').trim()));
+    const c = '\\s<style id=c>'; // Start of custom CSS regular expression.
     const cm = e.target.result.match(new RegExp(c + '.+?(?=</style>)', 'gs'));
     let cd = '';
-    if ((cm ?? []).length) cd = cm[0].replace(c, '');
-    const j = '<script id=j>'; // Start of regular expression
+    if ((cm ?? []).length) cd = cm[0].replace(c.replace('\\s', ''), '').trim();
+    const j = '\\s<script id=j>'; // Start of custom JS regular expression.
     const jm = e.target.result.match(new RegExp(j + '.+?(?=</script>)', 'gs'));
     let jd = '';
-    if ((jm ?? []).length) jd = jm[0].replace(j, '');
+    if ((jm ?? []).length) jd = jm[0].replace(j.replace('\\s', ''), '').trim();
     pd.img = await migrateImg(pd.img);
     callback([pd, cd, jd]);
   };
