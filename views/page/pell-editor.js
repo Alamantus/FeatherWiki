@@ -8,63 +8,61 @@ export const editor = (state, emit) => {
   const { src, edits } = state;
   const { content } = edits;
   const c = injectImageById(content, state, true);
-  let element;
+  let element = document.querySelector('#e');
   if (src) {
     element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${truncateImages(content)}</textarea>`;
   } else {
-    element = html`<article class=ed></article>`;
-    const fb = 'formatBlock';
-    const editor = init({
-      element,
-      onChange: html => state.edits.content = html,
-      defaultParagraphSeparator: 'p',
-      actions: [
-        'bold',
-        'italic',
-        'underline',
-        'strikethrough',
-        {
-          title: 'Heading',
-          icon: '<b>H</b>',
-          result: () => exec(fb, '<h2>'),
-        },
-        {
-          title: 'Sub-Heading',
-          icon: '<b>H<sub>2</sub></b>',
-          result: () => exec(fb, '<h3>'),
-        },
-        'paragraph',
-        'olist',
-        'ulist',
-        'quote',
-        'line',
-        'link',
-        {
-          title: 'Link External Image',
-          icon: '🖼️',
-          result: () => {
-            const url = window.prompt('Enter the image URL');
-            if (url) exec('insertImage', url);
+    if (!element) {
+      const fb = 'formatBlock';
+      element = init({
+        element: html`<div id=e class=ed></div>`, // Setting id here helps prevent re-render when other fields are changed
+        onChange: val => state.edits.content = val,
+        defaultParagraphSeparator: 'p',
+        actions: [
+          'bold',
+          'italic',
+          'underline',
+          'strikethrough',
+          {
+            title: 'Heading',
+            icon: '<b>H</b>',
+            result: () => exec(fb, '<h2>'),
           },
-        },
-        {
-          title: 'Insert Image from File',
-          icon: '📸',
-          result: () => promptImageUpload(state, insert),
-        },
-        {
-          title: 'Add Existing Image',
-          icon: '📎',
-          result: () => document.getElementById('g').showModal(),
-        },
-      ],
-    });
-    editor.content.innerHTML = c;
+          {
+            title: 'Sub-Heading',
+            icon: '<b>H<sub>2</sub></b>',
+            result: () => exec(fb, '<h3>'),
+          },
+          'paragraph',
+          'olist',
+          'ulist',
+          'quote',
+          'line',
+          'link',
+          {
+            title: 'Link External Image',
+            icon: '🖼️',
+            result: () => {
+              const url = window.prompt('Enter the image URL');
+              if (url) exec('insertImage', url);
+            },
+          },
+          {
+            title: 'Insert Image from File',
+            icon: '📸',
+            result: () => promptImageUpload(state, insert),
+          },
+          {
+            title: 'Add Existing Image',
+            icon: '📎',
+            result: () => document.getElementById('g').showModal(),
+          },
+        ],
+      });
+      element.isSameNode = () => true; // Do not re-render editor
+    }
+    element.content.innerHTML = c;
   }
-
-  element.isSameNode = target => {
-    return target?.nodeName === element?.nodeName && content.length;
-  };
 
   return [
     element,
