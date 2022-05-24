@@ -17,6 +17,12 @@ export default (() => {
 function run(app) {
 	app.use(initState);
 	app.use(initEmitter);
+	app.use(state => addEventListener('beforeunload', event => {
+		if (state.changed) {
+			event.preventDefault();
+  		return event.returnValue = "Lose unsaved changes?";
+		}
+	}, { capture: true }));
 	app.route('/:p', globalView);
 	app.mount('body');
 	window.choo = app;
