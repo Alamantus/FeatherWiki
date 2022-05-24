@@ -15,6 +15,7 @@ export const initState = state => {
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
   state.src = false; // Show HTML in editor
+  state.noti = null; // Notification
   if (process.env.SERVER) {
     state.canSave = false; // Show "Save Wiki to Server" button
   }
@@ -47,6 +48,8 @@ export const initState = state => {
     COLLECT_TAGS: 'ct',
     CHECK_CHANGED: 'cc',
     SAVE_WIKI: 'sw',
+    NOTIFY: 'n',
+    REMOVE_NOTI: 'rn',
   };
   if (process.env.SERVER) {
     state.events = {

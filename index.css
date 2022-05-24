@@ -44,7 +44,7 @@ button, summary {
   border: 0;
   border-radius: 1rem;
 }
-a, button, summary { cursor: pointer; }
+a, button, summary, .note { cursor: pointer; }
 a {
   text-decoration: none;
   color: #65A;
@@ -175,10 +175,16 @@ abbr[title] { cursor: help; }
 .uc a {
   text-decoration: underline;
 }
+.note {
+  position: fixed;
+  inset: 1vw 40vw auto;
+  padding: 1em;
+  box-shadow: 3px 3px 5px #555;
+}
 
 form, .mw { max-width: 1000px; }
 /**** pell edior ***/
-#g, input, select, textarea, .ed {
+#g, input, select, textarea, .ed, .note {
   border: 1px solid #000;
   border-radius: 3px;
   max-width: 1000px;

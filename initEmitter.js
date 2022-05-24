@@ -168,6 +168,19 @@ export const initEmitter = (state, emitter) => {
     emit(events.RENDER, callback);
   });
 
+  emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
+    state.noti = { text, css };
+    emit(events.RENDER, () => {
+      state.nt = time > 0 ? setTimeout(() => emit(events.REMOVE_NOTI), time) : null;
+    });
+  });
+
+  emitter.on(events.REMOVE_NOTI, () => {
+    state.noti = null;
+    if (state.nt) clearTimeout(state.nt);
+    emit(events.RENDER);
+  });
+
   emitter.on(events.SAVE_WIKI, () => {
     const output = generateWikiHtml(state);
     const { p, root } = state;
