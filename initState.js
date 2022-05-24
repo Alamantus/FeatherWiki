@@ -1,5 +1,9 @@
 import { hashObject } from './helpers/hashString';
 import { decompress } from './helpers/jsonCompress';
+import { pagesView } from './views/pages';
+import { settingsView } from './views/settings';
+import { taggedView } from './views/tagged';
+import { pageView } from './views/page';
 
 export const initState = state => {
   state.root = location.pathname; // Site Root
@@ -51,6 +55,13 @@ export const initState = state => {
       DETECT_PUT_SUPPORT: 'dps',
     };
   }
+
+  state.views = {
+    a: pagesView,
+    s: settingsView,
+    t: taggedView,
+    p: pageView,
+  };
 
   state.a = document.getElementById('a').innerHTML;
   state.s = document.getElementById('s').innerHTML;

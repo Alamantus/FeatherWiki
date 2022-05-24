@@ -1,10 +1,9 @@
 import { generateWikiHtml } from './helpers/generateWikiHtml';
 import { hashObject } from './helpers/hashString';
 import { slugify, tidyArray } from './helpers/formatting';
-import { views } from './views';
 
 export const initEmitter = (state, emitter) => {
-  const { events } = state;
+  const { events, views } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel

@@ -1,5 +1,3 @@
-import { views } from './index';
-
 export const globalView = (state, emit) => {
   const {
     root,
@@ -12,6 +10,7 @@ export const globalView = (state, emit) => {
     changed,
     sb,
     sbTab,
+    views,
   } = state;
 
   const showEditFields = !p.published || query.page === 's';
