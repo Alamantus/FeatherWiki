@@ -16,6 +16,7 @@ export const initEmitter = (state, emitter) => {
     emit(events.HANDLE_404);
     title();
     emit(events.COLLECT_TAGS);
+    if (state.t.length) emit(events.RENDER);
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
