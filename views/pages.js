@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 export const pagesView = (state, emit) => {
   const { p, help } = state;
   return [

@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 import { gallery } from '../gallery';
 import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 

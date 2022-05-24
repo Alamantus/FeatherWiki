@@ -1,4 +1,3 @@
-import html from 'choo/html';
 import { init, exec } from 'pell';
 
 import { gallery } from '../gallery';

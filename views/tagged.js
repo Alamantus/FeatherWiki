@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 export const taggedView = (state, emit) => {
   const { p, query } = state;
   const pages = p.pages.filter(pg => pg.tags?.includes(query.tag));

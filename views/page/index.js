@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 import { formatDate } from '../../helpers/formatting';
 import { pageDisplay } from './display';
 import { pageEdit } from './edit';

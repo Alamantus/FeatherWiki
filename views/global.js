@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 import { views } from './index';
 
 export const globalView = (state, emit) => {

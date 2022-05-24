@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 import { slugify, tidyArray } from '../../helpers/formatting';
 import { truncateImages } from '../../helpers/injection';
 

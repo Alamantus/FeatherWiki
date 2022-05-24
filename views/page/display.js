@@ -1,4 +1,3 @@
-import html from 'choo/html';
 import raw from 'choo/html/raw';
 import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
 

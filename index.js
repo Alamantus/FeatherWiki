@@ -20,4 +20,5 @@ function run(app) {
 	app.route('/:p', globalView);
 	app.mount('body');
 	window.choo = app;
+	window.html = require('choo/html');
 }

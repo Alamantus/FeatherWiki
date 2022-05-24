@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 export const gallery = (state, emit, options = {}) => {
   const { events, root } = state;
   const {

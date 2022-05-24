@@ -1,5 +1,3 @@
-import html from 'choo/html';
-
 import { gallery } from './gallery';
 import { uploadFile } from '../helpers/uploadFile';
 import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
