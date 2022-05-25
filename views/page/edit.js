@@ -35,6 +35,7 @@ export const pageEdit = (state, emit, page) => {
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
+    <span class=h style=float:left>Use [[Page Title]] or [[text|page_slug]] for internal links.</span>
     ${ editor }
     <footer class=r>
       <div class="c w13">
