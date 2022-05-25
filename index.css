@@ -55,7 +55,7 @@ a {
 a.e {
   color: red;
 }
-a:is([target="_blank"], .e):after {
+a:is([target="_blank"], .e):after, a.l {
   font-size: 70%;
   vertical-align: top;
   margin-left: 3px;
