@@ -55,7 +55,11 @@ a {
 a.e {
   color: red;
 }
-a:is([target="_blank"], .e):after, a.l {
+a.l { visibility: hidden; }
+:is(h1, h2, h3, h4, h5, h6):hover a.l, a.l:is(:focus, :active) {
+  visibility: visible;
+}
+a:is([target="_blank"], .e):after {
   font-size: 70%;
   vertical-align: top;
   margin-left: 3px;
