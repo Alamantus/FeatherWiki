@@ -1,5 +1,5 @@
 import raw from 'choo/html/raw';
-import { injectImageById, injectPageLink, injectTargetBlank } from '../../helpers/injection';
+import { injectImageById, injectPageLink, injectTargetBlank, injectHeadingIds } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
   const { root, help } = state;
@@ -11,7 +11,9 @@ export const pageDisplay = (state, emit, page) => {
   }
   c = injectImageById(
     injectPageLink(
-      injectTargetBlank(c),
+      injectHeadingIds(
+        injectTargetBlank(c)
+      ),
       state
     ),
     state

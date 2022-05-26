@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { exec } from 'child_process';
 import esbuild from 'esbuild';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
@@ -133,12 +134,28 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
       outdir: 'build',
     });
     for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
-      const output = new TextDecoder().decode(out.contents);
+      let output = new TextDecoder().decode(out.contents);
       // const outputKb = out.contents.byteLength * 0.000977;
       // console.info(`${out.path} (${cuteName})`, outputKb.toFixed(3) + ' kb');
       if (/\.css$/.test(out.path)) {
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
+        const jsBuildPath = path.resolve(process.cwd(), 'develop', cuteName + '.js');
+        const jsOutPath = path.resolve(process.cwd(), 'develop', cuteName + '_compressed.js');
+        output = await new Promise(resolve => {
+          fs.writeFileSync(jsBuildPath, output);
+          // Compress the JS even more
+          exec(`npx google-closure-compiler --js=${jsBuildPath} --js_output_file=${jsOutPath}`, {
+            maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
+          }, (err) => {
+            if (err) throw err;
+            resolve(fs.readFileSync(jsOutPath));
+          });
+        });
+        // Remove generated JS files
+        fs.unlink(jsBuildPath, () => {});
+        fs.unlink(jsOutPath, () => {});
+        
         // Since there's regex stuff in here, I can't do replace!
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
         html = htmlParts[0] + output + htmlParts[1];

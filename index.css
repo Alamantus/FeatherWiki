@@ -9,7 +9,6 @@ html, button, input, select, option, textarea {
 html, body {
   margin: 0;
   padding: 0;
-  max-width: 100vw;
 }
 
 :focus {
@@ -19,6 +18,7 @@ html, body {
 * {
   box-sizing: border-box;
   position: relative;
+  max-width: 100vw;
 }
 
 * + *, p, .pell-content > *:not(:first-child) { /* Consolidating .pell-content here to reduce repetition */
@@ -54,6 +54,10 @@ a {
 }
 a.e {
   color: red;
+}
+a.l { visibility: hidden; }
+:is(h1, h2, h3, h4, h5, h6):hover a.l, a.l:is(:focus, :active) {
+  visibility: visible;
 }
 a:is([target="_blank"], .e):after {
   font-size: 70%;
@@ -139,6 +143,8 @@ abbr[title] { cursor: help; }
     position: absolute;
     inset: auto 1.5rem 0;
   }
+
+  form, .mw, #g, input, select, textarea, .ed { max-width: 1000px; }
   
   .tr { text-align: right; }
   .fr { float: right; }
@@ -184,12 +190,10 @@ abbr[title] { cursor: help; }
   box-shadow: 3px 3px 5px #555;
 }
 
-form, .mw { max-width: 1000px; }
 /**** pell edior ***/
 #g, input, select, textarea, .ed, .noti {
   border: 1px solid #000;
   border-radius: 3px;
-  max-width: 1000px;
 }
 .ed * {
   margin: unset;

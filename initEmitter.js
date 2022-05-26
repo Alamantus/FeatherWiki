@@ -16,6 +16,7 @@ export const initEmitter = (state, emitter) => {
     emit(events.HANDLE_404);
     title();
     emit(events.COLLECT_TAGS);
+    if (state.t.length) emit(events.RENDER);
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
@@ -53,6 +54,7 @@ export const initEmitter = (state, emitter) => {
       state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
       emit(events.HANDLE_404);
       title();
+      window.scroll(0, 0);
     } else {
       state.keep = false;
     }
