@@ -11,7 +11,7 @@ export const globalView = (state, emit) => {
     sb,
     sbTab,
     views,
-    noti,
+    notis,
   } = state;
 
   const showEditFields = !p.published || query.page === 's';
@@ -95,7 +95,9 @@ export const globalView = (state, emit) => {
     <footer>
       <span class="fr">Powered by <a href="{{package.json:homepage}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
-    ${noti ? html`<div class=note style="${noti.css}" onclick=${() => emit(events.REMOVE_NOTI)}>${noti.text}</div>` : ''}
+    <div class=notis>
+      ${notis.map(n => html`<div class=noti style="${n.css}" onclick=${() => emit(events.REMOVE_NOTI, n.id)}>${n.text}</div>`)}
+    </div>
   </body>`;
 
   function createNewPage(e) {

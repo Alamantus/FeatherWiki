@@ -175,16 +175,18 @@ abbr[title] { cursor: help; }
 .uc a {
   text-decoration: underline;
 }
-.note {
+.notis {
   position: fixed;
   inset: 1vw 40vw auto;
+}
+.noti {
   padding: 1em;
   box-shadow: 3px 3px 5px #555;
 }
 
 form, .mw { max-width: 1000px; }
 /**** pell edior ***/
-#g, input, select, textarea, .ed, .note {
+#g, input, select, textarea, .ed, .noti {
   border: 1px solid #000;
   border-radius: 3px;
   max-width: 1000px;

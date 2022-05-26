@@ -1,5 +1,5 @@
 import { generateWikiHtml } from './helpers/generateWikiHtml';
-import { hashObject } from './helpers/hashString';
+import { hashObject, hashString } from './helpers/hashString';
 import { slugify, tidyArray } from './helpers/formatting';
 
 export const initEmitter = (state, emitter) => {
@@ -169,15 +169,19 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
-    state.noti = { text, css };
-    emit(events.RENDER, () => {
-      state.nt = time > 0 ? setTimeout(() => emit(events.REMOVE_NOTI), time) : null;
-    });
+    const id = hashString(text + css + (state.notis.length + 1));
+    const n = {
+      text,
+      css,
+      id,
+      t: time > 0 ? setTimeout(() => emit(events.REMOVE_NOTI, id), time) : null,
+    };
+    state.notis.push(n);
+    emit(events.RENDER);
   });
 
-  emitter.on(events.REMOVE_NOTI, () => {
-    state.noti = null;
-    if (state.nt) clearTimeout(state.nt);
+  emitter.on(events.REMOVE_NOTI, id => {
+    state.notis.splice(state.notis.findIndex(n => n.id === id), 1);
     emit(events.RENDER);
   });
 
