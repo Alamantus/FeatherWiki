@@ -215,13 +215,13 @@ export const initEmitter = (state, emitter) => {
         )
         .then(result => {
           if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
-          alert('Save complete.')
+          emit(events.NOTIFY, 'Saved.')
 
           state.prev = hashObject(p);
           emitter.emit(events.CHECK_CHANGED);
         })
         .catch(err => {
-          alert(`Save failed! ${err}`);
+          emit(events.NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
         });
     });
 
@@ -238,7 +238,7 @@ export const initEmitter = (state, emitter) => {
             state.canSave = true;
             emitter.emit(events.RENDER);
           } else {
-            alert('Cannot save to server.');
+            emit(events.NOTIFY, 'Cannot save to server.', 9999, 'background:#e88');
           }
         })
         .catch(err => {})
