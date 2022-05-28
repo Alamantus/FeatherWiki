@@ -1,7 +1,10 @@
 // This is a basic example that throws import/export buttons to the Wiki Settings page and an export button each edit page. 
 // Since I don't know what specific use cases you might have for importing and exporting specific data, please feel free
 // to submit expanded/improved versions of this Feather Wiki extension.
-choo.use((state, emitter) => {
+if (!window.choo._loaded) window.choo.use(importExportExtension);
+else (({state, emitter}) => importExportExtension(state, emitter))(window.choo);
+
+function importExportExtension (state, emitter) {
   emitter.on(state.events.RENDER, () => {
     setTimeout(() => {
       if (state.query.page === 's') {
@@ -114,4 +117,4 @@ choo.use((state, emitter) => {
     input.click();
     document.body.removeChild(input);
   }
-});
+}

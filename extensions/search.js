@@ -1,7 +1,10 @@
 // This extension adds Fuse.js from a CDN, creates a search results view, adds a search bar to the menu each render,
 // and displays search results when you press enter within the search box. This can likely be expanded or improved,
 // but it should at least get you started!
-choo.use((state, emitter) => {
+if (!window.choo._loaded) window.choo.use(searchExtension);
+else (({state, emitter}) => searchExtension(state, emitter))(window.choo);
+
+function searchExtension (state, emitter) {
   const fuseScript = document.createElement('script');
   fuseScript.src = 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2';
   document.body.appendChild(fuseScript);
@@ -20,8 +23,10 @@ choo.use((state, emitter) => {
       }, 10);
     });
   })
+  if (window.choo._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
 
   function renderSearchBar () {
+    if (!!document.getElementById('searchBar')) return;
     const input = html`<input id=searchBar placeholder="Search Pages" onkeyup=${e => {
       if (e.key === 'Enter') emitter.emit('search', e.target.value);
     }} oninput=${e => state.searchInput = e.target.value} value=${state.searchInput} />`;
@@ -58,4 +63,4 @@ choo.use((state, emitter) => {
       ),
     ];
   }
-});
+}
