@@ -9,7 +9,7 @@ export const settingsView = (state, emit) => {
     html`<header>
       <h1>Wiki Settings</h1>
     </header>`,
-    html`<article>
+    html`<article class=mw>
       <form onsubmit=${saveSettings} class=pb>
         <div class=r>
           <label class="c tr ml w14" for=wTitle>Wiki Title</label>
@@ -66,8 +66,13 @@ export const settingsView = (state, emit) => {
           <button type="submit">Update</button>
         </div>
       </form>
-      <div class="mw tr">
-        <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
+      <div class=tr>
+        <p class="pb h">
+          {{package.json:title}} Version: {{buildVersion}}_{{package.json:version}}
+        </p>
+        <p>
+          <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
+        </p>
       </div>
       ${ gallery(state, emit, { showDelete: true, showUsed: true })}
     </article>`
