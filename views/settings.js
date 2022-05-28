@@ -103,6 +103,7 @@ export const settingsView = (state, emit) => {
           handleCustomJs(result[2]);
           emit(events.DOMCONTENTLOADED);
           emit(events.CHECK_CHANGED);
+          emit(events.NOTIFY, 'Wiki Loaded')
         }
       });
     });

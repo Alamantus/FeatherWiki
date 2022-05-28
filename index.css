@@ -44,7 +44,7 @@ button, summary {
   border: 0;
   border-radius: 1rem;
 }
-a, button, summary, .note { cursor: pointer; }
+a, button, summary, .noti { cursor: pointer; }
 a {
   text-decoration: none;
   color: #65A;
