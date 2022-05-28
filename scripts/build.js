@@ -62,13 +62,13 @@ const letsVarConstsPlugin = {
 
 const cuteNames = {
   'both_es2015': 'Dove',
-  'both_es2022': 'Robin',
+  // 'both_es2022': 'Robin',
   'both_server': 'Tern',
   'md_es2015': 'Chickadee',
-  'md_es2022': 'Hummingbird',
+  // 'md_es2022': 'Hummingbird',
   'md_server': 'Bluethroat',
   'html_es2015': 'Finch',
-  'html_es2022': 'Sparrow',
+  // 'html_es2022': 'Sparrow',
   'html_server': 'Swallow',
 };
 

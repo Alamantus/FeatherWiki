@@ -9,26 +9,26 @@ Check out the [Documentation](https://feather.wiki) to see it in action and lear
 
 As of version 1.2.0, there are now a few different versions of Feather Wiki depending on the kinds of functionality you're looking for, each
 with its own cute bird name to indicate its size _(and to maybe help make up for the fact that there are 6 versions as a result 😵)_.
-Specifically, there are differences in _browser compatibility_ and _content editor_ for each version. Below is a breakdown of each
+Specifically, there are differences in _content editor_ and _server compatibility_ for each version. Below is a breakdown of each
 version.
 
-### Most Compatible
+### Simple
 
 In _most_ cases, this is the section you want to choose from. These versions will run on browsers running JavaScript with at least
-ECMAScript 2015 (also known as ES6) features.
+[ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
-- **Dove:** `63.517 kb`
+- **Dove:** `63.361 kb`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `59.738 kb`
+- **Finch:** `59.646 kb`
   - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `58.291 kb`
+- **Chickadee:** `58.086 kb`
   - Includes _only_ Markdown editor.
 
 <details>
 <summary>👨‍💻 Technical Talk: Supported Browsers</summary>
 
 According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es6/), the following
-browser versions should definitely be able to run the Dove, Finch, and Chickadee versions of Feather Wiki without issues:
+browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
 
 - Chrome 86+
 - Edge 87+
@@ -44,6 +44,7 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 </details>
 
+<!--
 ### Least Compatible
 
 These versions are smaller, but will only run on newer browsers running JavaScript with up to [ECMAScript 2020 features](https://caniuse.com/es6,array-includes,async-functions,pad-start-end,mdn-javascript_operators_optional_chaining,mdn-javascript_operators_nullish_coalescing). As such, these
@@ -56,16 +57,22 @@ publishing your Feather Wiki for other to see._
   - Includes _only_ WYSIWYG editor.
 - **Hummingbird:** `56.946 kb`
   - Includes _only_ Markdown editor. The smallest it gets!
+-->
 
-### Server-Focused
+### Server-Saving
 
-These versions are the same as those in the "Most Compatible" section above, but they are larger because they include extra code for saving to certain web servers. They are specifically named after migratory birds of different sizes!
+These versions are the same as those in the section above, but they are larger because they include extra code for saving to certain web servers.
+Currently the only viable use for these versions is through [Tiddlyhost](https://tiddlyhost.com), but a simple Feather Wiki server is planned
+in the near future! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
+example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
 
-- **Tern:** `64.412 kb`
+These versions are specifically named after migratory birds of different sizes to reflect their travel to the server from your browser!
+
+- **Tern:** `64.356 kb`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Swallow:** `60.637 kb`
+- **Swallow:** `60.646 kb`
   - Includes _only_ WYSIWYG editor.
-- **Bluethroat:** `59.188 kb`
+- **Bluethroat:** `59.083 kb`
   - Includes _only_ Markdown editor.
 
 ## Contribution
