@@ -1,5 +1,3 @@
-import { decompress } from './jsonCompress';
-
 export function extractFeatherWikiData (file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = async event => {
@@ -7,7 +5,7 @@ export function extractFeatherWikiData (file, callback = () => {}) {
     const pString = matchHtml(file, 'script', 'p type=application/json');
     // validate that wiki data exists and is probably JSON
     if (!pString.length || pString[0] !== '{') return alert('Could not find {{package.json:title}} data.');
-    const pData = decompress(JSON.parse(pString));
+    const pData = FW.json.decompress(JSON.parse(pString));
     pData.img = await migrateImg(pData.img);
     callback([
       pData,

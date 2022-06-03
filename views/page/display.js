@@ -1,18 +1,18 @@
 import raw from 'choo/html/raw';
-import { injectImageById, injectPageLink, injectTargetBlank, injectHeadingIds } from '../../helpers/injection';
 
 export const pageDisplay = (state, emit, page) => {
+  const { imageById, pageLink, targetBlank, headingIds } = FW.inject;
   const { root, help } = state;
   const { content } = page;
   let c = content;
   if (process.env.EDITOR !== 'html') {
     // Only include snarkdown in the build if the editor is not html
-    c = page.editor === 'md' ? require('../../helpers/snarkdownEnhanced').default(content) : content;
+    c = page.editor === 'md' ? md(content) : content;
   }
-  c = injectImageById(
-    injectPageLink(
-      injectHeadingIds(
-        injectTargetBlank(c)
+  c = imageById(
+    pageLink(
+      headingIds(
+        targetBlank(c)
       ),
       state
     ),

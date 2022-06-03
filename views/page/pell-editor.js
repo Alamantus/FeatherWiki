@@ -1,16 +1,13 @@
-import { init, exec } from 'pell';
-
 import { gallery } from '../gallery';
-import { injectImageById, truncateImages } from '../../helpers/injection';
-import { promptImageUpload, insertImg } from '../../helpers/handleImage';
 
 export const editor = (state, emit) => {
+  const { init, exec } = pell; // From `window`
   const { src, edits } = state;
   const { content } = edits;
-  const c = injectImageById(content, state, true);
+  const c = FW.inject.imageById(content, state, true);
   let element = document.querySelector('#e');
   if (src) {
-    element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${truncateImages(content)}</textarea>`;
+    element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${FW.inject.truncateImages(content)}</textarea>`;
   } else {
     if (!element) {
       const fb = 'formatBlock';
@@ -50,7 +47,7 @@ export const editor = (state, emit) => {
           {
             title: 'Insert Image from File',
             icon: '📸',
-            result: () => promptImageUpload(state, insert),
+            result: () => FW.img.promptImageUpload(state, insert),
           },
           {
             title: 'Add Existing Image',
@@ -73,7 +70,7 @@ export const editor = (state, emit) => {
       <form class=fr method=dialog>
         <button>Close</button>
       </form>
-      ${ gallery(state, () => {}, { insert: (e, i) => insertImg(e, i, insert) }) }
+      ${ gallery(state, () => {}, { insert: (e, i) => FW.img.insertImg(e, i, insert) }) }
     </dialog>`,
   ];
 

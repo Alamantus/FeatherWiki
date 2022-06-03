@@ -1,6 +1,3 @@
-import { slugify, tidyArray } from '../../helpers/formatting';
-import { truncateImages } from '../../helpers/injection';
-
 export const pageEdit = (state, emit, page) => {
   const { edits, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
@@ -78,7 +75,7 @@ export const pageEdit = (state, emit, page) => {
 
   function slugifyTitle (e) {
     e.preventDefault();
-    document.getElementById('slug').value = slugify(document.getElementById('name').value.trim());
+    document.getElementById('slug').value = FW.slugify(document.getElementById('name').value.trim());
   }
 
   function toggleEditor (e) {
@@ -87,7 +84,7 @@ export const pageEdit = (state, emit, page) => {
       const { useMd, content } = edits;
       if (useMd) {
         if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.edits.content = require('../../helpers/snarkdownEnhanced').default(content);
+        state.edits.content = md(content);
       }
       state.edits.useMd = !useMd;
       emit(state.events.RENDER);
@@ -101,7 +98,7 @@ export const pageEdit = (state, emit, page) => {
   }
 
   function getTagsArray () {
-    return tidyArray(document.getElementById('tags').value.split(','));
+    return FW.tidy(document.getElementById('tags').value.split(','));
   }
   
   function addTag (e) {
@@ -125,8 +122,8 @@ export const pageEdit = (state, emit, page) => {
     if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
     pg = { ...page };
     pg.name = name;
-    pg.slug = slugify(slug);
-    pg.content = truncateImages(state.edits.content);
+    pg.slug = FW.slugify(slug);
+    pg.content = FW.inject.truncateImages(state.edits.content);
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
     if (process.env.EDITOR !== 'html') {

@@ -1,6 +1,4 @@
 import { gallery } from './gallery';
-import { uploadFile } from '../helpers/uploadFile';
-import { extractFeatherWikiData } from '../helpers/extractFeatherWikiData';
 
 export const settingsView = (state, emit) => {
   const { events, p, c, j } = state;
@@ -101,8 +99,8 @@ export const settingsView = (state, emit) => {
   }
 
   function promptOverwrite () {
-    uploadFile('text/html', file => {
-      extractFeatherWikiData(file, result => {
+    FW.upload('text/html', file => {
+      FW.extract(file, result => {
         if (result) {
           state.p = result[0];
           handleCustomCss(result[1]);

@@ -1,5 +1,5 @@
 // Adapted from https://stackoverflow.com/a/7616484
-export function hashString (str) {
+export function string (str) {
   var hash = 0, i, chr;
   if (str.length === 0) return hash;
   for (i = 0; i < str.length; i++) {
@@ -10,6 +10,6 @@ export function hashString (str) {
   return hash;
 }
 
-export function hashObject (obj) {
-  return hashString(JSON.stringify(obj));
+export function object (obj) {
+  return string(JSON.stringify(obj));
 }

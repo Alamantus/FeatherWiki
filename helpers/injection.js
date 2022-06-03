@@ -1,11 +1,9 @@
-import { slugify } from "./formatting";
-
-export function injectPageLink (content, state) {
+export function pageLink (content, state) {
   let c = content ?? null;
   if (c) {
     (content?.match(/\[\[.+?(?=\]\])/g) ?? []).forEach(l => {
       const match = l.replace('[[', '').split('|');
-      const slug = match[1] ? match[1].trim() : slugify(match[0]);
+      const slug = match[1] ? match[1].trim() : FW.slugify(match[0]);
       const exists = state.p.pages.some(pg => pg.slug === slug);
       c = c.replace(
         `${l}]]`,
@@ -16,7 +14,7 @@ export function injectPageLink (content, state) {
   return c;
 }
 
-export function injectImageById (content, state, includeId = false) {
+export function imageById (content, state, includeId = false) {
   let c = content ?? null;
   if (c) {
     (content?.match(/img:.+?(?=:img)/g) ?? []).forEach(idMatch => {
@@ -35,7 +33,7 @@ export function truncateImages (content) {
   return content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
 }
 
-export function injectTargetBlank (content) {
+export function targetBlank (content) {
   let c = content ?? null;
   if (c) {
     (content?.match(/<a href=".+?(?=")/gi) ?? []).forEach(url => {
@@ -49,12 +47,12 @@ export function injectTargetBlank (content) {
   return c;
 }
 
-export function injectHeadingIds (content) {
+export function headingIds (content) {
   let c = content ?? null;
   if (c) {
     (content?.match(/<h\d>.+?<\/h\d>/gi) ?? []).forEach(h => {
       const m = h.match(/<h(\d)>(.+)<\/h\d>/i); // Grab relevant capture groups from each match
-      const slug = slugify(m[2]);
+      const slug = FW.slugify(m[2]);
       c = c.replace(
         h,
         `<h${m[1]} id=${slug}>${m[2]} <a class=l href=#${slug}>#</a></h${m[1]}>`

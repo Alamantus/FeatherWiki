@@ -1,5 +1,3 @@
-import { hashObject } from './helpers/hashString';
-import { decompress } from './helpers/jsonCompress';
 import { pagesView } from './views/pages';
 import { settingsView } from './views/settings';
 import { taggedView } from './views/tagged';
@@ -71,13 +69,13 @@ export const initState = state => {
   state.c = document.getElementById('c')?.innerHTML ?? '';
   state.j = document.getElementById('j')?.innerHTML ?? '';
   try {
-    state.p = decompress(JSON.parse(document.getElementById('p').innerHTML));
+    state.p = FW.json.decompress(JSON.parse(document.getElementById('p').innerHTML));
   } catch (e) {
     state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
   state.pg = state.help.getPage();
   state.t = []; // all used tags
-  state.prev = hashObject(state.p); // Hash of state at last save
+  state.prev = FW.hash.object(state.p); // Hash of state at last save
   state.now = state.prev; // Hash of current state
   state.changed = false; // Changed since last save?
 

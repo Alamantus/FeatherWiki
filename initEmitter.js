@@ -1,7 +1,3 @@
-import { generateWikiHtml } from './helpers/generateWikiHtml';
-import { hashObject, hashString } from './helpers/hashString';
-import { slugify, tidyArray } from './helpers/formatting';
-
 export const initEmitter = (state, emitter) => {
   const { events, views } = state;
   const emit = (...args) => emitter.emit(...args);
@@ -30,7 +26,7 @@ export const initEmitter = (state, emitter) => {
     const { page } = state.query;
     if (page?.length > 1) {
       const { help, events } = state;
-      const slug = slugify(page);
+      const slug = FW.slugify(page);
       const pg = help.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
@@ -81,7 +77,7 @@ export const initEmitter = (state, emitter) => {
     while (p.pages.findIndex(p => p.id === id) >= 0);
     // Ensure unique slug
     let d = 0,
-      s = slugify(name),
+      s = FW.slugify(name),
       slug;
     do {
       slug = s + (d > 0 ? '_' + d : '');
@@ -159,19 +155,19 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.COLLECT_TAGS, () => {
-    state.t = tidyArray(state.p.pages.reduce((r, p) => {
+    state.t = FW.tidy(state.p.pages.reduce((r, p) => {
       return [...r, ...(p.tags?.split(',') ?? [])];
     }, []));
   });
 
   emitter.on(events.CHECK_CHANGED, callback => {
-    state.now = hashObject(state.p);
+    state.now = FW.hash.object(state.p);
     state.changed = state.prev !== state.now;
     emit(events.RENDER, callback);
   });
 
   emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
-    const id = hashString(text + css + (state.notis.length + 1));
+    const id = FW.hash.string(text + css + (state.notis.length + 1));
     const n = {
       text,
       css,
@@ -188,7 +184,7 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.SAVE_WIKI, () => {
-    const output = generateWikiHtml(state);
+    const output = FW.gen(state);
     const { p, root } = state;
     const filename = /\/$/.test(root) ? 'index.html' : root.substring(root.lastIndexOf('/') + 1);
     const el = document.createElement('a');
@@ -200,14 +196,14 @@ export const initEmitter = (state, emitter) => {
 
     if (!process.env.SERVER) {
       // Only clear the "save needed" indicator on server save
-      state.prev = hashObject(p);
+      state.prev = FW.hash.object(p);
       emit(events.CHECK_CHANGED);
     }
   });
 
   if (process.env.SERVER) {
     emitter.on(events.PUT_SAVE_WIKI, () => {
-      const output = generateWikiHtml(state);
+      const output = FW.gen(state);
       const { p, root } = state;
       fetch(root, { method: 'PUT', body: output })
         .then(resp => resp.text()
@@ -217,7 +213,7 @@ export const initEmitter = (state, emitter) => {
           if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
           emit(events.NOTIFY, 'Saved.')
 
-          state.prev = hashObject(p);
+          state.prev = FW.hash.object(p);
           emitter.emit(events.CHECK_CHANGED);
         })
         .catch(err => {
