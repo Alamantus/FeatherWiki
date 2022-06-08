@@ -12,12 +12,12 @@ export function generateWikiHtml(state) {
   <meta name="application-name" content="{{package.json: title}}" />
   <style id="s">${s}</style>
   ${c ? `<style id=c>${c}</style>` : ''}
-</head>
-<body>
-  <a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript is required</a>
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
   <script id="a">${a}</script>
   ${j ? `<script id=j>${j}</script>` : ''}
+</head>
+<body>
+  <a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript is required</a>
 </body>
 </html>`;
 }
