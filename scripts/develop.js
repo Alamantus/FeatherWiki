@@ -34,6 +34,7 @@ esbuild.build({
   },
   plugins: [],
   platform: 'browser',
+  format: 'iife',
   target: [ 'es2015' ],
   outdir: 'build',
 })

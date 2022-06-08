@@ -121,6 +121,7 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
       letsVarConstsPlugin,
     ],
     platform: 'browser',
+    format: 'iife',
     target: [ buildTarget === 'server' ? 'es2015' : buildTarget ],
     outdir: 'build',
   }).then(async result => {
