@@ -10,6 +10,18 @@ export const pageEdit = (state, emit, page) => {
     editor = require('./pell-editor').editor(state, emit);
   } else {
     const { useMd } = edits;
+    function toggleEditor (e) {
+      e.preventDefault();
+      const { useMd, content } = edits;
+      if (useMd) {
+        if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
+        state.edits.content = md(content);
+      } else {
+        state.edits.content = FW.img.abbr(content);
+      }
+      state.edits.useMd = !useMd;
+      emit(state.events.RENDER);
+    }
     editor = [
       html`<div class="w1 tr">
         <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
@@ -76,19 +88,6 @@ export const pageEdit = (state, emit, page) => {
   function slugifyTitle (e) {
     e.preventDefault();
     document.getElementById('slug').value = FW.slug(document.getElementById('name').value.trim());
-  }
-
-  function toggleEditor (e) {
-    if (process.env.EDITOR === 'both') {
-      e.preventDefault();
-      const { useMd, content } = edits;
-      if (useMd) {
-        if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.edits.content = md(content);
-      }
-      state.edits.useMd = !useMd;
-      emit(state.events.RENDER);
-    }
   }
 
   function store (e) {
