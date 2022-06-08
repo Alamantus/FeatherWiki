@@ -26,7 +26,7 @@ export const initEmitter = (state, emitter) => {
     const { page } = state.query;
     if (page?.length > 1) {
       const { help, events } = state;
-      const slug = FW.slugify(page);
+      const slug = FW.slug(page);
       const pg = help.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
@@ -77,7 +77,7 @@ export const initEmitter = (state, emitter) => {
     while (p.pages.findIndex(p => p.id === id) >= 0);
     // Ensure unique slug
     let d = 0,
-      s = FW.slugify(name),
+      s = FW.slug(name),
       slug;
     do {
       slug = s + (d > 0 ? '_' + d : '');

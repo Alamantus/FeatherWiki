@@ -75,7 +75,7 @@ export const pageEdit = (state, emit, page) => {
 
   function slugifyTitle (e) {
     e.preventDefault();
-    document.getElementById('slug').value = FW.slugify(document.getElementById('name').value.trim());
+    document.getElementById('slug').value = FW.slug(document.getElementById('name').value.trim());
   }
 
   function toggleEditor (e) {
@@ -122,8 +122,8 @@ export const pageEdit = (state, emit, page) => {
     if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
     pg = { ...page };
     pg.name = name;
-    pg.slug = FW.slugify(slug);
-    pg.content = FW.inject.truncateImages(state.edits.content);
+    pg.slug = FW.slug(slug);
+    pg.content = FW.img.abbr(state.edits.content);
     pg.tags = getTagsArray().join(',');
     pg.parent = form.parent.value;
     if (process.env.EDITOR !== 'html') {

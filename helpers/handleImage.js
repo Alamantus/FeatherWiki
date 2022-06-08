@@ -1,4 +1,4 @@
-export function promptImageUpload (state, insert = () => {}) {
+export function upload (state, ins = () => {}) {
   if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
   FW.upload('image/*', file => {
     resizeImage(file, (img, w, h) => {
@@ -9,16 +9,22 @@ export function promptImageUpload (state, insert = () => {}) {
           size: [w, h],
           img,
         };
-        insert({ img, id });
+        ins({ img, id });
       }
     });
   });
 }
 
-export function insertImg (e, i, insert = () => {}) {
+// Given form event `e` and stored image data `i` do `ins()`
+export function put (e, i, ins = () => {}) {
   e.preventDefault();
   document.getElementById('g').close();
-  insert(i);
+  ins(i);
+}
+
+// Truncate image using its stored ID instead
+export function abbr (content) {
+  return content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
 }
 
 // Adapted from https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf

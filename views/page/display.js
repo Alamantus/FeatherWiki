@@ -1,7 +1,7 @@
 import raw from 'choo/html/raw';
 
 export const pageDisplay = (state, emit, page) => {
-  const { imageById, pageLink, targetBlank, headingIds } = FW.inject;
+  const { img, pg, out, hLink } = FW.inject;
   const { root, help } = state;
   const { content } = page;
   let c = content;
@@ -9,10 +9,10 @@ export const pageDisplay = (state, emit, page) => {
     // Only include snarkdown in the build if the editor is not html
     c = page.editor === 'md' ? md(content) : content;
   }
-  c = imageById(
-    pageLink(
-      headingIds(
-        targetBlank(c)
+  c = img(
+    pg(
+      hLink(
+        out(c)
       ),
       state
     ),

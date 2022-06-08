@@ -100,7 +100,7 @@ export const settingsView = (state, emit) => {
 
   function promptOverwrite () {
     FW.upload('text/html', file => {
-      FW.extract(file, result => {
+      FW.xtr(file, result => {
         if (result) {
           state.p = result[0];
           handleCustomCss(result[1]);

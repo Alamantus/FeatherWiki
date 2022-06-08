@@ -6,13 +6,13 @@ export const editor = (state) => {
 
   return [
     element,
-    html`<button onclick=${e => {e.preventDefault(); FW.img.promptImageUpload(state, insert)}}>Insert Image from File</button>`,
+    html`<button onclick=${e => {e.preventDefault(); FW.img.upload(state, insert)}}>Insert Image from File</button>`,
     html`<button onclick=${e => {e.preventDefault(); document.getElementById('g').showModal()}}>Add Existing Image</button>`,
     html`<dialog id=g>
       <form class=fr method=dialog>
         <button>Close</button>
       </form>
-      ${ gallery(state, () => {}, { insert: (e, i) => FW.img.insertImg(e, i, insert) }) }
+      ${ gallery(state, () => {}, { insert: (e, i) => FW.img.put(e, i, insert) }) }
     </dialog>`,
   ];
   

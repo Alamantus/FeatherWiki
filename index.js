@@ -23,10 +23,10 @@ if (process.env.EDITOR !== 'html') {
 
 window.FW = Choo({ hash: true });
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
-FW.slugify = slugify;
+FW.slug = slugify;
 FW.date = formatDate;
 FW.tidy = tidyArray;
-FW.extract = extractFeatherWikiData;
+FW.xtr = extractFeatherWikiData;
 FW.gen = generateWikiHtml;
 FW.img = img;
 FW.hash = hash;
