@@ -1,4 +1,4 @@
-import choo from 'choo';
+import Choo from 'choo';
 import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
@@ -20,34 +20,32 @@ if (process.env.EDITOR !== 'md') {
 if (process.env.EDITOR !== 'html') {
 	window.md = require('./helpers/snarkdownEnhanced').default;
 }
-window.FW = {
-	slugify,
-	date: formatDate,
-	tidy: tidyArray,
-	extract: extractFeatherWikiData,
-	gen: generateWikiHtml,
-	img,
-	hash,
-	inject,
-	json,
-	upload: uploadFile,
-};
 
-const app = choo({ hash: true });
+window.FW = Choo({ hash: true });
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
+FW.slugify = slugify;
+FW.date = formatDate;
+FW.tidy = tidyArray;
+FW.extract = extractFeatherWikiData;
+FW.gen = generateWikiHtml;
+FW.img = img;
+FW.hash = hash;
+FW.inject = inject;
+FW.json = json;
+FW.upload = uploadFile;
 
 if (process.env.NODE_ENV !== 'production') {
-	app.use(require('choo-devtools')());
+	FW.use(require('choo-devtools')());
 }
 
-app.use(initState);
-app.use(initEmitter);
-app.use(state => addEventListener('beforeunload', event => {
+FW.use(initState);
+FW.use(initEmitter);
+FW.use(state => addEventListener('beforeunload', event => {
 	if (state.changed) {
 		event.preventDefault();
 		return event.returnValue = "Lose unsaved changes?";
 	}
 }, { capture: true }));
-app.route('/:p', globalView);
-app.mount('body');
-window.choo = app;
+FW.route('/:p', globalView);
+FW.mount('body');
+window.choo = FW; // Don't break 1.3.0 extensions
