@@ -156,6 +156,9 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
         // Remove generated JS files
         fs.unlink(jsBuildPath, () => {});
         fs.unlink(jsOutPath, () => {});
+
+        // remove choo's window restriction in Choo.prototype.toString()
+        output = output.toString().replace(/.\.notEqual\(typeof window,"object","choo\.mount: window was found\. \.toString\(\) must be called in Node, use \.start\(\) or \.mount\(\) if running in the browser"\);/i, '');
         
         // Since there's regex stuff in here, I can't do replace!
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need

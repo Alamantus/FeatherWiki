@@ -56,12 +56,15 @@ async function handleBuildResult (result) {
     outdir: 'build',
   });
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
-    const output = new TextDecoder().decode(out.contents);
+    let output = new TextDecoder().decode(out.contents);
     const outputKb = out.contents.byteLength * 0.000977;
     console.info(out.path, outputKb.toFixed(3) + ' kb');
     if (/\.css$/.test(out.path)) {
       html = html.replace('{{cssOutput}}', output);
     } else if (/\.js$/.test(out.path)) {
+      // remove choo's window restriction in Choo.prototype.toString()
+      output = output.toString().replace(/assert\.notEqual\(typeof window, "object", "choo\.mount: window was found\. \.toString\(\) must be called in Node, use \.start\(\) or \.mount\(\) if running in the browser"\);/i, '');
+      
       // Since there's regex stuff in here, I can't do replace!
       const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
       html = htmlParts[0] + output + htmlParts[1];
