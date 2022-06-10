@@ -1,6 +1,6 @@
 // Generate full html doc for saving. See also index.html
 export function generateWikiHtml(state) {
-  const { a, s, c, p, j } = state;
+  const { a, s, c, p, j, views } = state;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +17,12 @@ export function generateWikiHtml(state) {
   ${j ? `<script id=j>${j}</script>` : ''}
 </head>
 <body>
-  <a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript is required</a>
+  <header>
+  <h1>${p.name}</h1>
+  ${ p.desc ? `<p>${p.desc}</p>` : ''}
+  </header>
+  <main>${views.a(state)[1].innerHTML}</main>
+  <footer><a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript required to edit</a></footer>
 </body>
 </html>`;
 }
