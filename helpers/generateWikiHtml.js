@@ -22,7 +22,7 @@ export function generateWikiHtml(state) {
   ${ p.desc ? `<p>${p.desc}</p>` : ''}
   </header>
   <main>${views.a(state)[1].innerHTML}</main>
-  <footer><a href="https://codeberg.org/Alamantus/FeatherWiki#versions">JavaScript required to edit</a></footer>
+  <footer><a href="https://src.feather.wiki/#versions">JavaScript required to edit</a></footer>
 </body>
 </html>`;
 }
