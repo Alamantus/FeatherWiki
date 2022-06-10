@@ -103,8 +103,8 @@ export const settingsView = (state, emit) => {
 
   function handleCustomJs (content) {
     if (content.trim()) {
+      if (state.j !== content) alert('You must save & reload to run your JavaScript');
       state.j = content;
-      alert('You must save & reload to run your JavaScript');
     } else {
       delete state.j;
     }
