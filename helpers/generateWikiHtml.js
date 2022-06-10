@@ -15,7 +15,6 @@ export function generateWikiHtml(state) {
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
   <script id="a">${a}</script>
-  ${j ? `<script id=j>${j}</script>` : ''}
 </head>
 <body>
   <header>
@@ -24,6 +23,7 @@ export function generateWikiHtml(state) {
   </header>
   <main>${content}</main>
   <footer><a href="https://src.feather.wiki/#versions">JavaScript required to edit</a></footer>
+  ${j ? `<script id=j>${j}</script>` : ''}
 </body>
 </html>`;
 }
