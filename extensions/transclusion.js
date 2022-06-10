@@ -1,8 +1,8 @@
 // This extension finds any content between double braces {{like_this}} and looks for a page with a matching
 // slug. If found, the braced content will be replaced with the content of the target page within an `article`
 // tag with a class of `transclusion` so it can be targeted and styled.
-if (!window.choo._loaded) window.choo.use(transclusionExtension);
-else (({state, emitter}) => transclusionExtension(state, emitter))(window.choo);
+if (!window.FW._loaded) window.FW.use(transclusionExtension);
+else (({state, emitter}) => transclusionExtension(state, emitter))(window.FW);
 
 function transclusionExtension (state, emitter) {
   const { events } = state;
@@ -13,8 +13,8 @@ function transclusionExtension (state, emitter) {
       }, 200);
     });
   });
-  if (window.choo._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
-  
+  if (window.FW._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
+
   function injectTransclusion() {
     if (state.pg) {
       const uc = document.querySelector('.uc');

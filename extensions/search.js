@@ -1,8 +1,8 @@
 // This extension adds Fuse.js from a CDN, creates a search results view, adds a search bar to the menu each render,
 // and displays search results when you press enter within the search box. This can likely be expanded or improved,
 // but it should at least get you started!
-if (!window.choo._loaded) window.choo.use(searchExtension);
-else (({state, emitter}) => searchExtension(state, emitter))(window.choo);
+if (!window.FW._loaded) window.FW.use(searchExtension);
+else (({state, emitter}) => searchExtension(state, emitter))(window.FW);
 
 function searchExtension (state, emitter) {
   const fuseScript = document.createElement('script');
@@ -23,7 +23,7 @@ function searchExtension (state, emitter) {
       }, 10);
     });
   })
-  if (window.choo._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
+  if (window.FW._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
 
   function renderSearchBar () {
     if (!!document.getElementById('searchBar')) return;
