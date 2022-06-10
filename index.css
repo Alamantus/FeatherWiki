@@ -35,6 +35,30 @@ input, select, textarea {
   padding: .5rem;
 }
 
+/* Heading & title */
+h1, h2, h3, h4, h5, h6, .t {
+  font-weight: bold;
+  margin: .5rem 0;
+}
+h1 {
+  font-size: 1.6rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3, .t {
+  font-size: 1.4rem;
+}
+h4 {
+  font-size: 1.3rem;
+}
+h5 {
+  font-size: 1.2rem;
+}
+h6 {
+  font-size: 1.1rem;
+}
+
 .np { max-width: 8rem; }
 button, summary {
   text-align: center;
@@ -91,11 +115,6 @@ blockquote {
 
 abbr[title] { cursor: help; }
 
-/* title */
-.t {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
 .sb { background: #ddd; }
 /* default width for all widths is 100% for small screens—no columns */
 .w1, .w34, .w12, .w14, .r, main { width: 100%; }
