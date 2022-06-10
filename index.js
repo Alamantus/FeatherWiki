@@ -14,6 +14,7 @@ import { uploadFile } from './helpers/uploadFile';
 
 // Populate window with dependencies and helpers before starting app
 window.html = require('choo/html');
+html.raw = require('choo/html/raw');
 if (process.env.EDITOR !== 'md') {
 	window.pell = require('pell');
 }
