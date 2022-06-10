@@ -93,7 +93,7 @@ Promise.all(builds).then(async results => {
   const filePath = path.resolve(process.cwd(), 'README.md');
   let readme = await fs.promises.readFile(filePath, 'utf8');
   results.forEach(result => {
-    const regex = new RegExp(`${result.version}:\\*\\* \`[\\d.]+ kb\``);
+    const regex = new RegExp(`${result.version}:\\*\\* \`[\\d.]+ KB\``);
     readme = readme.replace(regex, `${result.version}:** \`${result.size}\``);
   });
   await fs.writeFile(filePath, readme, (err) => {
@@ -137,7 +137,7 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
     for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
       let output = new TextDecoder().decode(out.contents);
       // const outputKb = out.contents.byteLength * 0.000977;
-      // console.info(`${out.path} (${cuteName})`, outputKb.toFixed(3) + ' kb');
+      // console.info(`${out.path} (${cuteName})`, outputKb.toFixed(3) + ' KB');
       if (/\.css$/.test(out.path)) {
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
@@ -201,7 +201,7 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
     }
     const filePath = path.resolve(outputDir, `FeatherWiki_${cuteName}.html`);
     const outHtml = minify(html, minifyOptions);
-    const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kb';
+    const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' KB';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
       console.info(filePath, outputKb);

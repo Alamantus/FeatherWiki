@@ -58,7 +58,7 @@ async function handleBuildResult (result) {
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
     let output = new TextDecoder().decode(out.contents);
     const outputKb = out.contents.byteLength * 0.000977;
-    console.info(out.path, outputKb.toFixed(3) + ' kb');
+    console.info(out.path, outputKb.toFixed(3) + ' KB');
     if (/\.css$/.test(out.path)) {
       html = html.replace('{{cssOutput}}', output);
     } else if (/\.js$/.test(out.path)) {
@@ -110,7 +110,7 @@ async function writeHtmlOutput (html) {
   await fs.writeFile(outputFilePath, html, (err) => {
     if (err) throw err;
     const outputKb = Uint8Array.from(Buffer.from(html)).byteLength * 0.000977;
-    console.info(outputFilePath, outputKb.toFixed(3) + ' kb');
+    console.info(outputFilePath, outputKb.toFixed(3) + ' KB');
   });
 }
 
