@@ -9,57 +9,29 @@ export const settingsView = (state, emit) => {
     </header>`,
     html`<article class=mw>
       <form onsubmit=${saveSettings} class=pb>
-        <div class=r>
-          <label class="c tr ml w14" for=wTitle>Wiki Title</label>
-          <div class="c w34">
-            <input class=w1 id=wTitle value=${p.name} minlength=1 required>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=wDesc>Wiki Description</label>
-          <div class="c w34">
-            <input class=w1 id=wDesc value=${p.desc}>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=home>Home Page</label>
-          <div class="c w34">
-            <select id=home>
-              <option value="" selected=${!p.home}>All Pages (default)</option>
-              ${
-                p.pages.map(pg => {
-                  return html`<option selected=${pg.id === p.home} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
-                })
-              }
-            </select>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=wPo>Page Order</label>
-          <div class="c w34">
-            <textarea id=wPo>${o}</textarea>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=wCss>Custom CSS</label>
-          <div class="c w34">
-            <textarea id=wCss>${c}</textarea>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=wJs>Custom JS</label>
-          <div class="c w34">
-            <span class=h>Only runs once on wiki load. To test, save your wiki & load that file.</span>
-            <textarea id=wJs>${j}</textarea>
-          </div>
-        </div>
-        <div class=r>
-          <label class="c tr ml w14" for=wPub>Publish</label>
-          <div class="c w34">
-            <input id=wPub type=checkbox checked=${p.published ?? false}>
-            <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
-          </div>
-        </div>
+        <label for=wTitle>Wiki Title</label>
+        <input class=w1 id=wTitle value=${p.name} minlength=1 required>
+        <label for=wDesc>Wiki Description</label>
+        <input class=w1 id=wDesc value=${p.desc}>
+        <label for=home>Home Page</label>
+        <select id=home>
+          <option value="" selected=${!p.home}>All Pages (default)</option>
+          ${
+            p.pages.map(pg => {
+              return html`<option selected=${pg.id === p.home} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
+            })
+          }
+        </select>
+        <label for=wPo>Page Order</label>
+        <textarea id=wPo>${o}</textarea>
+        <label for=wCss>Custom CSS</label>
+        <textarea id=wCss>${c}</textarea>
+        <label for=wJs>Custom JS</label>
+        <span class=h>Only runs once on wiki load. To test, save your wiki & load that file.</span>
+        <textarea id=wJs>${j}</textarea>
+        <label for=wPub>Publish</label>
+        <input id=wPub type=checkbox checked=${p.published ?? false}>
+        <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
         <div class=tr>
           <button type="submit">Update</button>
         </div>
