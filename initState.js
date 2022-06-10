@@ -29,7 +29,7 @@ export const initState = state => {
       const b = [];
       let parent = state.help.getParent(p);
       while (parent) {
-        b.push(parent);
+        b.unshift(parent);
         parent = state.help.getParent(parent);
       }
       return b;
