@@ -9,21 +9,9 @@ export const pagesView = (state, emit) => {
       <ul>
         ${
           p.pages.filter(pg => !pg.parent)
-            .map(page => getChildrenList(page))
+            .map(page => help.getChildList(page))
         }
       </ul>
     </article>`
   ];
-
-  function getChildrenList(page) {
-    const children = help.getChildren(page);
-    return html`<li>
-      <a href="?page=${page.slug}">${page.name}</a>
-      ${
-        children.length > 0
-        ? html`<ul>${children.map(pg => getChildrenList(pg))}</ul>`
-        : ''
-      }
-    </li>`;
-  }
 }

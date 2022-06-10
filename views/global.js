@@ -1,6 +1,7 @@
 export const globalView = (state, emit) => {
   const {
     root,
+    help,
     pg,
     p,
     t,
@@ -72,7 +73,7 @@ export const globalView = (state, emit) => {
           ${
             sbTab === 'Pages'
             ? html`<ul>
-              ${parents.map(pp => html`<li><a href="${root}?page=${pp.slug}">${pp.name}</a></li>`)}
+              ${parents.map(pp => help.getChildList(pp, true))}
               <li><a href="${root}?page=a">All Pages</a></li>
             </ul>` : ''
           }

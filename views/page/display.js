@@ -32,7 +32,7 @@ export const pageDisplay = (state, emit, page) => {
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>
       <ul>
-        ${children.map(c => html`<li><a href="${root}?page=${c.slug}">${c.name}</a></li>`)}
+        ${children.map(c => help.getChildList(c, true))}
       </ul>
     </footer>` : null,
   ];

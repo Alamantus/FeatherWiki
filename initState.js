@@ -25,6 +25,23 @@ export const initState = state => {
     },
     getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
     getChildren: p => state.p.pages.filter(pg => pg.parent === p?.id),
+    getChildList: (p, collapse) => {
+      const { getChildren, getChildList } = state.help;
+      const children = getChildren(p);
+      const current = state.pg?.slug;
+      const isCurrent = current === p.slug;
+      const expand = (ch) => isCurrent || (ch.find(c => c.slug === current || expand(getChildren(c))) ?? false);
+      const link = [
+        html`<a href="?page=${p.slug}" class=${isCurrent ? 'a' : ''}>${p.name}</a>`,
+        children.length > 0
+          ? html`<ul>${children.map(pg => getChildList(pg, collapse))}</ul>`
+          : '',
+      ]
+      const el = collapse && link[1] ? html`<details open=${expand(children)}><summary>${link[0]}</summary>${link[1]}</details>` : link;
+      return html`<li>
+        ${el}
+      </li>`;
+    },
     breadcrumb: p => {
       const b = [];
       let parent = state.help.getParent(p);

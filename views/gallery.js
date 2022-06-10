@@ -24,7 +24,7 @@ export const gallery = (state, emit, options = {}) => {
               showUsed
               ? [
                 html`<details>
-                  <summary>Used in ${i.pgs.length} pages</summary>
+                  <summary class=b>Used in ${i.pgs.length} pages</summary>
                   <ul>
                     ${ i.pgs.map(pg => html`<li><a href="${root}?page=${pg.slug}">${pg.name}</a></li>`) }
                   </ul>

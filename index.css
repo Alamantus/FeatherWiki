@@ -60,7 +60,7 @@ h6 {
 }
 
 .np { max-width: 8rem; }
-button, summary {
+button, summary:is(.np, .b) {
   text-align: center;
   color: #fff;
   padding: 5px 12px;
@@ -97,6 +97,7 @@ a.e:after {
 
 nav ul { list-style: none; }
 ul, ol { padding: 0 0 0 1rem; }
+nav li summary { text-indent: -1rem; }
 
 label { display: block; }
 
@@ -127,6 +128,7 @@ abbr[title] { cursor: help; }
 }
 .a {
   background: #87C;
+  color: #fff;
 }
 @media(min-width:50rem) {
   /* row */
