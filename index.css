@@ -25,7 +25,7 @@ html, body {
   margin: .5rem 0;
 }
 
-main > * { padding: 1rem 1.5rem; }
+main > * { padding: 1rem 1.5rem 2rem; }
 
 #g:not([open]), .sb .n {
   display: none;

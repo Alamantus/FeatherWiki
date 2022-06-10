@@ -29,6 +29,9 @@ export const settingsView = (state, emit) => {
         <label for=wJs>Custom JS</label>
         <span class=h>Only runs once on wiki load. To test, save your wiki & load that file.</span>
         <textarea id=wJs>${j}</textarea>
+        <label for=wOut>Include Static HTML</label>
+        <input id=wOut type=checkbox checked=${p.static ?? false}>
+        <span class=h>Include your wiki content in simple HTML for non-JS browsers. Nearly doubles output size.</span>
         <label for=wPub>Publish</label>
         <input id=wPub type=checkbox checked=${p.published ?? false}>
         <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
@@ -65,6 +68,7 @@ export const settingsView = (state, emit) => {
     state.p.pages.sort((a, b) => sort.indexOf(a.slug) < sort.indexOf(b.slug) ? -1 : 1);
     handleCustomCss(form.wCss.value);
     handleCustomJs(form.wJs.value);
+    state.p.static = form.wOut.checked;
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
     emit(events.NOTIFY, 'Settings updated');
