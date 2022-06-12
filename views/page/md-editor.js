@@ -1,4 +1,4 @@
-import { gallery } from '../gallery';
+import { modal } from '../gallery';
 
 export const editor = (state) => {
   const textChange = event => state.edits.content = event.target.value;
@@ -8,12 +8,7 @@ export const editor = (state) => {
     element,
     html`<button onclick=${e => {e.preventDefault(); FW.img.upload(state, insert)}}>Insert Image from File</button>`,
     html`<button onclick=${e => {e.preventDefault(); document.getElementById('g').showModal()}}>Add Existing Image</button>`,
-    html`<dialog id=g>
-      <form class=fr method=dialog>
-        <button>Close</button>
-      </form>
-      ${ gallery(state, () => {}, { insert: (e, i) => FW.img.put(e, i, insert) }) }
-    </dialog>`,
+    modal(state, insert),
   ];
   
   // Modified from https://stackoverflow.com/a/19961519

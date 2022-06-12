@@ -1,4 +1,4 @@
-import { gallery } from '../gallery';
+import { modal } from '../gallery';
 
 export const editor = (state, emit) => {
   const { init, exec } = pell; // From `window`
@@ -66,12 +66,7 @@ export const editor = (state, emit) => {
     html`<div class="w1 tr pb">
       <button onclick=${toggleShowSource}>${src ? 'Show Editor' : 'Show HTML'}</button>
     </div>`,
-    html`<dialog id=g>
-      <form class=fr method=dialog>
-        <button>Close</button>
-      </form>
-      ${ gallery(state, () => {}, { insert: (e, i) => FW.img.put(e, i, insert) }) }
-    </dialog>`,
+    modal(state, insert),
   ];
 
   function insert (i) {

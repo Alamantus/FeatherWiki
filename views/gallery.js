@@ -8,33 +8,32 @@ export const gallery = (state, emit, options = {}) => {
   const images = getImageDetails();
 
   return html`<section>
-      <h1>Existing Images</h1>
-      ${
-        images.map(i => html`<div class="ib at ed w14">
-          <div class=g>
-            <img src=${i.img} class=w1 aria-describedby=alt />
-            <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
-            <div class=pb>
-              <button onclick=${e => viewImage(e, i.img)}>View</button>
-              ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
-              ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
-              ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
-            </div>
-            ${
-              showUsed
-              ? [
-                html`<details>
-                  <summary class=b>Used in ${i.pgs.length} pages</summary>
-                  <ul>
-                    ${ i.pgs.map(pg => html`<li><a href="${root}?page=${pg.slug}">${pg.name}</a></li>`) }
-                  </ul>
-                </details>`
-              ] : ''
-            }
+    <h1>Existing Images</h1>
+    ${
+      images.map(i => html`<div class="ib at ed w14">
+        <div class=g>
+          <img src=${i.img} class=w1 aria-describedby=alt />
+          <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
+          <div class=pb>
+            <button onclick=${e => viewImage(e, i.img)}>View</button>
+            ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
+            ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
+            ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
           </div>
-        </div>`)
-      }
-    </article>
+          ${
+            showUsed
+            ? [
+              html`<details>
+                <summary class=b>Used in ${i.pgs.length} pages</summary>
+                <ul>
+                  ${ i.pgs.map(pg => html`<li><a href="${root}?page=${pg.slug}">${pg.name}</a></li>`) }
+                </ul>
+              </details>`
+            ] : ''
+          }
+        </div>
+      </div>`)
+    }
   </section>`;
 
   function getImageDetails() {
@@ -79,4 +78,13 @@ export const gallery = (state, emit, options = {}) => {
     }
     emit(events.CHECK_CHANGED);
   }
+}
+
+export const modal = (state, insert) => {
+  return html`<dialog id=g>
+    <form class=fr method=dialog>
+      <button>Close</button>
+    </form>
+    ${ gallery(state, () => {}, { insert: (e, i) => FW.img.put(e, i, insert) }) }
+  </dialog>`;
 }

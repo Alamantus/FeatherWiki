@@ -67,6 +67,7 @@ button, summary:is(.np, .b) {
   background-color: #65A;
   border: 0;
   border-radius: 1rem;
+  z-index: 2;
 }
 a, button, summary, .noti { cursor: pointer; }
 a {
