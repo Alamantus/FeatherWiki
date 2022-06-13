@@ -113,6 +113,7 @@ blockquote {
   border-radius: 6px;
   background-color: #eee;
   line-height: 1.5;
+  overflow-x: auto;
 }
 
 abbr[title] { cursor: help; }
