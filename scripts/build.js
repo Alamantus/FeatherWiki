@@ -144,8 +144,12 @@ function build(buildEditor = 'both', buildTarget = 'es2015', ruffled = false) {
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
         if (!ruffled) {
-          const jsBuildPath = path.resolve(process.cwd(), 'develop', cuteName + '.js');
-          const jsOutPath = path.resolve(process.cwd(), 'develop', cuteName + '_compressed.js');
+          const developDir = path.resolve(process.cwd(), 'develop');
+          if (!fs.existsSync(developDir)) {
+            fs.mkdirSync(developDir);
+          }
+          const jsBuildPath = path.resolve(developDir, cuteName + '.js');
+          const jsOutPath = path.resolve(developDir, cuteName + '_compressed.js');
           output = await new Promise(resolve => {
             fs.writeFileSync(jsBuildPath, output);
             // Compress the JS even more
