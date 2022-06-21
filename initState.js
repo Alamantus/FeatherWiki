@@ -8,6 +8,7 @@ export const initState = state => {
   if (state.root.length < 1) state.root = '/';
   state.sb = false; // show sidebar
   state.sbTab = 'Pages';
+  state.sbx = new Set(); // expanded sidebar menu items
   state.recent = [];
   state.edit = false;
   state.edits = null; // Edit store
@@ -30,14 +31,24 @@ export const initState = state => {
       const children = getChildren(p);
       const current = state.pg?.slug;
       const isCurrent = current === p.slug;
-      const expand = (ch) => isCurrent || (ch.find(c => c.slug === current || expand(getChildren(c))) ?? false);
+      // Expand if the menu item is the current page, if it was opened manually, or if one of its children is the current page
+      const expand = (ch) => isCurrent || state.sbx.has(p.id) || (ch.find(c => c.slug === current || expand(getChildren(c))) ?? false);
       const link = [
         html`<a href="?page=${p.slug}" class=${isCurrent ? 'a' : ''}>${p.name}</a>`,
         children.length > 0
           ? html`<ul>${children.map(pg => getChildList(pg, collapse))}</ul>`
           : '',
       ]
-      const el = collapse && link[1] ? html`<details open=${expand(children)}><summary>${link[0]}</summary>${link[1]}</details>` : link;
+      // If getChildList is passed with `collapse == true`, use a details element to allow collapsing the list
+      const el = collapse && link[1]
+        ? html`<details open=${expand(children)}
+          onclick=${e => state.sbx.add(p.id)}
+          ontoggle=${e => { if (!e.target.open) state.sbx.delete(p.id) }}
+        >
+          <summary>${link[0]}</summary>
+          ${link[1]}
+        </details>`
+        : link;
       return html`<li>
         ${el}
       </li>`;
