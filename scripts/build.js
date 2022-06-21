@@ -62,18 +62,20 @@ const letsVarConstsPlugin = {
 
 const cuteNames = {
   'both_es2015': 'Dove',
-  // 'both_es2022': 'Robin',
   'both_server': 'Tern',
   'md_es2015': 'Chickadee',
-  // 'md_es2022': 'Hummingbird',
   'md_server': 'Bluethroat',
   'html_es2015': 'Finch',
-  // 'html_es2022': 'Sparrow',
   'html_server': 'Swallow',
 };
 
 const version = process.argv[2];
-const target = process.argv[3];
+let target = process.argv[3];
+let excludeClosureCompiler = false;
+if (target === 'ruffled') {
+  target = 'es2015';
+  excludeClosureCompiler = true;
+}
 
 // This is me spending way too much time just to be lazy
 const buildVersions = Object.keys(cuteNames);
@@ -87,7 +89,7 @@ const builds = (
   )
 ).map(nameKey => {
   const args = nameKey.split('_');
-  return build(args[0], args[1]);
+  return build(args[0], args[1], excludeClosureCompiler);
 });
 Promise.all(builds).then(async results => {
   const filePath = path.resolve(process.cwd(), 'README.md');
@@ -102,7 +104,7 @@ Promise.all(builds).then(async results => {
   });
 })
 
-function build(buildEditor = 'both', buildTarget = 'es2015') {
+function build(buildEditor = 'both', buildTarget = 'es2015', ruffled = false) {
   const cuteName = cuteNames[buildEditor + '_' + buildTarget];
   return esbuild.build({
     entryPoints: ['index.js'],
@@ -122,7 +124,7 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
     ],
     platform: 'browser',
     format: 'iife',
-    target: [ buildTarget === 'server' ? 'es2015' : buildTarget ],
+    target: 'es2015',
     outdir: 'build',
   }).then(async result => {
     const fileName = path.relative(process.cwd(), 'index.html');
@@ -141,21 +143,23 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
       if (/\.css$/.test(out.path)) {
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
-        const jsBuildPath = path.resolve(process.cwd(), 'develop', cuteName + '.js');
-        const jsOutPath = path.resolve(process.cwd(), 'develop', cuteName + '_compressed.js');
-        output = await new Promise(resolve => {
-          fs.writeFileSync(jsBuildPath, output);
-          // Compress the JS even more
-          exec(`npx google-closure-compiler --js=${jsBuildPath} --js_output_file=${jsOutPath}`, {
-            maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
-          }, (err) => {
-            if (err) throw err;
-            resolve(fs.readFileSync(jsOutPath));
+        if (!ruffled) {
+          const jsBuildPath = path.resolve(process.cwd(), 'develop', cuteName + '.js');
+          const jsOutPath = path.resolve(process.cwd(), 'develop', cuteName + '_compressed.js');
+          output = await new Promise(resolve => {
+            fs.writeFileSync(jsBuildPath, output);
+            // Compress the JS even more
+            exec(`npx google-closure-compiler --js=${jsBuildPath} --js_output_file=${jsOutPath}`, {
+              maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
+            }, (err) => {
+              if (err) throw err;
+              resolve(fs.readFileSync(jsOutPath));
+            });
           });
-        });
-        // Remove generated JS files
-        fs.unlink(jsBuildPath, () => {});
-        fs.unlink(jsOutPath, () => {});
+          // Remove generated JS files
+          fs.unlink(jsBuildPath, () => {});
+          fs.unlink(jsOutPath, () => {});
+        }
 
         // remove choo's window restriction in Choo.prototype.toString()
         output = output.toString().replace(/.\.notEqual\(typeof window,"object","choo\.mount: window was found\. \.toString\(\) must be called in Node, use \.start\(\) or \.mount\(\) if running in the browser"\);/i, '');
@@ -199,7 +203,7 @@ function build(buildEditor = 'both', buildTarget = 'es2015') {
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
     }
-    const filePath = path.resolve(outputDir, `FeatherWiki_${cuteName}.html`);
+    const filePath = path.resolve(outputDir, `FeatherWiki_${ruffled ? 'ruffled-' : ''}${cuteName}.html`);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' KB';
     await fs.writeFile(filePath, outHtml, (err) => {
