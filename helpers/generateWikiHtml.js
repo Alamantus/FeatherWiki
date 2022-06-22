@@ -1,6 +1,6 @@
 // Generate full html doc for saving. See also index.html
 export function generateWikiHtml(state) {
-  const { a, s, c, p, j, views } = state;
+  const { c, p, j, views } = state;
   const content = (p.static ? staticHtml() : views.a(state)[1]).outerHTML;
   return `<!DOCTYPE html>
 <html lang="en">
@@ -11,10 +11,10 @@ export function generateWikiHtml(state) {
   ${p.desc ? `<meta name="description" content="${p.desc.replace(/"/g, '\\"')}">` : ''}
   <meta name="version" content="{{buildVersion}}_{{package.json:version}}" />
   <meta name="application-name" content="{{package.json: title}}" />
-  <style id="s">${s}</style>
+  <style id="s">${document.getElementById('s').innerHTML}</style>
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
-  <script id="a">${a}</script>
+  <script id="a">${document.getElementById('a').innerHTML}</script>
 </head>
 <body>
   <header>

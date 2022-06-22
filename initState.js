@@ -92,8 +92,6 @@ export const initState = state => {
     p: pageView,
   };
 
-  state.a = document.getElementById('a').innerHTML;
-  state.s = document.getElementById('s').innerHTML;
   state.c = document.getElementById('c')?.innerHTML ?? '';
   state.j = document.getElementById('j')?.innerHTML ?? '';
   try {
