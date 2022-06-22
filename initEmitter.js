@@ -119,6 +119,12 @@ export const initEmitter = (state, emitter) => {
     emit(events.RENDER);
   });
 
+  emitter.on(events.CANCEL_EDIT, () => {
+    if (keepEditing()) return;
+    stopEdit();
+    emit(events.RENDER);
+  });
+
   emitter.on(events.UPDATE_PAGE, (page) => {
     const { p } = state;
     if (p.pages.some(pg => pg.slug === page.slug && pg.id !== page.id)) {

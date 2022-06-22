@@ -69,6 +69,7 @@ export const initState = state => {
     HANDLE_404: '404',
     CREATE_PAGE: 'cp',
     START_EDIT: 'se',
+    CANCEL_EDIT: 'ce',
     UPDATE_PAGE: 'up',
     DELETE_PAGE: 'dp',
     COLLECT_TAGS: 'ct',

@@ -1,5 +1,5 @@
 export const pageEdit = (state, emit, page) => {
-  const { edits, p, help } = state;
+  const { events, edits, p, help } = state;
   const children = help.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
@@ -20,7 +20,7 @@ export const pageEdit = (state, emit, page) => {
         state.edits.content = FW.img.abbr(content);
       }
       state.edits.useMd = !useMd;
-      emit(state.events.RENDER);
+      emit(events.RENDER);
     }
     editor = [
       html`<div class="w1 tr">
@@ -78,8 +78,10 @@ export const pageEdit = (state, emit, page) => {
         <div class=pb><button type=submit>Save</button></div>
         ${
           !isNew
-          ? html`<div><button class=del onclick=${e => deletePage(e)}>Delete</button></div>`
-          : ''
+          ? [
+            html`<div class=pb><button onclick=${e => {e.preventDefault(); emit(events.CANCEL_EDIT)}}>Cancel</button></div>`,
+            html`<div><button class=del onclick=${e => deletePage(e)}>Delete</button></div>`,
+          ] : ''
         }
       </div>
     </footer>
@@ -93,7 +95,7 @@ export const pageEdit = (state, emit, page) => {
   function store (e) {
     const t = e.target;
     state.edits[t.id] = t.value;
-    emit(state.events.RENDER);
+    emit(events.RENDER);
   }
 
   function getTagsArray () {
@@ -106,7 +108,7 @@ export const pageEdit = (state, emit, page) => {
       const tags = getTagsArray();
       if (!tags.includes(tag)) {
         edits.tags += (tags.length > 0 ? ',' : '') + tag;
-        emit(state.events.RENDER);
+        emit(events.RENDER);
       }
     }
     e.target.value = '';
@@ -128,13 +130,13 @@ export const pageEdit = (state, emit, page) => {
     if (process.env.EDITOR !== 'html') {
       if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
     }
-    emit(state.events.UPDATE_PAGE, pg);
+    emit(events.UPDATE_PAGE, pg);
   }
 
   function deletePage (e) {
     e.preventDefault();
     if (confirm('You can\'t undo this after saving your wiki! Delete this page?')) {
-      emit(state.events.DELETE_PAGE, page.id);
+      emit(events.DELETE_PAGE, page.id);
     }
   }
 }
