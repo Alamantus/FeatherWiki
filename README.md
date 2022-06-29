@@ -17,11 +17,11 @@ version.
 In _most_ cases, this is the section you want to choose from. These versions will run on browsers running JavaScript with at least
 [ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
-- **Dove:** `64.584 KB`
+- **Dove:** `64.837 KB`
   - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `60.656 KB`
+- **Finch:** `60.916 KB`
   - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `59.508 KB`
+- **Chickadee:** `59.766 KB`
   - Includes _only_ Markdown editor.
 
 <details>
@@ -68,11 +68,11 @@ example of how to implement the PUT-save feature—if you work on an implementat
 
 These versions are specifically named after migratory birds of different sizes to reflect their travel to the server from your browser!
 
-- **Tern:** `65.559 KB`
+- **Tern:** `65.812 KB`
   - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Swallow:** `61.639 KB`
+- **Swallow:** `61.899 KB`
   - Includes _only_ WYSIWYG editor.
-- **Bluethroat:** `60.487 KB`
+- **Bluethroat:** `60.747 KB`
   - Includes _only_ Markdown editor.
 
 ## Contribution
