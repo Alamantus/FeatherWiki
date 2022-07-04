@@ -19,7 +19,7 @@ function htmlToMarkdownExtension (state, emitter) {
     emitter.on(ev, () => {
       setTimeout(() => { // Adds a very small delay so it injects after render when elements exist in DOM
         convertHtmlToMarkdown();
-      }, 10);
+      }, 50);
     });
   })
   if (window.FW._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
