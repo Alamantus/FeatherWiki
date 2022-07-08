@@ -36,7 +36,7 @@ function transclusionExtension (state, emitter) {
         const pageContent = img(
           pg(
             hLink(
-              out(`<h1 id=${page.slug}>${page.name} <a href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.content}`)
+              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.content}`)
             ),
             state
           ),
