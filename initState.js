@@ -102,10 +102,10 @@ export const initState = state => {
     p: pageView,
   };
 
-  state.c = document.getElementById('c')?.innerHTML ?? '';
-  state.j = document.getElementById('j')?.innerHTML ?? '';
+  state.c = document.querySelector('style#c')?.innerHTML ?? '';
+  state.j = document.querySelector('script#j')?.innerHTML ?? '';
   try {
-    state.p = FW.json.decompress(JSON.parse(document.getElementById('p').innerHTML));
+    state.p = FW.json.decompress(JSON.parse(document.querySelector('script#p').innerHTML));
   } catch (e) {
     state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
