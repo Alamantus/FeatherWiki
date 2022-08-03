@@ -7,10 +7,12 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+
+import { globalView } from "../views/global";
+
 // Generate full html doc for saving. See also index.html
 export function generateWikiHtml(state) {
-  const { c, p, j, views } = state;
-  const content = (p.static ? staticHtml() : views.a(state)[1]).outerHTML;
+  const { c, p, j } = state;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,44 +28,42 @@ export function generateWikiHtml(state) {
   <script id="a">${document.getElementById('a').innerHTML}</script>
 </head>
 <body>
-  <header>
-  <h1>${p.name}</h1>
-  ${ p.desc ? `<p>${p.desc}</p>` : ''}
-  </header>
-  <main>${content}</main>
+  ${staticExport()}
   <footer><a href="https://src.feather.wiki/#versions">JavaScript required to edit</a></footer>
   ${j ? `<script id=j>${j}</script>` : ''}
 </body>
 </html>`;
-}
 
-export function staticHtml() {
-  const { state } = FW;
-  const { pages } = state.p;
-  const { img, out } = FW.inject;
-  return html`<div>
-  ${pages.map(pg => {
-    let c = pg.content;
-    if (process.env.EDITOR !== 'html') {
-      c = pg.editor === 'md' ? md(c) : c;
+  function staticExport() {
+    const st = { ...state, edit: false, query: { page: 'a' }, p: { ...p, published: true } };
+    const doc = globalView(st);
+    doc.querySelector('.sb .tabs').remove();
+    if (p.static) {
+      // If "Include Static HTML" is checked, adjust URLs
+      const page = doc.querySelector('main>section');
+      page.parentElement.replaceChild(allPagesHtml(), page);
+      // Remove "All Pages" link
+      doc.querySelector('.sb>nav>ul>li:last-child').remove();
     }
-    c = img(pgAnchor(out(c)), state);
-    return html`<article>
-      <h1 id=${pg.slug}>${pg.name}</h1>
-      <section>${html.raw(c)}</section>
-    </article>`
-  })}
-  </div>`;
-
-  function pgAnchor (c) {
-    (c?.match(/\[\[.+?(?=\]\])/g) ?? []).forEach(l => {
-      const match = l.replace('[[', '').split('|');
-      const slug = match[1] ? match[1].trim() : FW.slug(match[0]);
-      c = c.replace(
-        `${l}]]`,
-        `<a href="#${slug}">${match[0]}</a>`
-      );
+    doc.querySelectorAll('a').forEach(a => {
+      a.classList.remove('a')
+      a.href = a.href.includes('#') ? a.href.replace(/.+(#.+)$/, '$1') : (
+        p.static && a.href.includes(`${state.root}?page=`) ? a.href.replace(/.+page=(.+)(\&.+)*?$/, '#Pg-$1') : a.href
+      )
     });
-    return c;
+    return doc.querySelector('main').outerHTML;
+  }
+
+  function allPagesHtml() {
+    return html`<section>
+      ${p.pages.map(pg => {
+        const pv = state.views.p(state, '', pg);
+        pv[0].querySelector('h1').id = 'Pg-' + pg.slug;
+        return html`<article>
+          ${pv[0]}
+          <div class=uc>${ html.raw(pv[1][1].innerHTML) }</div>
+        </article>`;
+      })}
+    </section>`;
   }
 }
