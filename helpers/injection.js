@@ -31,10 +31,12 @@ export function img (content, state, includeId = false) {
     (content?.match(/img:.+?(?=:img)/g) ?? []).forEach(idMatch => {
       id = idMatch.replace('img:', '');
       const i = state.p.img[id];
-      c = c.replace(
-        `${idMatch}:img`,
-        i.img + (includeId ? `#${id}` : '') + `" alt="${i.alt}`
-      );
+      if (typeof i !== 'undefined') {
+        c = c.replace(
+          `${idMatch}:img`,
+          i.img + (includeId ? `#${id}` : '') + `" alt="${i.alt}`
+        );
+      }
     });
   }
   return c;
