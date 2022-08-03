@@ -48,6 +48,6 @@ export const pageView = (state, emit, page) => {
         }
       </div>
     </header>`,
-    pageDisplay(state, emit, page)
+    pageDisplay(state, page)
   ];
 }

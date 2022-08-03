@@ -7,9 +7,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const pageDisplay = (state, emit, page) => {
+export const pageDisplay = (state, page) => {
   const { img, pg, out, hLink } = FW.inject;
-  const { root, help } = state;
+  const { help } = state;
   let c = page.content;
   if (process.env.EDITOR !== 'html') {
     c = page.editor === 'md' ? md(c) : c;
