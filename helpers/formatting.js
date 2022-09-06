@@ -7,7 +7,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const slugify = s => s.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '-');
+// Replace ASCII punctuation & non-print characters with -
+export const slugify = s => s.toLowerCase().replace(/[\x00-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]/g, '-');
 
 export const formatDate = d => {
   const pad = s => s.toString().padStart(2, '0');
