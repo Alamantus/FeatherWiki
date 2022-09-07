@@ -12,7 +12,7 @@
 export default function snarkdownEnhanced(markdown) {
   const a = '\uFFFF', u = '\uFFFE', l = '\uFFFD', r = '\uFFFC';
   // Find any HTML tags with underscore or asterisk or internal wiki links
-  (markdown.match(/<.*?[_*].*?(?=>)|\[\[.+?\]\]/gs) ?? []).forEach(m => {
+  (markdown.match(/<[^>]*?[_*].*?(?=>)|\[\[.+?\]\]/gs) ?? []).forEach(m => {
     markdown = markdown.replace(
       m,
       m.replace(/_/g, u)
@@ -21,27 +21,22 @@ export default function snarkdownEnhanced(markdown) {
         .replace(/\]\]/g, r)
     );
   });
-  let c = false, b = '```'; // code block
   const s = h => h.replace(/</g, '&lt;').replace(/>/g, '&gt;'); // oversimplified HTML sanitizer
-  return markdown.split(/(?:\r?\n){2,}/)
-    .map(l => {
-      const lt = l.trim();
-      if (l.includes(b)) {
-        // Parse paragraph as a code block if it contains ```
-        const o = s(l) // Sanitize any HTML tags
-          .replace(b, `<${c ? '/' : ''}pre>`) // Change first instance of ``` to a pre tag. If we're in a code block, assume it's the end
-          .replace(b, '</pre>'); // If any ``` remain, assume it's the end.
-        c = !lt.endsWith(b) || (!c && lt === b);
-        return o;
-      }
-      if (!c && lt.match(/^[-*]{2,}$/)) return '<hr>';
-      return c ? s(l) : ( // If we're in a code block, don't transform the text until we're out of it again.
-        [" ", "\t", "#", "-", "*", ">"].some(c => l.startsWith(c))
-        ? md(l)
-        : `<p>${md(l)}</p>`
-      );
-    })
-    .join("\n")
+  return markdown.split('```')
+    .map((b, i) => {
+      // Every odd instance of the split will be the code
+      return i % 2 == 1 ? `<pre>${s(b)}</pre>` : (
+        b.split(/(\r?\n){2,}/)
+          .map(l => {
+            const lt = l.trim();
+            return [" ", "\t", "#", "-", "*", ">"].some(c => l.startsWith(c))
+              ? md(l) // If the line starts with a markdown character, parse it directly
+              : lt == '' ? lt : ( // If the trimmed line is empty, return the empty line
+                lt.match(/^[-*]{3,}$/) ? '<hr>' : `<p>${md(l)}</p>` // If it's 3 or more - or *, insert horizontal rule, otherwise wrap it in a paragraph tag.
+              );
+          }).join('')
+      )
+    }).join('')
     .replace(new RegExp(u, 'g'), '_')
     .replace(new RegExp(a, 'g'), '*')
     .replace(new RegExp(l, 'g'), '[[')
