@@ -52,10 +52,13 @@ function searchExtension (state, emitter) {
       ...(
         state.results.length
         ? state.results.map(r => {
-          const { name, slug, content, tags } = r.item;
+          const { name, slug, content, tags, editor } = r.item;
+          const contentHtml = (html`<div></div>`);
+          contentHtml.innerHTML = md && editor === 'md' ? md(content) : content;
+          const textOnlyContent = contentHtml.innerText;
           return html`<article class="g ed">
             <h3><a href="?page=${slug}">${name} <span class=h>(${slug})</span></a></h3>
-            <div class=uc>${content.substring(0, 200)}${content.length > 200 ? '...' : ''}</div>
+            <div class=uc>${textOnlyContent.substring(0, 200)}${textOnlyContent.length > 200 ? '...' : ''}</div>
             ${tags?.length
               ? html`<aside>
                 <dl class="db r">
