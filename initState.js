@@ -11,6 +11,7 @@ import { pagesView } from './views/pages';
 import { settingsView } from './views/settings';
 import { taggedView } from './views/tagged';
 import { pageView } from './views/page';
+import { missingView } from './views/missing';
 
 export const initState = state => {
   state.root = location.pathname; // Site Root
@@ -63,6 +64,12 @@ export const initState = state => {
         ${el}
       </li>`;
     },
+    missing: () => state.p.pages.reduce((result, current) => {
+      const c = document.createElement('div');
+      c.innerHTML = FW.inject.pg(current.content, state);
+      const newEl = [...c.getElementsByClassName('e')].filter(el => result.every(r => r.href !== el.href));
+      return [...result, ...newEl];
+    }, []).sort(),
     breadcrumb: p => {
       const b = [];
       let parent = state.help.getParent(p);
@@ -101,6 +108,7 @@ export const initState = state => {
     s: settingsView,
     t: taggedView,
     p: pageView,
+    m: missingView
   };
 
   state.c = document.querySelector('style#c')?.innerHTML ?? '';

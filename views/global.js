@@ -84,6 +84,7 @@ export const globalView = (state, emit) => {
             ? html`<ul>
               ${parents.map(pp => help.getChildList(pp, true))}
               <li><a href="${root}?page=a">All Pages</a></li>
+              ${help.missing().length > 0 ? html`<li><a href="${root}?page=m">Missing Pages</a></li>` : ''}
             </ul>` : ''
           }
           ${
