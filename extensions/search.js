@@ -15,15 +15,16 @@ else (({state, emitter}) => searchExtension(state, emitter))(window.FW);
 
 function searchExtension (state, emitter) {
   const fuseScript = document.createElement('script');
-  fuseScript.src = 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2';
   document.body.appendChild(fuseScript);
+  fuseScript.onload = () => {if (state.query.search) emitter.emit('search', state.query.search);}
+  fuseScript.src = 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2';
   state.searchInput = '';
   state.results = [];
   state.views.r = resultsView;
   emitter.on('search', q => {
     state.searchInput = q;
     state.results = (new Fuse(state.p.pages, { keys: ['name', 'content'] })).search(q);
-    emitter.emit(state.events.PUSHSTATE, state.root + '?page=r');
+    emitter.emit(state.events.PUSHSTATE, state.root + '?page=r&search=' + encodeURIComponent(q));
   });
   [state.events.DOMCONTENTLOADED, state.events.RENDER].forEach(ev => {
     emitter.on(ev, () => {
@@ -31,7 +32,7 @@ function searchExtension (state, emitter) {
         renderSearchBar();
       }, 50);
     });
-  })
+  });
   if (window.FW._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
 
   function renderSearchBar () {
@@ -54,7 +55,7 @@ function searchExtension (state, emitter) {
         ? state.results.map(r => {
           const { name, slug, content, tags, editor } = r.item;
           const contentHtml = (html`<div></div>`);
-          contentHtml.innerHTML = md && editor === 'md' ? md(content) : content;
+          contentHtml.innerHTML = FW.inject.pg(md && editor === 'md' ? md(content) : content, state);
           const textOnlyContent = contentHtml.innerText;
           return html`<article class="g ed">
             <h3><a href="?page=${slug}">${name} <span class=h>(${slug})</span></a></h3>
