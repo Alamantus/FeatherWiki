@@ -115,6 +115,7 @@ export const initEmitter = (state, emitter) => {
       content: pg.content ?? '',
       tags: pg.tags ?? '',
       parent: pg.parent ?? '',
+      hide: !!pg.hide,
     };
     if (process.env.EDITOR !== 'html') {
       if (process.env.EDITOR === 'md') {

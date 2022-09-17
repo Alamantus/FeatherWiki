@@ -34,14 +34,15 @@ export const initState = state => {
       return (!query.page && p.home) ? help.find(p.home, 'id') : help.find(query.page);
     },
     getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
-    getChildren: p => state.p.pages.filter(pg => pg.parent === p?.id),
+    getChildren: (p, hide) => state.p.pages.filter(pg => pg.parent === p?.id && (!hide || !pg.hide)),
     getChildList: (p, collapse) => {
+      if (collapse && p.hide) return '';
       const { getChildren, getChildList } = state.help;
-      const children = getChildren(p);
+      const children = getChildren(p, collapse);
       const current = state.pg?.slug;
       const isCurrent = current === p.slug;
       // Expand if the menu item is the current page, if it was opened manually, or if one of its children is the current page
-      const expand = (ch) => isCurrent || state.sbx.has(p.id) || (ch.find(c => c.slug === current || expand(getChildren(c))) ?? false);
+      const expand = (ch) => isCurrent || state.sbx.has(p.id) || (ch.find(c => c.slug === current || expand(getChildren(c, collapse))) ?? false);
       const link = [
         html`<a href="?page=${p.slug}" class=${isCurrent ? 'a' : ''}>${p.name}</a>`,
         children.length > 0

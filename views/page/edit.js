@@ -82,6 +82,7 @@ export const pageEdit = (state, emit, page) => {
               })
           }
         </select>
+        <label>Hide Page <input type=checkbox id=hide onchange=${e => state.edits.hide = e.target.checked} checked=${edits.hide} /></label>
       </div>
       <div class="c w13 tr">
         <div class=pb><button type=submit>Save</button></div>
@@ -125,17 +126,19 @@ export const pageEdit = (state, emit, page) => {
 
   function save (e) {
     e.preventDefault();
-    const form = e.currentTarget;
-    const name = form.name.value.trim();
-    if (name.length < 1) return alert('Page Title cannot be blank.');
-    const slug = form.slug.value.trim();
+    const f = e.currentTarget;
+    const n = f.name.value.trim();
+    if (n.length < 1) return alert('Page Title cannot be blank.');
+    const slug = f.slug.value.trim();
     if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
-    pg = { ...page };
-    pg.name = name;
+    const pg = { ...page };
+    pg.name = n;
     pg.slug = FW.slug(slug);
     pg.content = FW.img.abbr(state.edits.content);
     pg.tags = getTagsArray().join(',');
-    pg.parent = form.parent.value;
+    pg.parent = f.parent.value;
+    if (f.hide.checked) pg.hide = true; else delete pg.hide;
+    if (f.hide.checked) pg.hide = true; else delete pg.hide;
     if (process.env.EDITOR !== 'html') {
       if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
     }

@@ -23,7 +23,7 @@ export const pageDisplay = (state, page) => {
     ),
     state
   );
-  const children = help.getChildren(page);
+  const children = help.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length
       ? html`<aside>
