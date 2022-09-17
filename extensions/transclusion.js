@@ -39,7 +39,7 @@
         const pageContent = img(
           pg(
             hLink(
-              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.content}`)
+              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.editor === 'md' ? md(page.content) : page.content}`)
             ),
             state
           ),
