@@ -28,7 +28,7 @@ if (process.env.EDITOR !== 'md') {
 	window.pell = require('pell');
 }
 if (process.env.EDITOR !== 'html') {
-	window.md = require('./helpers/snarkdownEnhanced').default;
+	window.md = require('./helpers/md').default;
 }
 
 window.FW = Choo({ hash: true });

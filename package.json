@@ -20,8 +20,7 @@
   "type": "module",
   "dependencies": {
     "choo": "^7.1.0",
-    "pell": "^1.0.6",
-    "snarkdown": "^2.0.0"
+    "pell": "^1.0.6"
   },
   "devDependencies": {
     "choo-devtools": "^3.0.4",
