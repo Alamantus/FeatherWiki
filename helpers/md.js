@@ -4,7 +4,9 @@
  * 
  * @licence MIT
  */
-var unicodes = {
+var resc = /[<>&\(\)\[\]"']/g;
+
+const unicode = char => ({
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
@@ -14,11 +16,7 @@ var unicodes = {
   ']': '&#93;',
   '(': '&#40;',
   ')': '&#41;',
-};
-
-var resc = /[<>&\(\)\[\]"']/g;
-
-function unicode (char) { return unicodes[char] || char; }
+}[char] || char);
 
 var XSSFilterRegExp = /<(script)[^\0]*?>([^\0]+?)<\/(script)>/gmi;
 var XSSFilterTemplate = '&lt;$1&gt;$2&lt;/$3&gt;';
@@ -27,25 +25,14 @@ var XSSFilterInlineJSRegExp = /(<.*? [^\0]*?=[^\0]*?)(javascript:.*?)(.*>)/gmi;
 var XSSFilterInlineJSTemplate = '$1#$2&#58;$3';
 
 var XSSFilterImageRegExp = /<img([^\0]*?onerror=)([^\0]*?)>/gmi;
-var XSSFilterImageTemplate = function (match, group1, group2) {
-  return '<img' + group1 + group2.replace(resc, unicode) + '>';
-};
-
-var removeTabsRegExp = /^[\t ]+|[\t ]$/gm;
-
-var htmlFilterRegExp = /(<.*>[\t ]*\n^.*)/gm;
-var htmlFilterTemplate = function (match, group1) { 
-  return group1.replace(/^\n|$\n/gm, '');
-};
-
-var cssFilterRegExp = /(<style>[^]*<\/style>)/gm;
-var cssFilterTemplate = htmlFilterTemplate;
+var XSSFilterImageTemplate = (match, group1, group2) => '<img' + group1 + group2.replace(resc, unicode) + '>';
 
 var eventsFilterRegExp = /(<[^]+?)(on.*?=.*?)(.*>)/gm;
 var eventsFilterTemplate = '$1$3';
 
 var blockQuotesRegExp = /^[ \t]*> (.*)/gm;
-var blockQuotesTemplate = '<blockquote>$1</blockquote>';
+var blockQuotesTemplate = '<blockquote>\n$1\n</blockquote>';
+var combineSequentialBlockquotesRegExp = /(<\/blockquote>\n?<blockquote>)+?/g;
 
 var inlineCodeRegExp = /`([^`]+?)`/g;
 var inlineCodeTemplate = function (match, group1) {
@@ -67,33 +54,37 @@ var headingsTemplate = function (match, hash, content) {
   var length = hash.length; return '<h'+length+'>'+content+'</h'+length+'>';
 };
 
-var headingsCommonh2RegExp = /^([^\n\t ])(.*)\n----+/gm;
 var headingsCommonh1RegExp = /^([^\n\t ])(.*)\n====+/gm;
 var headingsCommonh1Template = '<h1>$1$2</h1>';
+var headingsCommonh2RegExp = /^([^\n\t ])(.*)\n----+/gm;
 var headingsCommonh2Template = '<h2>$1$2</h2>';
 
-var paragraphsRegExp = /^([^-><#\d\+\_\*\t\n\[\! \{])([^]*?)(|  )(?:\n\n)/gm;
-var paragraphsTemplate = function (match, group1, group2, group3) {
+var lineBreaksRegExp = /  +\n/gm;
+var lineBreaksTemplate = '<br>';
+
+var paragraphsRegExp = /^([^-><#\d\+\_\*\t \n\[\!\{])([^]*?)(?:\n\n)/gm;
+var paragraphsTemplate = function (match, group1, group2) {
   var leadingCharater = group1;
   var body = group2;
-  
-  var trailingSpace = group3 ? '\n<br>\n' : '\n';
-  return '<p>'+leadingCharater+body+'</p>'+trailingSpace;
+  return '<p>'+leadingCharater+body+'</p>\n';
 };
 
-var horizontalRegExp = /^.*?(?:---|\*\*\*|- - -|\* \* \*)/gm;
+// var misplacedParagraphTagRegExp = /^(.+)(?!<\/p>)\n?<p><\/p>/gm;
+// var misplacedParagraphTagTemplate = '<p>$1</p>';
+
+var horizontalRegExp = /\n( *[-*]){3,}\n/gm;
 var horizontalTemplate = '<hr>';
 
-var strongRegExp = /(?:\*\*|\_\_)([^\*\n_]+?)(?:\*\*|\_\_)/g;
+var strongRegExp = /(?:\*\*|__)([^\n*_]+?)(?:\*\*|__)/g;
 var strongTemplate = '<strong>$1</strong>';
 
-var emphasisRegExp = /(?:\*|\_)([^\*\n_]+?)(?:\*|\_)/g;
+var emphasisRegExp = /(?:\*|_)([^\n*_]+?)(?:\*|_)/g;
 var emphasisTemplate = '<em>$1</em>';
 
 var strikeRegExp = /(?:~~)([^~]+?)(?:~~)/g;
 var strikeTemplate = '<del>$1</del>';
 
-var linksRegExp = /\[(.*?)\]\(([^\t\n ]*)(?:| "(.*)")\)+/gm;
+var linksRegExp = /\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm;
 var linksTemplate = function (match, group1, group2, group3) {
   var link = group2.replace(resc, unicode);
   var text = group1.replace(resc, unicode);
@@ -112,9 +103,6 @@ var listTemplate = function(match, leading, bullet, numbered, content) {
 
 var combineSequentialUlRegExp = /(<\/ul>\n?\s*<ul>)+?/g;
 var combineSequentialOlRegExp = /(<\/ol>\n?\s*<ol>)+?/g;
-
-var lineBreaksRegExp = /^\n\n+/gm;
-var lineBreaksTemplate = '<br>';
 
 var checkBoxesRegExp = /\[( |x)\]/g;
 var checkBoxesTemplate = function (match, group1) {
@@ -163,6 +151,7 @@ export default function md (markdown) {
       .replace(eventsFilterRegExp, eventsFilterTemplate)
       // blockquotes
       .replace(blockQuotesRegExp, blockQuotesTemplate)
+      .replace(combineSequentialBlockquotesRegExp, '')
       // images
       .replace(imagesRegExp, imagesTemplate)
       // headings
@@ -175,12 +164,11 @@ export default function md (markdown) {
       .replace(horizontalRegExp, horizontalTemplate)
       // checkboxes
       .replace(checkBoxesRegExp, checkBoxesTemplate)
-      // filter html
-      .replace(htmlFilterRegExp, htmlFilterTemplate)
-      // filter css
-      .replace(cssFilterRegExp, cssFilterTemplate)
+      // line breaks
+      .replace(lineBreaksRegExp, lineBreaksTemplate)
       // paragraphs
       .replace(paragraphsRegExp, paragraphsTemplate)
+      // .replace(misplacedParagraphTagRegExp, misplacedParagraphTagTemplate)
       // inline code
       .replace(inlineCodeRegExp, inlineCodeTemplate)
       // links
@@ -204,16 +192,12 @@ export default function md (markdown) {
       // Combine lists
       .replace(combineSequentialUlRegExp, '')
       .replace(combineSequentialOlRegExp, '')
-      // tabs
-      .replace(removeTabsRegExp, '')
       // strong
       .replace(strongRegExp, strongTemplate)
       // emphasis
       .replace(emphasisRegExp, emphasisTemplate)
       // strike through
       .replace(strikeRegExp, strikeTemplate)
-      // line breaks
-      .replace(lineBreaksRegExp, lineBreaksTemplate)
       // filter inline js
       .replace(XSSFilterInlineJSRegExp, XSSFilterInlineJSTemplate)
   );
