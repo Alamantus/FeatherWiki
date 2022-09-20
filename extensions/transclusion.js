@@ -1,10 +1,18 @@
+/**
+ * This file is part of Feather Wiki.
+ *
+ * Feather Wiki is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Feather Wiki is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
+ */
 // This extension finds any content between double braces {{like_this}} and looks for a page with a matching
 // slug. If found, the braced content will be replaced with the content of the target page within an `article`
 // tag with a class of `transclusion` so it can be targeted and styled.
-if (!window.FW._loaded) window.FW.use(transclusionExtension);
-else (({state, emitter}) => transclusionExtension(state, emitter))(window.FW);
-
-function transclusionExtension (state, emitter) {
+(function transclusionExtension () {
+  if (!window.FW._loaded) return setTimeout(transclusionExtension, 1); // wait until FW is mounted
+  const { state, emitter } = window.FW;
   const { events } = state;
   state.tDepth = 0;
   state.tDepthMax = 20; // Maximum depth to check for transclusion
@@ -16,7 +24,7 @@ function transclusionExtension (state, emitter) {
       }, 300);
     });
   });
-  if (window.FW._loaded) emitter.emit(state.events.DOMCONTENTLOADED);
+  emitter.emit(state.events.DOMCONTENTLOADED);
 
   function injectTransclusion() {
     if (state.pg) {
@@ -31,7 +39,7 @@ function transclusionExtension (state, emitter) {
         const pageContent = img(
           pg(
             hLink(
-              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.content}`)
+              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.editor === 'md' ? md(page.content) : page.content}`)
             ),
             state
           ),
@@ -50,4 +58,4 @@ function transclusionExtension (state, emitter) {
       }
     }
   }
-}
+})();
