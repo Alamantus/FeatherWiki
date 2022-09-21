@@ -1,4 +1,4 @@
-/*!
+/**
  * Modified from md.js is a lightweight markdown parser
  * https://github.com/thysultan/md.js
  * 
@@ -55,9 +55,6 @@ var lineBreaksTemplate = '<br>';
 
 var paragraphsRegExp = /^([^-><#\d\+\_\*\t \n\[\!\{])([^]*?)(?:\n\n)/gm;
 var paragraphsTemplate = (match, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`;
-
-// var misplacedParagraphTagRegExp = /^(.+)(?!<\/p>)\n?<p><\/p>/gm;
-// var misplacedParagraphTagTemplate = '<p>$1</p>';
 
 var horizontalRegExp = /\n( *[-*]){3,}\n/gm;
 var horizontalTemplate = '<hr>';
@@ -157,6 +154,17 @@ export default function md (markdown) {
       // lists
       .replace(listRegExp, listTemplate)
   );
+  // Find any `a` tags with underscores in the href (must be wrapped in quotes) and any internal links
+  // and replace any instance of underscore or asterisk with replacement characters so they are not parsed
+  const u = '\uFFFC', a = '\uFFFD';
+  (markdown.match(/href="([^"]*[_*][^"]*)"|\[\[[^\]]+\]\]/gm) ?? []).forEach(m => {
+    markdown = markdown.replace(
+      m,
+      m.replace(/_/g, u)
+        .replace(/\*/g, a)
+    );
+  });
+
   // This handles *almost* all combinations, but some indented lists combining ul & ol don't render right
   var indentListRegExp = /<\/li><\/(u|o)l>\n(\t+)<(u|o)l><li>(.*)<\/li><\/(u|o)l>/;
   while (markdown.match(indentListRegExp)) {
@@ -191,6 +199,8 @@ export default function md (markdown) {
 
     markdown = markdown.replace(item.regex, () => `<pre><code${lang ? ` class="language-${ lang }"` : ''}>${block}</code></pre>`);
   }
+
+  markdown = markdown.replace(new RegExp(u, 'g'), '_').replace(new RegExp(a, 'g'), '*');
 
   return markdown.trim();
 }
