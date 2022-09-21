@@ -1,4 +1,4 @@
-/*!
+/**
  * Modified from md.js is a lightweight markdown parser
  * https://github.com/thysultan/md.js
  * 
