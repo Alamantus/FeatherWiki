@@ -25,7 +25,7 @@ var XSSFilterInlineJSRegExp = /(<.*? [^\0]*?=[^\0]*?)(javascript:.*?)(.*>)/gmi;
 var XSSFilterInlineJSTemplate = '$1#$2&#58;$3';
 
 var XSSFilterImageRegExp = /<img([^\0]*?onerror=)([^\0]*?)>/gmi;
-var XSSFilterImageTemplate = (match, group1, group2) => '<img' + group1 + group2.replace(resc, unicode) + '>';
+var XSSFilterImageTemplate = (match, group1, group2) => `<img${group1}${group2.replace(resc, unicode)}>`;
 
 var eventsFilterRegExp = /(<[^]+?)(on.*?=.*?)(.*>)/gm;
 var eventsFilterTemplate = '$1$3';
@@ -35,24 +35,15 @@ var blockQuotesTemplate = '<blockquote>\n$1\n</blockquote>';
 var combineSequentialBlockquotesRegExp = /(<\/blockquote>\n?<blockquote>)+?/g;
 
 var inlineCodeRegExp = /`([^`]+?)`/g;
-var inlineCodeTemplate = function (match, group1) {
-  return '<code>'+group1.replace(resc, unicode)+'</code>'
-}
+var inlineCodeTemplate = (match, code) => `<code>${ code.replace(resc, unicode) }</code>`;
 
 var blockCodeRegExp = /```(.*)\n([^\0]+?)```(?!```)/gm;
 
 var imagesRegExp = /!\[(.*)\]\((.*)\)/g;
-var imagesTemplate = function (match, group1, group2) {
-  var src = group2.replace(resc, unicode);
-  var alt = group1.replace(resc, unicode);
-
-  return '<img src="'+src+'" alt="'+alt+'">';
-};
+var imagesTemplate = (match, alt, src) => `<img src="${ src.replace(resc, unicode) }" alt="${ alt.replace(resc, unicode) }">`;
 
 var headingsRegExp = /^(#+) +(.*)/gm;
-var headingsTemplate = function (match, hash, content) {
-  var length = hash.length; return '<h'+length+'>'+content+'</h'+length+'>';
-};
+var headingsTemplate = (match, hash, content)  => `<h${ hash.length }>${ content }</h${ hash.length }>`;
 
 var headingsCommonh1RegExp = /^([^\n\t ])(.*)\n====+/gm;
 var headingsCommonh1Template = '<h1>$1$2</h1>';
@@ -63,11 +54,7 @@ var lineBreaksRegExp = /  +\n/gm;
 var lineBreaksTemplate = '<br>';
 
 var paragraphsRegExp = /^([^-><#\d\+\_\*\t \n\[\!\{])([^]*?)(?:\n\n)/gm;
-var paragraphsTemplate = function (match, group1, group2) {
-  var leadingCharater = group1;
-  var body = group2;
-  return '<p>'+leadingCharater+body+'</p>\n';
-};
+var paragraphsTemplate = (match, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`;
 
 // var misplacedParagraphTagRegExp = /^(.+)(?!<\/p>)\n?<p><\/p>/gm;
 // var misplacedParagraphTagTemplate = '<p>$1</p>';
@@ -85,29 +72,23 @@ var strikeRegExp = /(?:~~)([^~]+?)(?:~~)/g;
 var strikeTemplate = '<del>$1</del>';
 
 var linksRegExp = /\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm;
-var linksTemplate = function (match, group1, group2, group3) {
-  var link = group2.replace(resc, unicode);
-  var text = group1.replace(resc, unicode);
-  var title = group3 ? ' title="'+group3.replace(resc, unicode)+'"' : '';
-
-  return '<a href="'+link+'"'+title+'>'+text+'</a>';
+var linksTemplate = (match, text, link, title) => {
+  title = title ? ` title="${ title.replace(resc, unicode) }"` : '';
+  return `<a href="${ link.replace(resc, unicode) }"${ title }>${ text.replace(resc, unicode) }</a>`;
 };
 
 
 var listRegExp = /^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm;
-var listTemplate = function(match, leading, bullet, numbered, content) {
+var listTemplate = (match, leading, bullet, numbered, content) => {
   leading = leading.replace(/  /g, '\t');
   const type = numbered ? 'o' : 'u';
   return `${leading}<${type}l><li>${content}</li></${type}l>`;
 }
-
 var combineSequentialUlRegExp = /(<\/ul>\n?\s*<ul>)+?/g;
 var combineSequentialOlRegExp = /(<\/ol>\n?\s*<ol>)+?/g;
 
 var checkBoxesRegExp = /\[( |x)\]/g;
-var checkBoxesTemplate = function (match, group1) {
-  return '<input type="checkbox" disabled' + (group1.toLowerCase() === 'x' ? ' checked' : '') + '>'
-};
+var checkBoxesTemplate = (match, checked) => `<input type="checkbox" disabled${ group1.toLowerCase() === 'x' ? ' checked' : '' }>`;
 
 
 /**
@@ -208,9 +189,7 @@ export default function md (markdown) {
     var lang = item.lang;
     var block = item.block;
 
-    markdown = markdown.replace(item.regex, function (match) {
-      return `<pre><code${lang ? ' class="language-'+lang+'"' : ''}>${block}</code></pre>`;
-    });
+    markdown = markdown.replace(item.regex, () => `<pre><code${lang ? ` class="language-${ lang }"` : ''}>${block}</code></pre>`);
   }
 
   return markdown.trim();
