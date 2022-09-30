@@ -62,8 +62,8 @@ publishing your Feather Wiki for other to see._
 ### Server-Saving
 
 These versions are the same as those in the section above, but they are larger because they include extra code for saving to certain web servers.
-Currently the only viable use for these versions is through [Tiddlyhost](https://tiddlyhost.com), but a simple Feather Wiki server is planned
-in the near future! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
+
+Currently the only viable use for these versions is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
 example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
 
 These versions are specifically named after migratory birds of different sizes to reflect their travel to the server from your browser!
