@@ -108,7 +108,7 @@ export const globalView = (state, emit) => {
     </footer>
     <div class=notis>
       ${notis.map(n => html`<div class=noti style="${n.css}" onclick=${() => emit(events.REMOVE_NOTI, n.id)} title="Click to close">
-        ${n.text}<span class=fr>×</span>
+        <span role=alert>${n.text}</span><span class=fr>×</span>
       </div>`)}
     </div>
   </body>`;
