@@ -55,7 +55,7 @@
         ? state.results.map(r => {
           const { name, slug, content, tags, editor } = r.item;
           const contentHtml = (html`<div></div>`);
-          contentHtml.innerHTML = FW.inject.pg(md && editor === 'md' ? md(content) : content, state);
+          contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
           const textOnlyContent = contentHtml.innerText;
           return html`<article class="g ed">
             <h3><a href="?page=${slug}">${name} <span class=h>(${slug})</span></a></h3>
