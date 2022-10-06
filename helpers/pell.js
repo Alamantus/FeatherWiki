@@ -118,6 +118,7 @@ export const init = settings => {
 
   const actionbar = ce('div')
   actionbar.className = classes.actionbar
+  actionbar.role = 'toolbar'
   ac(settings.element, actionbar)
 
   const content = settings.element.content = ce('div')
