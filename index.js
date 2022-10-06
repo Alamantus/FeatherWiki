@@ -25,7 +25,7 @@ import { uploadFile } from './helpers/uploadFile';
 window.html = require('choo/html');
 html.raw = require('choo/html/raw');
 if (process.env.EDITOR !== 'md') {
-	window.pell = require('pell');
+	window.pell = require('./helpers/pell').default;
 }
 if (process.env.EDITOR !== 'html') {
 	window.md = require('./helpers/md').default;

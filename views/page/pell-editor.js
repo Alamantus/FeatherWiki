@@ -23,47 +23,6 @@ export const editor = (state, emit) => {
       element = init({
         element: html`<div id=e class=ed></div>`, // Setting id here helps prevent re-render when other fields are changed
         onChange: val => state.edits.content = val,
-        defaultParagraphSeparator: 'p',
-        actions: [
-          'bold',
-          'italic',
-          'underline',
-          'strikethrough',
-          {
-            title: 'Heading',
-            icon: '<b>H</b>',
-            result: () => exec(fb, '<h2>'),
-          },
-          {
-            title: 'Sub-Heading',
-            icon: '<b>H<sub>2</sub></b>',
-            result: () => exec(fb, '<h3>'),
-          },
-          'paragraph',
-          'olist',
-          'ulist',
-          'quote',
-          'line',
-          'link',
-          {
-            title: 'Link External Image',
-            icon: '🖼️',
-            result: () => {
-              const url = window.prompt('Enter the image URL');
-              if (url) exec('insertImage', url);
-            },
-          },
-          {
-            title: 'Insert Image from File',
-            icon: '📸',
-            result: () => FW.img.upload(state, insert),
-          },
-          {
-            title: 'Add Existing Image',
-            icon: '📎',
-            result: () => document.getElementById('g').showModal(),
-          },
-        ],
       });
       element.isSameNode = () => true; // Do not re-render editor
     }
