@@ -10,14 +10,14 @@
 export const initEmitter = (state, emitter) => {
   const { events, views } = state;
   const emit = (...args) => emitter.emit(...args);
-  const title = () => emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
     state.edits = null;
   };
 
-  emitter.on(events.DOMCONTENTLOADED, () => {
+  emitter.on(events.ONLOAD, () => {
     emit(events.HANDLE_404);
     title();
     emit(events.COLLECT_TAGS);

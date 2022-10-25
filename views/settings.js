@@ -90,7 +90,7 @@ export const settingsView = (state, emit) => {
           state.p = result[0];
           handleCustomCss(result[1]);
           handleCustomJs(result[2]);
-          emit(events.DOMCONTENTLOADED);
+          emit(events.ONLOAD);
           emit(events.CHECK_CHANGED);
           emit(events.NOTIFY, 'Wiki Loaded');
         }

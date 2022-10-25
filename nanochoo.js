@@ -25,7 +25,7 @@ function documentReady (f) {
 
 function getParams () {
   const p = {};
-  const s = new URLSearchParams(location.search);
+  const s = new URLSearchParams(window.location.search);
   s.forEach((v, k) => {
     v = s.getAll(k);
     p[k] = v.length > 1 ? v : v[0];
@@ -49,7 +49,6 @@ export default function Choo () {
   }
 
   // properties for internal use only
-  this._hasWindow = typeof window !== 'undefined'
   this._loaded = false
   this._stores = []
   this._tree = null
@@ -59,21 +58,14 @@ export default function Choo () {
   this.emitter = nanobus('choo.emit')
   this.emit = this.emitter.emit.bind(this.emitter)
 
-  var events = { events: this._events }
-  if (this._hasWindow) {
-    this.state = window.initialState
-      ? Object.assign({}, window.initialState, events)
-      : events
-    delete window.initialState
-  } else {
-    this.state = events
+  this.state = {
+    events: this._events,
+    title: document.title,
+    query: getParams(),
   }
 
-  // listen for title changes; available even when calling .toString()
-  if (this._hasWindow) this.state.title = document.title
   this.emitter.prependListener(this._events.TITLE, function (title) {
-    self.state.title = title
-    if (self._hasWindow) document.title = title
+    self.state.title = document.title = title
   })
 }
 
@@ -91,10 +83,10 @@ Choo.prototype.use = function (cb) {
 Choo.prototype.start = function () {
   var self = this
   this.emitter.prependListener(this._events.GO, function (to = null, action = 'push') {
-    self.state.query = getParams()
     if (to) {
       history[action + 'State'](HISTORY, self.state.title, to)
     }
+    self.state.query = getParams()
     if (self._loaded) {
       self.emitter.emit(self._events.RENDER)
     }
@@ -117,7 +109,6 @@ Choo.prototype.start = function () {
     })
   }
 
-  this.state.query = getParams()
   this._tree = render()
 
   this.emitter.prependListener(self._events.RENDER, nanoraf(function () {
