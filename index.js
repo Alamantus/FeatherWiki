@@ -7,7 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-import Choo from 'choo';
+import Choo from './nanochoo';
 import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
@@ -22,8 +22,8 @@ import * as json from './helpers/jsonCompress';
 import { uploadFile } from './helpers/uploadFile';
 
 // Populate window with dependencies and helpers before starting app
-window.html = require('choo/html');
-html.raw = require('choo/html/raw');
+window.html = require('nanohtml');
+html.raw = require('nanohtml/raw');
 if (process.env.EDITOR !== 'md') {
 	window.pell = require('./helpers/pell').default;
 }
@@ -31,7 +31,7 @@ if (process.env.EDITOR !== 'html') {
 	window.md = require('./helpers/md').default;
 }
 
-window.FW = Choo({ hash: true });
+window.FW = Choo();
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
 FW.slug = slugify;
 FW.date = formatDate;
@@ -44,10 +44,6 @@ FW.inject = inject;
 FW.json = json;
 FW.upload = uploadFile;
 
-if (process.env.NODE_ENV !== 'production') {
-	FW.use(require('choo-devtools')());
-}
-
 FW.use(initState);
 FW.use(initEmitter);
 FW.use(state => addEventListener('beforeunload', event => {
@@ -56,6 +52,5 @@ FW.use(state => addEventListener('beforeunload', event => {
 		return event.returnValue = "Lose unsaved changes?";
 	}
 }, { capture: true }));
-FW.route('/:p', globalView);
+FW.view(globalView);
 FW.mount('body');
-window.choo = FW; // Don't break 1.3.0 extensions

@@ -47,7 +47,7 @@ export const initEmitter = (state, emitter) => {
     }
   });
 
-  emitter.on(events.NAVIGATE, () => {
+  emitter.on(events.GO, () => {
     // Prevent navigation if editing and they don't confirm
     if (!state.keep && keepEditing()) {
       state.keep = true;
@@ -99,7 +99,7 @@ export const initEmitter = (state, emitter) => {
     if (save) {
       state.p.pages.push(newPg);
       emit(events.CHECK_CHANGED);
-      emit(events[query.page !== slug ? 'REPLACESTATE' : 'PUSHSTATE'], root + '?page=' + slug);
+      emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
       state.pg = newPg;
     }
@@ -155,7 +155,7 @@ export const initEmitter = (state, emitter) => {
       state.useMd = page.editor === 'md';
     }
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.root + '?page=' + page.slug);
+    emit(events.GO, state.root + '?page=' + page.slug);
     emit(events.CHECK_CHANGED);
   });
 
@@ -166,7 +166,7 @@ export const initEmitter = (state, emitter) => {
     }).filter(pg => pg.id !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.root);
+    emit(events.GO, state.root);
     emit(events.CHECK_CHANGED);
   });
 
