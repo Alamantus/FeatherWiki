@@ -11,6 +11,11 @@ export const initEmitter = (state, emitter) => {
   const { events, views } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const hashScroll = () => {
+    if (!location.hash) return false;
+    document.querySelector(location.hash)?.scrollIntoView();
+    return true;
+  }
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
@@ -25,6 +30,7 @@ export const initEmitter = (state, emitter) => {
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
+    hashScroll();
   });
 
   emitter.on(events.RENDER, callback => {
@@ -49,20 +55,15 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.GO, () => {
     // Prevent navigation if editing and they don't confirm
-    if (!state.keep && keepEditing()) {
-      state.keep = true;
-      return history.go(-1);
-    }
-    if (!state.keep) {
-      stopEdit();
-      state.pg = state.help.getPage();
-      state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
-      emit(events.HANDLE_404);
-      title();
-      window.scroll(0, 0);
-    } else {
-      state.keep = false;
-    }
+    if (keepEditing()) return history.go(-1);
+
+    stopEdit();
+    state.pg = state.help.getPage();
+    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
+    emit(events.HANDLE_404);
+    title();
+    // Scroll to top of page if no location hash is set
+    if (!hashScroll()) window.scroll(0, 0);
   });
 
   emitter.on(events.CREATE_PAGE, (name, save = true) => {
