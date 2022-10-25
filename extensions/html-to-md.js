@@ -23,14 +23,14 @@
       clearInterval(interval);
     }
   }, 500);
-  [state.events.DOMCONTENTLOADED, state.events.RENDER].forEach(ev => {
+  ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
       setTimeout(() => { // Adds a very small delay so it injects after render when elements exist in DOM
         convertHtmlToMarkdown();
       }, 50);
     });
   })
-  emitter.emit(state.events.DOMCONTENTLOADED);
+  emitter.emit('DOMContentLoaded');
 
   function convertHtmlToMarkdown () {
     const ref = document.querySelector('form div.w1.tr');
