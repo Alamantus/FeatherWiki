@@ -24,12 +24,8 @@ import { uploadFile } from './helpers/uploadFile';
 // Populate window with dependencies and helpers before starting app
 window.html = require('nanohtml');
 html.raw = require('nanohtml/raw');
-if (process.env.EDITOR !== 'md') {
-	window.pell = require('./helpers/pell').default;
-}
-if (process.env.EDITOR !== 'html') {
-	window.md = require('./helpers/md').default;
-}
+window.pell = require('./helpers/pell').default;
+window.md = require('./helpers/md').default;
 
 window.FW = Choo();
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
