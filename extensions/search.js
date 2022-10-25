@@ -23,7 +23,12 @@
   state.views.r = resultsView;
   emitter.on('search', q => {
     state.searchInput = q;
-    state.results = (new Fuse(state.p.pages, { keys: ['name', 'content'] })).search(q);
+    state.results = (new Fuse(state.p.pages, {
+      shouldSort: true,
+      threshold: 0.4,
+      ignoreLocation: true,
+      keys: ['name', 'content'],
+    })).search(q);
     emitter.emit(state.events.PUSHSTATE, state.root + '?page=r&search=' + encodeURIComponent(q));
   });
   [state.events.DOMCONTENTLOADED, state.events.RENDER].forEach(ev => {
