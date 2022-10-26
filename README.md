@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 53.804 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 54.144 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
@@ -35,7 +35,7 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-The server build of Feather Wiki is exactly the same as the regular build, but it is larger (54.816 kilobytes) because it includes extra code for saving to certain web servers.
+The server build of Feather Wiki is exactly the same as the regular build, but it is larger (55.156 kilobytes) because it includes extra code for saving to certain web servers.
 
 Currently the only viable use for this versions is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
 example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
