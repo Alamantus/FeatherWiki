@@ -36,8 +36,11 @@ export const settingsView = (state, emit) => {
         <label for=wCss>Custom CSS</label>
         <textarea id=wCss>${c}</textarea>
         <label for=wJs>Custom JS</label>
-        <span class=h>Only runs once on wiki load. To test, save your wiki & load that file.</span>
+        <span class=h>Only runs once on wiki load. To test, save wiki & load that file.</span>
         <textarea id=wJs>${j}</textarea>
+        <label for=wHead>Custom Head</label>
+        <span class=h>Add HTML directly to <code>${ html.raw('&lt;head&gt;') }</code>. To test, save wiki & load that file. Be careful! Malformed HTML will break wiki.</span>
+        <textarea id=wHead>${p.head ?? ''}</textarea>
         <label for=wOut>Include Static HTML</label>
         <input id=wOut type=checkbox checked=${p.static ?? false}>
         <span class=h>Include your wiki content in simple HTML for non-JS browsers. Nearly doubles output size.</span>
@@ -77,6 +80,11 @@ export const settingsView = (state, emit) => {
     state.p.pages.sort((a, b) => sort.indexOf(a.slug) < sort.indexOf(b.slug) ? -1 : 1);
     handleCustomCss(form.wCss.value);
     handleCustomJs(form.wJs.value);
+    if (form.wHead.value.trim()) {
+      state.p.head = form.wHead.value;
+    } else {
+      delete state.p.head;
+    }
     state.p.static = form.wOut.checked;
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
