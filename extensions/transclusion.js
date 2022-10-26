@@ -13,10 +13,9 @@
 (function transclusionExtension () {
   if (!window.FW._loaded) return setTimeout(transclusionExtension, 1); // wait until FW is mounted
   const { state, emitter } = window.FW;
-  const { events } = state;
   state.tDepth = 0;
   state.tDepthMax = 20; // Maximum depth to check for transclusion
-  [events.DOMCONTENTLOADED, events.RENDER].forEach(ev => {
+  ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
       state.tDepth = 0;
       setTimeout(() => { // Adds a very small delay so it injects after render when elements exist in DOM
@@ -24,7 +23,7 @@
       }, 300);
     });
   });
-  emitter.emit(state.events.DOMCONTENTLOADED);
+  emitter.emit('DOMContentLoaded');
 
   function injectTransclusion() {
     if (state.pg) {

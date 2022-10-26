@@ -31,14 +31,14 @@
     })).search(q);
     emitter.emit(state.events.PUSHSTATE, state.root + '?page=r&search=' + encodeURIComponent(q));
   });
-  [state.events.DOMCONTENTLOADED, state.events.RENDER].forEach(ev => {
+  ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
       setTimeout(() => { // Adds a very small delay so it injects after render when elements exist in DOM
         renderSearchBar();
       }, 50);
     });
   });
-  emitter.emit(state.events.DOMCONTENTLOADED);
+  emitter.emit('DOMContentLoaded');
 
   function renderSearchBar () {
     if (!!document.getElementById('searchBar')) return;
