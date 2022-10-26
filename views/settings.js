@@ -40,7 +40,7 @@ export const settingsView = (state, emit) => {
         <textarea id=wJs>${j}</textarea>
         <label for=wHead>Custom Head</label>
         <span class=h>Add HTML directly to <code>${ html.raw('&lt;head&gt;') }</code>. To test, save wiki & load that file. Be careful! Malformed HTML will break wiki.</span>
-        <textarea id=wHead>${p.head ?? ''}</textarea>
+        <textarea id=wHead>${FW.inject.esc(p.head, true)}</textarea>
         <label for=wOut>Include Static HTML</label>
         <input id=wOut type=checkbox checked=${p.static ?? false}>
         <span class=h>Include your wiki content in simple HTML for non-JS browsers. Nearly doubles output size.</span>
@@ -81,7 +81,8 @@ export const settingsView = (state, emit) => {
     handleCustomCss(form.wCss.value);
     handleCustomJs(form.wJs.value);
     if (form.wHead.value.trim()) {
-      state.p.head = form.wHead.value;
+      // Store this with angle braces removed in case users add script tags
+      state.p.head = FW.inject.esc(form.wHead.value);
     } else {
       delete state.p.head;
     }

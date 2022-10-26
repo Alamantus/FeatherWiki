@@ -26,7 +26,7 @@ export function generateWikiHtml(state) {
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
   <script id="a">${document.getElementById('a').innerHTML}</script>
-  ${p.head ?? ''}
+  ${FW.inject.esc(p.head, true)}
 </head>
 <body>
   ${staticExport()}
