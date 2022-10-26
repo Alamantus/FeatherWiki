@@ -15,14 +15,11 @@ import esbuild from 'esbuild';
 const outputDir = path.resolve(process.cwd(), 'develop');
 const outputFilePath = path.resolve(outputDir, 'index.html');
 
-const editor = process.argv[2] ?? 'both';
-
 esbuild.build({
   entryPoints: ['index.js'],
   define: {
     'process.env.NODE_ENV': '"development"',
     'process.env.NODE_DEBUG': '"debug"',
-    'process.env.EDITOR': '"' + editor + '"',
     'process.env.SERVER': 'false',
   },
   sourcemap: 'inline',
@@ -67,13 +64,10 @@ async function handleBuildResult (result) {
   for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
     let output = new TextDecoder().decode(out.contents);
     const outputKb = out.contents.byteLength * 0.000977;
-    console.info(out.path, outputKb.toFixed(3) + ' KB');
+    console.info(out.path, outputKb.toFixed(3) + ' kilobytes');
     if (/\.css$/.test(out.path)) {
       html = html.replace('{{cssOutput}}', output);
     } else if (/\.js$/.test(out.path)) {
-      // remove choo's window restriction in Choo.prototype.toString()
-      output = output.toString().replace(/assert\.notEqual\(typeof window, "object", "choo\.mount: window was found\. \.toString\(\) must be called in Node, use \.start\(\) or \.mount\(\) if running in the browser"\);/i, '');
-      
       // Since there's regex stuff in here, I can't do replace!
       const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
       html = htmlParts[0] + output + htmlParts[1];
@@ -119,7 +113,7 @@ async function writeHtmlOutput (html) {
   await fs.writeFile(outputFilePath, html, (err) => {
     if (err) throw err;
     const outputKb = Uint8Array.from(Buffer.from(html)).byteLength * 0.000977;
-    console.info(outputFilePath, outputKb.toFixed(3) + ' KB');
+    console.info(outputFilePath, outputKb.toFixed(3) + ' kilobytes');
   });
 }
 

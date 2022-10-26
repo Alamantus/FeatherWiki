@@ -11,11 +11,7 @@
   "scripts": {
     "start": "node scripts/develop.js",
     "build": "node scripts/build.js",
-    "build:all": "npm run build -- all",
-    "build:both": "npm run build -- both",
-    "build:html": "npm run build -- html",
-    "build:md": "npm run build -- md",
-    "test": "npm run build:all && node scripts/test-build.js"
+    "test": "npm run build && node scripts/test-build.js"
   },
   "type": "module",
   "dependencies": {

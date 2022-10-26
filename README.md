@@ -1,28 +1,17 @@
 # Feather Wiki
 
-A lightweight [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 53.804 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
 ## Versions
 
-As of version 1.2.0, there are now a few different versions of Feather Wiki depending on the kinds of functionality you're looking for, each
-with its own cute bird name to indicate its size _(and to maybe help make up for the fact that there are 6 versions as a result 😵)_.
-Specifically, there are differences in _content editor_ and _server compatibility_ for each version. Below is a breakdown of each
-version.
+Feather Wiki has two primary builds depending on your needs, one for everyday use and one that can be used on a web server to trigger a save if set up correctly. The vast majority of people will likely only use the non-server version of Feather Wiki—if you don't plan on setting up a web server that can support saving the HTML file over the existing file, then you're the majority of people.
 
-### Simple
+Both of these builds have an alternative "ruffled" option that uses less minification to allow for better compatibility with certain web browsers. If you're not able to get Feather Wiki running in your browser of choice, give the ruffled option a try. All builds can be found on the [website](https://feather.wiki/?page=downloads) or on the repository's [Releases page](https://codeberg.org/Alamantus/FeatherWiki/releases).
 
-In _most_ cases, this is the section you want to choose from. These versions will run on browsers running JavaScript with at least
-[ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
-
-- **Dove:** `66.141 KB`
-  - Includes both What You See Is What You Get (WYSIWYG) editor _and_ Markdown editor with toggle button
-- **Finch:** `61.960 KB`
-  - Includes _only_ WYSIWYG editor. **When in doubt, choose this one!**
-- **Chickadee:** `61.071 KB`
-  - Includes _only_ Markdown editor.
+Feather Wiki will only run on browsers that support [ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
 <details>
 <summary>👨‍💻 Technical Talk: Supported Browsers</summary>
@@ -44,36 +33,12 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 </details>
 
-<!--
-### Least Compatible
-
-These versions are smaller, but will only run on newer browsers running JavaScript with up to [ECMAScript 2020 features](https://caniuse.com/es6,array-includes,async-functions,pad-start-end,mdn-javascript_operators_optional_chaining,mdn-javascript_operators_nullish_coalescing). As such, these
-are much more symbolic than actually recommended for use; _Only use these if you use a modern, up-to-date web browser and don't plan on
-publishing your Feather Wiki for other to see._
-
-- **Robin:** `62.130 KB`
-  - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Sparrow:** `58.370 KB`
-  - Includes _only_ WYSIWYG editor.
-- **Hummingbird:** `56.946 KB`
-  - Includes _only_ Markdown editor. The smallest it gets!
--->
-
 ### Server-Saving
 
-These versions are the same as those in the section above, but they are larger because they include extra code for saving to certain web servers.
+The server build of Feather Wiki is exactly the same as the regular build, but it is larger (54.816 kilobytes) because it includes extra code for saving to certain web servers.
 
-Currently the only viable use for these versions is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
+Currently the only viable use for this versions is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
 example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
-
-These versions are specifically named after migratory birds of different sizes to reflect their travel to the server from your browser!
-
-- **Tern:** `67.115 KB`
-  - Includes both WYSIWYG editor _and_ Markdown editor with toggle button
-- **Swallow:** `62.944 KB`
-  - Includes _only_ WYSIWYG editor.
-- **Bluethroat:** `62.050 KB`
-  - Includes _only_ Markdown editor.
 
 ## Contribution
 
@@ -111,27 +76,20 @@ To get your computer set up to develop:
 1. Start making changes to the JavaScript to update your build—you will need to refresh your browser to see your changes
   - Note: Changing the CSS doesn't automatically update the build, so you'll need to modify some JS or restart the script to see those changes
 
-When you're ready to build, simply use the `npm run build:all` to build all versions of Feather Wiki at once!
+When you're ready to build, simply use the `npm run build` to build all versions of Feather Wiki at once!
 
-If you only want to make changes to one version of an editor, you can use
-
-- `npm run build:both` to build the Dove & Robin versions
-- `npm run build:html` to build the Finch & Sparrow versions
-- `npm run build:md` to build the Chickadee & Hummingbird versions
-
-To test a build, you can use `npm test` to build all versions and serve Tern on a local server. You can choose a specific
-build version to test by specifying the build name like `npm test -- Swallow`. The test script will allow server-focused
-versions of Feather Wiki to use the "Save Wiki to Server" button—the output gets saved to `develop/put-save.html` if you need
+To test a build, you can use `npm test` to build all versions and serve the Server build on a local server. The test script will allow
+Feather Wiki to use the "Save Wiki to Server" button—the output gets saved to `develop/put-save.html` if you need
 to check it.
 
 ### Details
 
-Feather Wiki uses [Choo](https://choo.io) as its base JavaScript framework, a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
-minifying JSON output, [pell](https://jaredreich.com/pell/) for its HTML editor, and [Snarkdown](https://github.com/developit/snarkdown) for
+Feather Wiki uses a modified version of [Choo](https://choo.io) as its base JavaScript framework, a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
+minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its HTML editor, and a customized [md.js](https://github.com/thysultan/md.js) for
 its Markdown parsing.
 
-If you want to restrict a feature to one build or another (which I request you do if it's only specific to one editor or another),
-use `process.env.EDITOR === 'md'` in an `if` statement to ensure that esbuild removes the code on build for the irrelevant versions.
+If you want to restrict a feature to one build or another (which I request you do if it's only specific to the regular or server build),
+use `process.env.SERVER` in an `if` statement to ensure that esbuild removes the code on build for the irrelevant versions. It will be auto-populated with `true` or `false` during the build process.
 
 The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's
 a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
