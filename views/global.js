@@ -104,7 +104,7 @@ export const globalView = (state, emit) => {
       <section>${ pageToRender }</section>
     </main>
     <footer>
-      <span class="fr">Powered by <a href="{{package.json:homepage}}" title="Version: {{package.json:version}}{{buildVersion}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
+      <span class="fr">Powered by <a href="{{package.json:homepage}}" title="Version: {{buildVersion}}_{{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
     <div class=notis>
       ${notis.map(n => html`<div class=noti style="${n.css}" onclick=${() => emit(events.REMOVE_NOTI, n.id)} title="Click to close">

@@ -1,15 +1,15 @@
 # Feather Wiki
 
-A 54.403 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 54.423 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
 ## Versions
 
-Feather Wiki has two primary builds depending on your needs, one for everyday use and one that can be used on a web server to trigger a save if set up correctly. The vast majority of people will likely only use the non-server version of Feather Wiki—if you don't plan on setting up a web server that can support saving the HTML file over the existing file, then you're the majority of people.
+Feather Wiki has two primary builds depending on your needs, Wren for everyday use and Warbler for web servers to trigger a save if set up correctly. The vast majority of people will likely only use Wren—if you don't plan on setting up a web server that can support saving the HTML file over the existing file directly on the server, then you're the majority of people.
 
-Both of these builds have an alternative "ruffled" option that uses less minification to allow for better compatibility with certain web browsers. If you're not able to get Feather Wiki running in your browser of choice, give the ruffled option a try. All builds can be found on the [website](https://feather.wiki/?page=downloads) or on the repository's [Releases page](https://codeberg.org/Alamantus/FeatherWiki/releases).
+Both of these builds have an alternative "ruffled" option that uses less minification to allow for better compatibility with certain web browsers at the cost of a couple of extra kilobytes in size. If you're not able to get Feather Wiki running in your browser of choice, give the ruffled option a try. All builds can be found on the [website](https://feather.wiki/?page=downloads) or on the repository's [Releases page](https://codeberg.org/Alamantus/FeatherWiki/releases).
 
 Feather Wiki will only run on browsers that support [ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
@@ -35,10 +35,18 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-The server build of Feather Wiki is exactly the same as the regular build, but it is larger (55.414 kilobytes) because it includes extra code for saving to certain web servers.
+Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.409 kilobytes) because it includes extra code for saving to certain web servers.
 
-Currently the only viable use for this versions is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
+Currently the only viable use for this version is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
 example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
+
+#### Server Setup
+
+Warbler expects a `dav` header with any value to be returned by an `OPTIONS` call to the server at the same address as the Feather Wiki file is served. If the server looks compatible, Feather Wiki will display a new "Save Wiki to Server" button above a "Save Wiki Locally" button.
+
+When the user clicks the "Save Wiki to Server" button, Feather Wiki will send a `PUT` request to the server with a body that contains the full HTML output of the Feather Wiki file that would normally be downloaded to the computer. If you want password protection on your wiki (and I think you _should_), then you'll need to implement that in a way that the server can understand, whether by having the user log in on a different page and saving to a domain cookie or by using basic HTTP auth—the choice is yours.
+
+After sending to the server, Feather Wiki expects either a success or failed response with an optional text message as the body to explain a failure. If not text is returned in the response body on a failure, it will simply display the status code in a message box, eg. "Save Failed! Status 403." On success, Feather Wiki will display "Saved."
 
 ## Contribution
 

@@ -53,7 +53,7 @@ export const settingsView = (state, emit) => {
       </form>
       <div class=tr>
         <p class="pb h">
-          {{package.json:title}} Version: {{package.json:version}}{{buildVersion}}
+          {{package.json:title}} Version: {{buildVersion}}_{{package.json:version}}
         </p>
         <p>
           <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>

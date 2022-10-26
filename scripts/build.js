@@ -78,9 +78,9 @@ Promise.all([
   const filePath = path.resolve(process.cwd(), 'README.md');
   let readme = await fs.promises.readFile(filePath, 'utf8');
   results.forEach(result => {
-    if (result.version === 'Plain') {
+    if (result.version === 'Wren') {
       readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
-    } else if (result.version === 'Server') {
+    } else if (result.version === 'Warbler') {
       readme = readme.replace(/larger \(\d+\.?\d+ kilobytes\)/, `larger (${result.size})`);
     }
   });
@@ -91,9 +91,7 @@ Promise.all([
 })
 
 function build(server = false, ruffled = false) {
-  const buildName = server || ruffled
-  ? `${ruffled ? 'Ruffled' : ''}${server && ruffled ? ' ' : ''}${server ? 'Server' : ''}`
-  : 'Plain';
+  const buildName = (ruffled ? 'ruffled-' : '') + (server ? 'Warbler' : 'Wren');
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
@@ -186,15 +184,12 @@ function build(server = false, ruffled = false) {
       return result;
     }
   }).then(async html => {
-    const buildVersion = server || ruffled
-      ? ` (${ruffled ? 'Ruffled' : ''}${server && ruffled ? ' ' : ''}${server ? 'Server' : ''})`
-      : '';
-    html = html.replace(/{{buildVersion}}/g, buildVersion);
+    html = html.replace(/{{buildVersion}}/g, buildName);
     const outputDir = path.resolve(process.cwd(), 'builds');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
     }
-    const filePath = path.resolve(outputDir, `FeatherWiki${server ? '_Server' : ''}${ruffled ? '-ruffled' : ''}.html`);
+    const filePath = path.resolve(outputDir, `FeatherWiki_${buildName}.html`);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
