@@ -26,6 +26,7 @@ export function generateWikiHtml(state) {
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
   <script id="a">${document.getElementById('a').innerHTML}</script>
+  ${FW.inject.esc(p.head, true)}
 </head>
 <body>
   ${staticExport()}
@@ -48,7 +49,7 @@ export function generateWikiHtml(state) {
     doc.querySelectorAll('a').forEach(a => {
       a.classList.remove('a')
       a.href = a.href.includes('#') ? a.href.replace(/.+(#.+)$/, '$1') : (
-        p.static && a.href.includes(`${state.root}?page=`) ? a.href.replace(/.+page=(.+)(\&.+)*?$/, '#Pg-$1') : a.href
+        a.href.includes(`${state.root}?page=`) ? a.href.replace(/.+(page=.+)(\&.+)*?$/, p.static ? '#$1' : '?$1') : a.href
       )
     });
     return doc.querySelector('main').outerHTML;
@@ -58,7 +59,7 @@ export function generateWikiHtml(state) {
     return html`<section>
       ${p.pages.map(pg => {
         const pv = state.views.p(state, '', pg);
-        pv[0].querySelector('h1').id = 'Pg-' + pg.slug;
+        pv[0].querySelector('h1').id = 'page=' + pg.slug;
         return html`<article>
           ${pv[0]}
           <div class=uc>${ html.raw(pv[1][1].innerHTML) }</div>

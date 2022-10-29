@@ -12,32 +12,25 @@ export const pageEdit = (state, emit, page) => {
   const children = help.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
-  let editor;
-  if (process.env.EDITOR === 'md') {
-    editor = require('./md-editor').editor(state, emit);
-  } else if (process.env.EDITOR === 'html') {
-    editor = require('./pell-editor').editor(state, emit);
-  } else {
-    const { useMd } = edits;
-    function toggleEditor (e) {
-      e.preventDefault();
-      const { useMd, content } = edits;
-      if (useMd) {
-        if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-        state.edits.content = md(content);
-      } else {
-        state.edits.content = FW.img.abbr(content);
-      }
-      state.edits.useMd = !useMd;
-      emit(events.RENDER);
+  const { useMd } = edits;
+  function toggleEditor (e) {
+    e.preventDefault();
+    const { useMd, content } = edits;
+    if (useMd) {
+      if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
+      state.edits.content = md(content);
+    } else {
+      state.edits.content = FW.img.abbr(content);
     }
-    editor = [
-      html`<div class="w1 tr">
-        <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
-      </div>`,
-      require(useMd ? './md-editor' : './pell-editor').editor(state, emit),
-    ];
+    state.edits.useMd = !useMd;
+    emit(events.RENDER);
   }
+  const editor = [
+    html`<div class="w1 tr">
+      <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
+    </div>`,
+    require(useMd ? './md-editor' : './pell-editor').editor(state, emit),
+  ];
 
   return html`<form onsubmit=${save}>
     <header>
@@ -139,9 +132,7 @@ export const pageEdit = (state, emit, page) => {
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
-    if (process.env.EDITOR !== 'html') {
-      if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
-    }
+    if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
     emit(events.UPDATE_PAGE, pg);
   }
 

@@ -10,14 +10,19 @@
 export const initEmitter = (state, emitter) => {
   const { events, views } = state;
   const emit = (...args) => emitter.emit(...args);
-  const title = () => emit(events.DOMTITLECHANGE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const hashScroll = () => {
+    if (!location.hash) return false;
+    document.querySelector(location.hash)?.scrollIntoView();
+    return true;
+  }
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
     state.edits = null;
   };
 
-  emitter.on(events.DOMCONTENTLOADED, () => {
+  emitter.on(events.ONLOAD, () => {
     emit(events.HANDLE_404);
     title();
     emit(events.COLLECT_TAGS);
@@ -25,6 +30,7 @@ export const initEmitter = (state, emitter) => {
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
+    hashScroll();
   });
 
   emitter.on(events.RENDER, callback => {
@@ -47,22 +53,17 @@ export const initEmitter = (state, emitter) => {
     }
   });
 
-  emitter.on(events.NAVIGATE, () => {
+  emitter.on(events.GO, () => {
     // Prevent navigation if editing and they don't confirm
-    if (!state.keep && keepEditing()) {
-      state.keep = true;
-      return history.go(-1);
-    }
-    if (!state.keep) {
-      stopEdit();
-      state.pg = state.help.getPage();
-      state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
-      emit(events.HANDLE_404);
-      title();
-      window.scroll(0, 0);
-    } else {
-      state.keep = false;
-    }
+    if (keepEditing()) return history.go(-1);
+
+    stopEdit();
+    state.pg = state.help.getPage();
+    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
+    emit(events.HANDLE_404);
+    title();
+    // Scroll to top of page if no location hash is set
+    if (!hashScroll()) window.scroll(0, 0);
   });
 
   emitter.on(events.CREATE_PAGE, (name, save = true) => {
@@ -99,7 +100,7 @@ export const initEmitter = (state, emitter) => {
     if (save) {
       state.p.pages.push(newPg);
       emit(events.CHECK_CHANGED);
-      emit(events[query.page !== slug ? 'REPLACESTATE' : 'PUSHSTATE'], root + '?page=' + slug);
+      emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
       state.pg = newPg;
     }
@@ -117,13 +118,7 @@ export const initEmitter = (state, emitter) => {
       parent: pg.parent ?? '',
       hide: !!pg.hide,
     };
-    if (process.env.EDITOR !== 'html') {
-      if (process.env.EDITOR === 'md') {
-        store.useMd = true;
-      } else {
-        store.useMd = pg.editor === 'md' || state.useMd;
-      }
-    }
+    store.useMd = pg.editor === 'md' || state.useMd;
     state.edits = store;
     state.src = false;
     emit(events.RENDER);
@@ -151,11 +146,9 @@ export const initEmitter = (state, emitter) => {
       p.pages.push(page);
     }
     stopEdit();
-    if (process.env.EDITOR !== 'html') {
-      state.useMd = page.editor === 'md';
-    }
+    state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.root + '?page=' + page.slug);
+    emit(events.GO, state.root + '?page=' + page.slug);
     emit(events.CHECK_CHANGED);
   });
 
@@ -166,7 +159,7 @@ export const initEmitter = (state, emitter) => {
     }).filter(pg => pg.id !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
-    emit(events.PUSHSTATE, state.root);
+    emit(events.GO, state.root);
     emit(events.CHECK_CHANGED);
   });
 

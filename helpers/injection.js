@@ -72,3 +72,10 @@ export function hLink (content) {
   }
   return c;
 }
+
+export function esc(string, unescape = false) {
+  return (unescape
+    ? string?.replace(/&[lg]t;/g, x => ({ '&lt;': '<', '&gt;': '>' }[x] ?? x))
+    : string?.replace(/[<>]/g, x => ({ '<': '&lt;', '>': '&gt;' }[x] ?? x))
+  ) ?? '';
+}
