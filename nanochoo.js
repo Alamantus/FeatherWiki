@@ -92,6 +92,10 @@ Choo.prototype.start = function () {
     }
   })
 
+  window.onpopstate = function () {
+    self.emitter.emit(self._events.GO)
+  }
+
   nanohref(function (location) {
     var href = location.href
     var currHref = window.location.href
