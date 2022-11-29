@@ -118,7 +118,8 @@ export const initEmitter = (state, emitter) => {
       parent: pg.parent ?? '',
       hide: !!pg.hide,
     };
-    store.useMd = pg.editor === 'md' || state.useMd;
+    // Use markdown if: the page is already using it or it's a new page and the last saved page used it
+    store.useMd = pg.editor === 'md' || (!store.content && state.useMd);
     state.edits = store;
     state.src = false;
     emit(events.RENDER);
