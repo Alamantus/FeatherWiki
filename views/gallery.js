@@ -69,7 +69,7 @@ export const gallery = (state, emit, options = {}) => {
 
   function editAlt(e, i) {
     e.preventDefault();
-    state.p.img[i.id].alt = prompt('Set alt text', i.alt);
+    state.p.img[i.id].alt = prompt('Set alt text', i.alt) ?? i.alt;
     emit(events.CHECK_CHANGED);
   }
 
