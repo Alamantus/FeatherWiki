@@ -198,8 +198,9 @@
   emitter.emit('DOMContentLoaded');
 
   function renderImportExportSection () {
-    if (state.query.page !== 's') return;
-    const section = html`<section style="margin-top:20px;">
+    // Don't run if not on settings page or if already rendered
+    if (state.query.page !== 's' || !!document.querySelector('#dataManagementSection')) return;
+    const section = html`<section id="dataManagementSection" style="margin-top:20px;">
       <h1>Data Management</h1>
       <div class="r">
         <div class="c w12">
