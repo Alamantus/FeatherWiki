@@ -101,7 +101,7 @@ export const init = settings => {
     { // insertImage
       title: 'Insert Image from File',
       icon: '📸',
-      result: () => FW.img.upload(state, insert),
+      result: settings.insert,
     },
     { // existingImage
       title: 'Add Existing Image',

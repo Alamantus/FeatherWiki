@@ -23,6 +23,7 @@ export const editor = (state, emit) => {
       element = init({
         element: html`<div id=e class=ed></div>`, // Setting id here helps prevent re-render when other fields are changed
         onChange: val => state.edits.content = val,
+        insert: () => FW.img.upload(state, insert),
       });
       element.isSameNode = () => true; // Do not re-render editor
     }
