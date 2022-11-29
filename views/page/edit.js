@@ -131,7 +131,6 @@ export const pageEdit = (state, emit, page) => {
     pg.tags = getTagsArray().join(',');
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
-    if (f.hide.checked) pg.hide = true; else delete pg.hide;
     if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
     emit(events.UPDATE_PAGE, pg);
   }
