@@ -7,9 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-// This extension adds Fuse.js from a CDN, creates a search results view, adds a search bar to the menu each render,
-// and displays search results when you press enter within the search box. This can likely be expanded or improved,
-// but it should at least get you started!
+// This extension adds a search box with a very simple text search with results that drop down from the box if there are any matches.
 (function featherSearchExtension () {
   if (!window.FW._loaded) return setTimeout(featherSearchExtension, 1); // wait until FW is mounted
   const { state, emitter } = window.FW;
@@ -26,13 +24,13 @@
 
   function renderSearchBar () {
     if (!!document.getElementById('featherSearch')) return;
-    const input = html`<div class="featherSearch">
+    const input = html`<div id=featherSearch>
       <input id=featherSearchBar type=search placeholder="Search Pages" onsearch=${e => search(e)} oninput=${e => search(e)} onblur=${() => {
         setTimeout(() => document.getElementById('featherSearchResults').style.display = 'none', 300);
       }} onfocus=${() => {
         if (document.getElementById('featherSearchResults').innerHTML.length > 0) document.getElementById('featherSearchResults').style.display = null;
       }} />
-      <div id="featherSearchResults" style="display:none;"></div>
+      <div id=featherSearchResults style="display:none;"></div>
       <style>
         #featherSearch{position:relative;}
         #featherSearchResults{

@@ -7,9 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-// This extension adds a "Data Management" section to the Wiki settings page that allows you to import multiple HTML, Markdown, and plain text files as new pages in your wiki and
-// export all of your current wiki's pages as HTML or Markdown files. It loads JSZip from a CDN when exporting to package up all the pages into a single .zip file.
-// You can also export your entire wiki's raw JSON data in its uncompressed format, but this may be less useful to you if you don't know how to manipulate JSON data.
+// This extension adds a "Clone Page" button next to the "Edit" button on every page. Click it, set a new name, and a copy of the current page will appear for editing.
 (function clonePageExtension () {
   if (!window.FW._loaded) return setTimeout(clonePageExtension, 1); // wait until FW is mounted
   const { state, emitter } = window.FW;
