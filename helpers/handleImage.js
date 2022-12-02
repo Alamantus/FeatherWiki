@@ -36,6 +36,12 @@ export function abbr (content) {
   return content.replace(/(?:<img src=")[^"]+#([-\d]+)(?=")/g, '<img src="img:$1:img');
 }
 
+// Restore image HTML after using it stored mangling (or mangle it with not)
+export function fix (content, not) {
+  if (not) return content.replace(/<img /g, '<im ');
+  return content.replace(/<im /g, '<img ');
+}
+
 // Adapted from https://gist.github.com/ORESoftware/ba5d03f3e1826dc15d5ad2bcec37f7bf
 export function resizeImage(file, callback = () => {}) {
   const reader = new FileReader();

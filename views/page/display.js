@@ -10,7 +10,7 @@
 export const pageDisplay = (state, page) => {
   const { img, pg, out, hLink } = FW.inject;
   const { help } = state;
-  let c = page.content ?? '';
+  let c = FW.img.fix(page.content ?? '');
   c = page.editor === 'md' ? md(c) : c;
   c = img(
     pg(

@@ -113,7 +113,7 @@ export const initEmitter = (state, emitter) => {
     const store = {
       name: pg.name ?? '',
       slug: pg.slug ?? '',
-      content: pg.content ?? '',
+      content: FW.img.fix(pg.content ?? ''),
       tags: pg.tags ?? '',
       parent: pg.parent ?? '',
       hide: !!pg.hide,

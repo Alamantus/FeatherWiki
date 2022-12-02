@@ -127,7 +127,7 @@ export const pageEdit = (state, emit, page) => {
     const pg = { ...page };
     pg.name = n;
     pg.slug = FW.slug(slug);
-    pg.content = FW.img.abbr(state.edits.content);
+    pg.content = FW.img.fix(FW.img.abbr(state.edits.content), true);
     pg.tags = getTagsArray().join(',');
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
