@@ -7,14 +7,14 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export function upload (state, ins = () => {}) {
-  if (!confirm('Inserting an image will increase your wiki\'s file size. Continue?')) return;
+ export function upload (state, ins = () => {}) {
+  if (!confirm("Inserting images increases your wiki's file size. Continue?")) return;
   FW.upload('image/*', file => {
     resizeImage(file, (img, w, h) => {
       if (img) {
         const id = FW.hash.string(img);
         state.p.img[id.toString()] = {
-          alt: prompt('Set alt text', file.name),
+          alt: prompt('Alt text:', file.name),
           size: [w, h],
           img,
         };
@@ -53,9 +53,9 @@ export function resizeImage(file, callback = () => {}) {
       let width = img.width;
       let height = img.height;
 
-      let maxWidth = prompt('Set max width pixels:', '400');
+      let maxWidth = prompt('Max width pixels:', '400');
       maxWidth = maxWidth?.length ? parseInt(maxWidth) : 400;
-      let maxHeight = prompt('Set max height pixels:', '350');
+      let maxHeight = prompt('Max height pixels:', '350');
       maxHeight = maxHeight?.length ? parseInt(maxHeight) : 350;
 
       if (width > height) {

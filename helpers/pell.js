@@ -86,7 +86,7 @@ export const init = settings => {
       icon: '&#128279;',
       title: 'Link',
       result: () => {
-        const url = window.prompt('Enter the link URL')
+        const url = window.prompt('Link URL:')
         if (url) exec('createLink', url)
       }
     },
@@ -94,7 +94,7 @@ export const init = settings => {
       title: 'Link External Image',
       icon: '🖼️',
       result: () => {
-        const url = window.prompt('Enter the image URL');
+        const url = window.prompt('Image URL:');
         if (url) exec('insertImage', url);
       },
     },
