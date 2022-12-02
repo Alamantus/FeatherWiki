@@ -32,6 +32,7 @@
           readFile(f, (content => {
             if (content) {
               const pg = window.FW.data['parse' + (f.type === 'text/html' ? 'Html' : 'Text')](f, content);
+              pg.content = window.FW.img.fix(pg.content, true);
               state.p.pages.push(pg);
               emitter.emit(state.events.CHECK_CHANGED);
             }
@@ -146,7 +147,7 @@
       var zip = new JSZip();
       state.p.pages.forEach(pg => {
         let filename = pg.slug;
-        let content = window.FW.inject.img(pg.content) ?? '';
+        let content = window.FW.inject.img(window.FW.img.fix(pg.content ?? ''));
         // replace internal links
         (content?.match(/\[\[.+?(?=\]\])/g) ?? []).forEach(l => {
           const match = l.replace('[[', '').split('|');
