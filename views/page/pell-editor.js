@@ -13,7 +13,6 @@ export const editor = (state, emit) => {
   const { init, exec } = pell; // From `window`
   const { src, edits } = state;
   const { content } = edits;
-  const c = FW.inject.img(content, state, true);
   let element = document.querySelector('#e');
   if (src) {
     element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
@@ -27,7 +26,7 @@ export const editor = (state, emit) => {
       });
       element.isSameNode = () => true; // Do not re-render editor
     }
-    element.content.innerHTML = c;
+    element.content.innerHTML = content.includes('<img ') ? FW.inject.img(content, state, true) : content;
   }
 
   return [

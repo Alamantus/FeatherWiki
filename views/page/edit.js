@@ -17,8 +17,7 @@ export const pageEdit = (state, emit, page) => {
     e.preventDefault();
     const { useMd, content } = edits;
     if (useMd) {
-      if (!confirm('Your markdown will be converted to HTML. Continue?')) return;
-      state.edits.content = md(content);
+      if (confirm('Convert Markdown to HTML?')) state.edits.content = md(content);
     } else {
       state.edits.content = FW.img.abbr(content);
     }
@@ -137,7 +136,7 @@ export const pageEdit = (state, emit, page) => {
 
   function deletePage (e) {
     e.preventDefault();
-    if (confirm('You can\'t undo this after saving your wiki! Delete this page?')) {
+    if (confirm("You can't undo this after saving your wiki! Delete this page?")) {
       emit(events.DELETE_PAGE, page.id);
     }
   }
