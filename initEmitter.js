@@ -13,7 +13,7 @@ export const initEmitter = (state, emitter) => {
   const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const hashScroll = () => {
     if (!location.hash) return false;
-    document.querySelector(location.hash)?.scrollIntoView();
+    document.getElementById(location.hash.substring(1))?.scrollIntoView();
     return true;
   }
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
