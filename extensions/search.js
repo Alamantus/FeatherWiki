@@ -29,7 +29,7 @@
       ignoreLocation: true,
       keys: ['name', 'content'],
     })).search(q);
-    emitter.emit(state.events.PUSHSTATE, state.root + '?page=r&search=' + encodeURIComponent(q));
+    emitter.emit(state.events.GO, state.root + '?page=r&search=' + encodeURIComponent(q));
   });
   ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
