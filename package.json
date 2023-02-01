@@ -1,6 +1,6 @@
 {
   "name": "featherwiki",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "title": "Feather Wiki",
   "description": "A lightweight quine for simple, self-contained wikis",
   "homepage": "https://feather.wiki",
