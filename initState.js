@@ -24,7 +24,7 @@ export const initState = state => {
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
   state.src = false; // Show HTML in editor
-  state.notis = []; // Notifications
+  state.notis = {}; // Notifications
   if (process.env.SERVER) {
     state.canSave = false; // Show "Save Wiki to Server" button
   }

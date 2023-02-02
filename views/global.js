@@ -107,9 +107,7 @@ export const globalView = (state, emit) => {
       <span class="fr">Powered by <a href="{{package.json:homepage}}" title="Version: {{buildVersion}}_{{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
     <div class=notis>
-      ${notis.map(n => html`<div class=noti style="${n.css}" onclick=${() => emit(events.REMOVE_NOTI, n.id)} title="Click to close">
-        <span role=alert>${n.text}</span><span class=fr>×</span>
-      </div>`)}
+      ${Object.values(notis)}
     </div>
   </body>`;
 

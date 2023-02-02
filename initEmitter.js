@@ -177,20 +177,21 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
-    const id = FW.hash.string(text + css + (state.notis.length + 1));
-    const n = {
-      text,
-      css,
-      id,
-      t: time > 0 ? setTimeout(() => emit(events.REMOVE_NOTI, id), time) : null,
-    };
-    state.notis.push(n);
-    emit(events.RENDER);
+    const i = Date.now();
+    const rm = () => emitter.emit(state.events.REMOVE_NOTI, i);
+    const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="Click to close">
+      <span role=alert>${text}</span><span class=fr>×</span>
+    </div>`;
+    state.notis[i] = n;
+    if (time > 0) setTimeout(rm, time);
+
+    document.querySelector('.notis').appendChild(n);
   });
 
-  emitter.on(events.REMOVE_NOTI, id => {
-    state.notis.splice(state.notis.findIndex(n => n.id === id), 1);
-    emit(events.RENDER);
+  emitter.on(events.REMOVE_NOTI, i => {
+    const e = state.notis[i];
+    e?.parentNode.removeChild(e);
+    delete state.notis[i];
   });
 
   emitter.on(events.SAVE_WIKI, () => {
