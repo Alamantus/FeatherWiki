@@ -13,11 +13,13 @@ export function pg (content, state) {
   if (c) {
     (content?.match(/\[\[.+?(?=\]\])/g) ?? []).forEach(l => {
       const match = l.replace('[[', '').split('|');
-      const slug = match[1] ? match[1].trim() : FW.slug(match[0]);
-      const exists = state.p.pages.some(pg => pg.slug === slug);
+      const text = !match[1] ? match[0].split('#')[0] : match[0]; // allow hash character in text when slug is used
+      const link = (match[1] ?? match[0]).trim().split('#');
+      if (!match[1]) link[0] = FW.slug(link[0]);
+      const exists = state.p.pages.some(pg => pg.slug === link[0]);
       c = c.replace(
         `${l}]]`,
-        `<a href="${state.root}?page=${slug}"${!exists ? ' class=e' : ''}>${match[0]}</a>`
+        `<a href="${state.root}?page=${link.join('#')}"${!exists ? ' class=e' : ''}>${text}</a>`
       );
     });
   }

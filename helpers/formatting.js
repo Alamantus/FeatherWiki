@@ -9,7 +9,7 @@
  */
 // Replace whitespace with _ then all ASCII punctuation (except _) & non-print characters with -
 // Only ASCII ranges are replaced to allow non-English characters to be used
-export const slugify = s => s.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40[\\\]^`\x7B-\x7F]/g, '-');
+export const slugify = s => s?.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40[\\\]^`\x7B-\x7F]/g, '-');
 
 export const formatDate = d => {
   const pad = s => s.toString().padStart(2, '0');
