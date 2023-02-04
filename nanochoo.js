@@ -82,13 +82,22 @@ Choo.prototype.use = function (cb) {
 
 Choo.prototype.start = function () {
   var self = this
+  const hashScroll = () => {
+    const el = document.getElementById(location.hash.substring(1));
+    if (!el) return false;
+    el?.scrollIntoView();
+    return true;
+  }
   this.emitter.prependListener(this._events.GO, function (to = null, action = 'push') {
     if (to) {
       history[action + 'State'](HISTORY, self.state.title, to)
     }
     self.state.query = getParams()
     if (self._loaded) {
-      self.emitter.emit(self._events.RENDER)
+      self.emitter.emit(self._events.RENDER, function () {
+        // Scroll to top of page if no location hash is set
+        hashScroll() || window.scroll(0, 0);
+      })
     }
   })
 
@@ -115,14 +124,16 @@ Choo.prototype.start = function () {
 
   this._tree = render()
 
-  this.emitter.prependListener(self._events.RENDER, nanoraf(function () {
+  this.emitter.prependListener(self._events.RENDER, nanoraf(function (callback) {
     var newTree = render()
     nanomorph(self._tree, newTree)
+    if (typeof callback === 'function') setTimeout(callback, 9);
   }))
 
   documentReady(function () {
     self.emitter.emit(self._events.ONLOAD)
     self._loaded = true
+    hashScroll();
   })
 
   return this._tree
