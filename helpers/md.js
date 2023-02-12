@@ -27,9 +27,6 @@ var inlineCodeTemplate = (match, code) => `<code>${ code.replace(resc, unicode) 
 
 var blockCodeRegExp = /```(.*)\n([^\0]+?)```(?!```)/gm;
 
-var imagesRegExp = /!\[(.*)\]\((.*)\)/g;
-var imagesTemplate = (match, alt, src) => `<img src="${ src.replace(resc, unicode) }" alt="${ alt.replace(resc, unicode) }">`;
-
 var headingsRegExp = /^(#+) +(.*)/gm;
 var headingsTemplate = (match, hash, content)  => `<h${ hash.length }>${ content }</h${ hash.length }>`;
 
@@ -41,7 +38,8 @@ var headingsCommonh2Template = '<h2>$1$2</h2>';
 var lineBreaksRegExp = /  +\n/gm;
 var lineBreaksTemplate = '<br>';
 
-var paragraphsRegExp = /^([^-><#\d\+\_\*\t \n\[\!\{])([^]*?)(?:\n\n)/gm;
+// exclude lists, already-rendered HTML, & whitespace
+var paragraphsRegExp = /^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm;
 var paragraphsTemplate = (match, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`;
 
 var horizontalRegExp = /\n( *[-*]){3,}\n/gm;
@@ -56,10 +54,19 @@ var emphasisTemplate = '<em>$1</em>';
 var strikeRegExp = /(?:~~)([^~]+?)(?:~~)/g;
 var strikeTemplate = '<del>$1</del>';
 
-var linksRegExp = /\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm;
-var linksTemplate = (match, text, link, title) => {
+var autoLinkRegExp = /<([^>\s]+(\/\/|@)[^>\s]+)>/g;
+var autoLinkTemplate = (match, url, method) => {
+  method = method === '@' ? 'mailto:' : '';
+  return `[${ url }](${ method }${url})`;
+}
+
+var linksRegExp = /(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm;
+var linksTemplate = (match, img, text, link, title) => {
+  text = text.replace(resc, unicode);
+  link = encodeURI(link);
   title = title ? ` title="${ title.replace(resc, unicode) }"` : '';
-  return `<a href="${ link.replace(resc, unicode) }"${ title }>${ text.replace(resc, unicode) }</a>`;
+  if (img) return `<img src="${ link }" alt="${text}"${title}>`;
+  return `<a href="${ link }"${ title }>${ text }</a>`;
 };
 
 
@@ -73,7 +80,7 @@ var combineSequentialUlRegExp = /(<\/ul>\n?\s*<ul>)+?/g;
 var combineSequentialOlRegExp = /(<\/ol>\n?\s*<ol>)+?/g;
 
 var checkBoxesRegExp = /\[( |x)\]/g;
-var checkBoxesTemplate = (match, checked) => `<input type="checkbox" disabled${ group1.toLowerCase() === 'x' ? ' checked' : '' }>`;
+var checkBoxesTemplate = (match, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`;
 
 
 /**
@@ -112,8 +119,6 @@ export default function md (markdown) {
       // blockquotes
       .replace(blockQuotesRegExp, blockQuotesTemplate)
       .replace(combineSequentialBlockquotesRegExp, '')
-      // images
-      .replace(imagesRegExp, imagesTemplate)
       // headings
       .replace(headingsRegExp, headingsTemplate)
       // headings h1 (commonmark)
@@ -131,6 +136,8 @@ export default function md (markdown) {
       // .replace(misplacedParagraphTagRegExp, misplacedParagraphTagTemplate)
       // inline code
       .replace(inlineCodeRegExp, inlineCodeTemplate)
+      // auto links
+      .replace(autoLinkRegExp, autoLinkTemplate)
       // links
       .replace(linksRegExp, linksTemplate)
       // lists
