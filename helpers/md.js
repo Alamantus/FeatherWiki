@@ -18,18 +18,6 @@ const unicode = char => ({
   ')': '&#41;',
 }[char] || char);
 
-var XSSFilterRegExp = /<(script)[^\0]*?>([^\0]+?)<\/(script)>/gmi;
-var XSSFilterTemplate = '&lt;$1&gt;$2&lt;/$3&gt;';
-
-var XSSFilterInlineJSRegExp = /(<.*? [^\0]*?=[^\0]*?)(javascript:.*?)(.*>)/gmi;
-var XSSFilterInlineJSTemplate = '$1#$2&#58;$3';
-
-var XSSFilterImageRegExp = /<img([^\0]*?onerror=)([^\0]*?)>/gmi;
-var XSSFilterImageTemplate = (match, group1, group2) => `<img${group1}${group2.replace(resc, unicode)}>`;
-
-var eventsFilterRegExp = /(<[^]+?)(on.*?=.*?)(.*>)/gm;
-var eventsFilterTemplate = '$1$3';
-
 var blockQuotesRegExp = /^[ \t]*> (.*)/gm;
 var blockQuotesTemplate = '<blockquote>\n$1\n</blockquote>';
 var combineSequentialBlockquotesRegExp = /(<\/blockquote>\n?<blockquote>)+?/g;
@@ -121,12 +109,6 @@ export default function md (markdown) {
 
         return placeholder;
       })
-      // XSS script tags
-      .replace(XSSFilterRegExp, XSSFilterTemplate)
-      // XSS image onerror
-      .replace(XSSFilterImageRegExp, XSSFilterImageTemplate)
-      // filter events
-      .replace(eventsFilterRegExp, eventsFilterTemplate)
       // blockquotes
       .replace(blockQuotesRegExp, blockQuotesTemplate)
       .replace(combineSequentialBlockquotesRegExp, '')
@@ -187,8 +169,6 @@ export default function md (markdown) {
       .replace(emphasisRegExp, emphasisTemplate)
       // strike through
       .replace(strikeRegExp, strikeTemplate)
-      // filter inline js
-      .replace(XSSFilterInlineJSRegExp, XSSFilterInlineJSTemplate)
   );
 
   // replace code block placeholders
