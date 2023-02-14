@@ -1,12 +1,10 @@
 /**
- * Modified from md.js is a lightweight markdown parser
+ * Modified beyond recognition from md.js, a lightweight markdown parser
  * https://github.com/thysultan/md.js
  * 
  * @licence MIT
  */
-var resc = /[<>&\(\)\[\]"']/g;
-
-const unicode = char => ({
+const charMap = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
@@ -16,72 +14,13 @@ const unicode = char => ({
   ']': '&#93;',
   '(': '&#40;',
   ')': '&#41;',
-}[char] || char);
-
-var blockQuotesRegExp = /^[ \t]*> (.*)/gm;
-var blockQuotesTemplate = '<blockquote>\n$1\n</blockquote>';
-var combineSequentialBlockquotesRegExp = /(<\/blockquote>\n?<blockquote>)+?/g;
-
-var inlineCodeRegExp = /`([^`]+?)`/g;
-var inlineCodeTemplate = (match, code) => `<code>${ code.replace(resc, unicode) }</code>`;
-
-var blockCodeRegExp = /```(.*)\n([^\0]+?)```(?!```)/gm;
-
-var headingsRegExp = /^(#+) +(.*)/gm;
-var headingsTemplate = (match, hash, content)  => `<h${ hash.length }>${ content }</h${ hash.length }>`;
-
-var headingsCommonh1RegExp = /^([^\n\t ])(.*)\n====+/gm;
-var headingsCommonh1Template = '<h1>$1$2</h1>';
-var headingsCommonh2RegExp = /^([^\n\t ])(.*)\n----+/gm;
-var headingsCommonh2Template = '<h2>$1$2</h2>';
-
-var lineBreaksRegExp = /  +\n/gm;
-var lineBreaksTemplate = '<br>';
-
-// exclude lists, already-rendered HTML, & whitespace
-var paragraphsRegExp = /^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm;
-var paragraphsTemplate = (match, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`;
-
-var horizontalRegExp = /\n( *[-*]){3,}\n/gm;
-var horizontalTemplate = '<hr>';
-
-var strongRegExp = /(?:\*\*|__)([^\n*_]+?)(?:\*\*|__)/g;
-var strongTemplate = '<strong>$1</strong>';
-
-var emphasisRegExp = /(?:\*|_)([^\n*_]+?)(?:\*|_)/g;
-var emphasisTemplate = '<em>$1</em>';
-
-var strikeRegExp = /(?:~~)([^~]+?)(?:~~)/g;
-var strikeTemplate = '<del>$1</del>';
-
-var autoLinkRegExp = /<([^>\s]+(\/\/|@)[^>\s]+)>/g;
-var autoLinkTemplate = (match, url, method) => {
-  method = method === '@' ? 'mailto:' : '';
-  return `[${ url }](${ method }${url})`;
-}
-
-var linksRegExp = /(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm;
-var linksTemplate = (match, img, text, link, title) => {
-  text = text.replace(resc, unicode);
-  link = encodeURI(link);
-  title = title ? ` title="${ title.replace(resc, unicode) }"` : '';
-  if (img) return `<img src="${ link }" alt="${text}"${title}>`;
-  return `<a href="${ link }"${ title }>${ text }</a>`;
+  '_': '&#95;',
+  '*': '&ast;',
 };
+// const mapChar = {};
+// Object.keys(charMap).forEach(c => mapChar[charMap[c]] = c);
 
-
-var listRegExp = /^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm;
-var listTemplate = (match, leading, bullet, numbered, content) => {
-  leading = leading.replace(/  /g, '\t');
-  const type = numbered ? 'o' : 'u';
-  return `${leading}<${type}l><li>${content}</li></${type}l>`;
-}
-var combineSequentialUlRegExp = /(<\/ul>\n?\s*<ul>)+?/g;
-var combineSequentialOlRegExp = /(<\/ol>\n?\s*<ol>)+?/g;
-
-var checkBoxesRegExp = /\[( |x)\]/g;
-var checkBoxesTemplate = (match, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`;
-
+const htmlEntity = str => str.replace(/[<>&\(\)\[\]"']/g, c => (charMap[c] || c));
 
 /**
  * markdown parser
@@ -106,42 +45,53 @@ export default function md (markdown) {
   // format, removes tabs, leading and trailing spaces
   markdown = (
     markdown
+      // escaped characters
+      .replace(/\\(.)/g, (match, c) => (charMap[c] || match))
       // collect code blocks and replace with placeholder
       // we do this to avoid code blocks matching the paragraph regexp
-      .replace(blockCodeRegExp, function (match, lang, block) {
+      .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, function (match, lang, block) {
         var placeholder = '{code-block-'+index+'}';
         var regex = new RegExp('{code-block-'+index+'}', 'g');
 
-        code[index++] = {lang: lang, block: block.replace(resc, unicode), regex: regex};
+        code[index++] = {lang: lang, block: htmlEntity(block), regex: regex};
 
         return placeholder;
       })
       // blockquotes
-      .replace(blockQuotesRegExp, blockQuotesTemplate)
-      .replace(combineSequentialBlockquotesRegExp, '')
+      .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
+      .replace(/(<\/blockquote>\n?<blockquote>)+?/g, '')
       // headings
-      .replace(headingsRegExp, headingsTemplate)
+      .replace(/^(#+) +(.*)/gm, (m, hash, content)  => `<h${ hash.length }>${ content }</h${ hash.length }>`)
       // headings h1 (commonmark)
-      .replace(headingsCommonh1RegExp, headingsCommonh1Template)
+      .replace(/^([^\n\t ])(.*)\n====+/gm, '<h1>$1$2</h1>')
       // headings h2 (commonmark)
-      .replace(headingsCommonh2RegExp, headingsCommonh2Template)
+      .replace(/^([^\n\t ])(.*)\n----+/gm, '<h2>$1$2</h2>')
       // horizontal rule 
-      .replace(horizontalRegExp, horizontalTemplate)
+      .replace(/\n( *[-*]){3,}\n/gm, '<hr>')
       // checkboxes
-      .replace(checkBoxesRegExp, checkBoxesTemplate)
+      .replace(/\[( |x)\]/g, (m, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`)
       // line breaks
-      .replace(lineBreaksRegExp, lineBreaksTemplate)
-      // paragraphs
-      .replace(paragraphsRegExp, paragraphsTemplate)
-      // .replace(misplacedParagraphTagRegExp, misplacedParagraphTagTemplate)
+      .replace(/  +\n/gm, '<br>')
+      // paragraphs - exclude lists, already-rendered HTML, & whitespace
+      .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`)
       // inline code
-      .replace(inlineCodeRegExp, inlineCodeTemplate)
+      .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
       // auto links
-      .replace(autoLinkRegExp, autoLinkTemplate)
+      .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
       // links
-      .replace(linksRegExp, linksTemplate)
+      .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, link, title) => {
+        text = htmlEntity(text);
+        link = encodeURI(link);
+        title = title ? ` title="${ htmlEntity(title) }"` : '';
+        if (img) return `<img src="${ link }" alt="${text}"${title}>`;
+        return `<a href="${ link }"${ title }>${ text }</a>`;
+      })
       // lists
-      .replace(listRegExp, listTemplate)
+      .replace(/^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm, (m, leading, bullet, numbered, content) => {
+        leading = leading.replace(/  /g, '\t');
+        const type = numbered ? 'o' : 'u';
+        return `${leading}<${type}l><li>${content}</li></${type}l>`;
+      })
   );
   // Find any `a` tags with underscores in the href (must be wrapped in quotes) and any internal links
   // and replace any instance of underscore or asterisk with replacement characters so they are not parsed
@@ -163,19 +113,22 @@ export default function md (markdown) {
         if (tabs.length > 0) tabs = '\n' + tabs;
       }
       return `${tabs}<${childStart}l><li>${content}</li></${childEnd}l></li></${parentEnd}l>`;
-    })
+    });
   }
+
   markdown = (
     markdown
-      // Combine lists
-      .replace(combineSequentialUlRegExp, '')
-      .replace(combineSequentialOlRegExp, '')
+  // Combine lists
+      .replace(/(<\/ul>\n?[ \t]*<ul>)+?/g, '')
+      .replace(/(<\/ol>\n?[ \t]*<ol>)+?/g, '')
+      // strong emphasis
+      .replace(/(?:\*\*|__*)[_*]([^\n*_]+?)[_*](?:\*\*|__)/g, '<strong><em>$1</em></strong>')
       // strong
-      .replace(strongRegExp, strongTemplate)
+      .replace(/(?:\*\*|__)([^\n*_]+?)(?:\*\*|__)/g, '<strong>$1</strong>')
       // emphasis
-      .replace(emphasisRegExp, emphasisTemplate)
+      .replace(/(?:\*|_)([^\n*_]+?)(?:\*|_)/g, '<em>$1</em>')
       // strike through
-      .replace(strikeRegExp, strikeTemplate)
+      .replace(/(?:~~)([^~]+?)(?:~~)/g, '<del>$1</del>')
   );
 
   // replace code block placeholders
