@@ -119,6 +119,11 @@ export const initState = state => {
     state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
   state.pg = state.help.getPage();
+  
+  // determine last-used editor
+  const modifiedPages = [...state.p.pages].sort((a, b) => (a.md ?? a.cd) > (b.md ?? b.cd) ? -1 : 1);
+  state.useMd = modifiedPages[0]?.editor === 'md';
+
   state.t = []; // all used tags
   state.prev = FW.hash.object(state.p); // Hash of state at last save
   state.now = state.prev; // Hash of current state
