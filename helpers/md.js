@@ -4,6 +4,25 @@
  * 
  * @licence MIT
  */
+/**
+ * Supports Markdown Features:
+ * - HTML
+ * - headings h1–h6+ (# h1, ## h2, ### h3, etc.)
+ * - paragraphs (\n\n)
+ * - line breaks (  \n)
+ * - blockquotes (> text)
+ * - horizontal rule (---, ***, - - -, * * *)
+ * - code blocks (```)
+ * - inline code (`code`)
+ * - images with alt text & optional title (![alt](image_src "optional title"))
+ * - inline Markdown links with optional title ([link text](link_url "optional title"))
+ * - auto links & email linking (<http://url.domain>, <person@email.example>)
+ * - lists with indentation (- list item, * list item, + list item)
+ * - checkboxes ([ ], [x])
+ * - bold, italic (**bold**, __bold__, *italic*, _italic_, ***bold & italic***, ___bold & italic___, **_bold & italic_**, etc.)
+ * - strikethrough (~~strikethrough~~)
+ * - escaped characters (\*, \_)
+ */
 const charMap = {
   '<': '&lt;',
   '>': '&gt;',
@@ -121,12 +140,12 @@ export default function md (markdown) {
   // Combine lists
       .replace(/(<\/ul>\n?[ \t]*<ul>)+?/g, '')
       .replace(/(<\/ol>\n?[ \t]*<ol>)+?/g, '')
-      // strong emphasis
-      .replace(/(?:\*\*|__*)[_*]([^\n*_]+?)[_*](?:\*\*|__)/g, '<strong><em>$1</em></strong>')
       // strong
-      .replace(/(?:\*\*|__)([^\n*_]+?)(?:\*\*|__)/g, '<strong>$1</strong>')
+      .replace(/\*\*([^\n*]+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/__([^\n_]+?)__/g, '<strong>$1</strong>')
       // emphasis
-      .replace(/(?:\*|_)([^\n*_]+?)(?:\*|_)/g, '<em>$1</em>')
+      .replace(/\*([^\n*]+?)\*/g, '<em>$1</em>')
+      .replace(/_([^\n_]+?)_/g, '<em>$1</em>')
       // strike through
       .replace(/(?:~~)([^~]+?)(?:~~)/g, '<del>$1</del>')
   );
