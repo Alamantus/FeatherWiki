@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 54.518 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 54.217 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
@@ -35,7 +35,7 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.504 kilobytes) because it includes extra code for saving to certain web servers.
+Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.203 kilobytes) because it includes extra code for saving to certain web servers.
 
 Currently the only viable use for this version is through [Tiddlyhost](https://tiddlyhost.com) or by using [Caddy 2](https://caddyserver.com/download?package=github.com%2Fmholt%2Fcaddy-webdav) with the WebDAV extension and the [Caddyfile.example](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/Caddyfile.example) in this repository, but more script collections for other servers are being worked on to create your own nests! See [scripts/test-build.js](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/scripts/test-build.js) for an overly-simple
 example of how to implement the PUT-save feature—if you work on an implementation for this on your own, make sure you add password protection!
@@ -92,9 +92,9 @@ to check it.
 
 ### Details
 
-Feather Wiki uses a modified version of [Choo](https://choo.io) as its base JavaScript framework, a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
-minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its HTML editor, and a customized [md.js](https://github.com/thysultan/md.js) for
-its Markdown parsing.
+Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./nanochoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
+minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/pell.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for
+its [Markdown parsing](./helpers/md.js).
 
 If you want to restrict a feature to one build or another (which I request you do if it's only specific to the regular or server build),
 use `process.env.SERVER` in an `if` statement to ensure that esbuild removes the code on build for the irrelevant versions. It will be auto-populated with `true` or `false` during the build process.
