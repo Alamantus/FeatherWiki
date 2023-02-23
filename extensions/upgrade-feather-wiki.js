@@ -16,6 +16,7 @@
   if (!window.FW._loaded) return setTimeout(upgradeFeatherWikiExtension, 1);
   console.log('running upgradeFeatherWikiExtension');
   const { state, emitter } = window.FW;
+  const { events } = state;
   const version = document.head.getElementsByTagName('meta').namedItem('version')?.content?.split('_');
   ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
