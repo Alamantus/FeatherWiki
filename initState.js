@@ -14,8 +14,9 @@ import { pageView } from './views/page';
 import { missingView } from './views/missing';
 
 export const initState = state => {
-  state.root = location.pathname; // Site Root
-  if (state.root.length < 1) state.root = '/';
+  const root = location.pathname || '/'; // path to file
+  state.root = root;
+  state.file = /\/$/.test(root) ? 'index.html' : root.substring(root.lastIndexOf('/') + 1); // Filename of wiki
   state.sb = false; // show sidebar
   state.sbTab = 'Pages';
   state.sbx = new Set(); // expanded sidebar menu items

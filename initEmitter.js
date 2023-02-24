@@ -8,7 +8,7 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 export const initEmitter = (state, emitter) => {
-  const { events, views } = state;
+  const { events, help, root, views } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   
@@ -31,7 +31,6 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.HANDLE_404, () => {
     const { page } = state.query;
     if (page?.length > 1) {
-      const { help, events } = state;
       const slug = FW.slug(page);
       const pg = help.find(slug);
       if (!pg && !views[slug]) {
@@ -49,7 +48,7 @@ export const initEmitter = (state, emitter) => {
     if (keepEditing()) return history.go(-1);
 
     stopEdit();
-    state.pg = state.help.getPage();
+    state.pg = help.getPage();
     state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
     emit(events.HANDLE_404);
     title();
@@ -59,7 +58,7 @@ export const initEmitter = (state, emitter) => {
     if (name.length < 2) return;
     if (keepEditing()) return;
     stopEdit();
-    const { p, events, query, root } = state;
+    const { p, query } = state;
 
     const genId = () => {
       const s = [];
@@ -138,7 +137,7 @@ export const initEmitter = (state, emitter) => {
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);
-    emit(events.GO, state.root + '?page=' + page.slug);
+    emit(events.GO, root + '?page=' + page.slug);
     emit(events.CHECK_CHANGED);
   });
 
@@ -149,7 +148,7 @@ export const initEmitter = (state, emitter) => {
     }).filter(pg => pg.id !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
-    emit(events.GO, state.root);
+    emit(events.GO, root);
     emit(events.CHECK_CHANGED);
   });
 
@@ -167,7 +166,7 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
     const i = Date.now();
-    const rm = () => emitter.emit(state.events.REMOVE_NOTI, i);
+    const rm = () => emitter.emit(events.REMOVE_NOTI, i);
     const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="Click to close">
       <span role=alert>${text}</span><span class=fr>×</span>
     </div>`;
@@ -185,11 +184,10 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.SAVE_WIKI, () => {
     const output = FW.gen(state);
-    const { p, root } = state;
-    const filename = /\/$/.test(root) ? 'index.html' : root.substring(root.lastIndexOf('/') + 1);
+    const { p, file } = state;
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
-    el.setAttribute('download', filename);
+    el.setAttribute('download', file);
     document.body.appendChild(el);
     el.click();
     document.body.removeChild(el);
@@ -204,7 +202,7 @@ export const initEmitter = (state, emitter) => {
   if (process.env.SERVER) {
     emitter.on(events.PUT_SAVE_WIKI, () => {
       const output = FW.gen(state);
-      const { p, root } = state;
+      const { p } = state;
       fetch(root, { method: 'PUT', body: output })
         .then(resp => resp.text()
           .then(text => ({ ok: resp.ok, status: resp.status, text: text }))
@@ -227,8 +225,8 @@ export const initEmitter = (state, emitter) => {
       // * This only needs to run once at startup
       // * There's no need to turn it off again once it's set
       // * If any 'dav' header is present then a put save could work
-      if (!location.protocol.startsWith('http')) return;
-      fetch(state.root, { method: 'OPTIONS' })
+      if (!location.protocol.startsWith('http') || state.canSave) return;
+      fetch(root, { method: 'OPTIONS' })
         .then(resp => {
           if (resp.ok && resp.headers.get('dav')) {
             state.canSave = true;
