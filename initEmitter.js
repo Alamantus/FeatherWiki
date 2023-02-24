@@ -184,10 +184,11 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.SAVE_WIKI, () => {
     const output = FW.gen(state);
-    const { p, file } = state;
+    const { p } = state;
     const el = document.createElement('a');
     el.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(output));
-    el.setAttribute('download', file);
+    const filename = /\/$/.test(root) ? 'index.html' : decodeURI(root.substring(root.lastIndexOf('/') + 1));
+    el.setAttribute('download', filename);
     document.body.appendChild(el);
     el.click();
     document.body.removeChild(el);
