@@ -36,7 +36,7 @@ export function generateWikiHtml(state) {
 </html>`;
 
   function staticExport() {
-    const st = { ...state, edit: false, query: { page: 'a' }, p: { ...p, published: true } };
+    const st = { ...state, edit: false, pg: undefined, query: { page: 'a' }, p: { ...p, published: true } };
     const doc = globalView(st);
     doc.querySelector('.sb .tabs').remove();
     if (p.static) {
