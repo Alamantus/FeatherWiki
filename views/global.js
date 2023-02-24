@@ -53,11 +53,10 @@ export const globalView = (state, emit) => {
     ]
   }
 
-  const home = root.endsWith('/') ? '.' : file;
   return html`<body>
     <main>
       <div class=sb>
-        <span class=db><a href=${home} class=t>${p.name}</a></span>
+        <span class=db><a href=? class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${ showEditFields ? saveButton : '' }
         <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>

@@ -49,8 +49,10 @@ export function generateWikiHtml(state) {
     doc.querySelectorAll('a').forEach(a => {
       a.classList.remove('a')
       a.href = a.href.includes('#') ? a.href.replace(/.+(#.+)$/, '$1') : (
-        a.href.includes(`page=`) ? a.href.replace(/.+(page=.+)(\&.+)*?$/, p.static ? '#$1' : '?$1') : a.href
-      )
+        a.href.includes(`page=`)
+          ? a.href.replace(/.+(page=.+)(\&.+)*?$/, p.static ? '#$1' : '?$1')
+          : a.href.replace(location.toString().split('?')[0], '') // Ensure local path is not included
+      );
     });
     return doc.querySelector('main').outerHTML;
   }
