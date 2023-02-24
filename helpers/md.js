@@ -35,11 +35,15 @@ const charMap = {
   ')': '&#41;',
   '_': '&#95;',
   '*': '&ast;',
+  '`': '&#96;',
 };
-// const mapChar = {};
-// Object.keys(charMap).forEach(c => mapChar[charMap[c]] = c);
+// Save non-& charMap values without `&` to more easily check for double-escaped htmlEntity values
+const doubleEscaped = Object.keys(charMap).filter(c => c != '&').map(c => charMap[c].replace(c != '&' ? '&' : '', ''));
 
-const htmlEntity = str => str.replace(/[<>&\(\)\[\]"']/g, c => (charMap[c] || c));
+const htmlEntity = str => {
+  return str.replace(/[<>&\(\)\[\]"']/g, c => (charMap[c] || c))
+    .replace(new RegExp(`&amp;(${doubleEscaped.join('|')})`, 'g'), '&$1');
+}
 
 /**
  * markdown parser
@@ -64,8 +68,6 @@ export default function md (markdown) {
   // format, removes tabs, leading and trailing spaces
   markdown = (
     markdown
-      // escaped characters
-      .replace(/\\(.)/g, (match, c) => (charMap[c] || match))
       // collect code blocks and replace with placeholder
       // we do this to avoid code blocks matching the paragraph regexp
       .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, function (match, lang, block) {
@@ -76,6 +78,8 @@ export default function md (markdown) {
 
         return placeholder;
       })
+      // escaped characters
+      .replace(/\\(.)/g, (match, c) => (charMap[c] || match))
       // blockquotes
       .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
       .replace(/(<\/blockquote>\n?<blockquote>)+?/g, '')
