@@ -10,6 +10,7 @@
 export const globalView = (state, emit) => {
   const {
     root,
+    file,
     help,
     pg,
     p,
@@ -52,10 +53,11 @@ export const globalView = (state, emit) => {
     ]
   }
 
+  const home = root.endsWith('/') ? '.' : file;
   return html`<body>
     <main>
       <div class=sb>
-        <span class=db><a href=${root} class=t>${p.name}</a></span>
+        <span class=db><a href=${home} class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${ showEditFields ? saveButton : '' }
         <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>
@@ -63,7 +65,7 @@ export const globalView = (state, emit) => {
           ${
             showEditFields
             ? [
-              html`<p><a href="${root}?page=s">Wiki Settings</a></p>`,
+              html`<p><a href="?page=s">Wiki Settings</a></p>`,
               html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
                 <summary class=np>New Page</summary>
                 <form onsubmit=${createNewPage}>
@@ -83,20 +85,20 @@ export const globalView = (state, emit) => {
             sbTab === 'Pages'
             ? html`<ul>
               ${parents.map(pp => help.getChildList(pp, true))}
-              <li><a href="${root}?page=a">All Pages</a></li>
-              ${help.missing().length > 0 ? html`<li><a href="${root}?page=m">Missing Pages</a></li>` : ''}
+              <li><a href="?page=a">All Pages</a></li>
+              ${help.missing().length > 0 ? html`<li><a href="?page=m">Missing Pages</a></li>` : ''}
             </ul>` : ''
           }
           ${
             sbTab === 'Tags'
             ? html`<ul>
-              ${t.map(tag => html`<li><a href="${root}?tag=${tag}">${tag}</a></li>`)}
+              ${t.map(tag => html`<li><a href="?tag=${tag}">${tag}</a></li>`)}
             </ul>` : ''
           }
           ${
             sbTab === 'Recent'
             ? html`<ol>
-              ${recents.map(pp => html`<li><a href="${root}?page=${pp.slug}">${pp.name}</a></li>`)}
+              ${recents.map(pp => html`<li><a href="?page=${pp.slug}">${pp.name}</a></li>`)}
             </ol>` : ''
           }
         </nav>

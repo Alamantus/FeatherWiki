@@ -11,7 +11,7 @@ import { pageDisplay } from './display';
 import { pageEdit } from './edit';
 
 export const pageView = (state, emit, page) => {
-  const { root, edit, help, p, events } = state;
+  const { edit, help, p, events } = state;
   const { cd, md } = page; // created date & modified date
 
   if (edit) {
@@ -24,7 +24,7 @@ export const pageView = (state, emit, page) => {
   const mdFormat = FW.date(modified);
   return [
     html`<header>
-      ${breadcrumb.map(p => [html`<a href="${root}?page=${p.slug}">${p.name}</a>`, ' / '])}
+      ${breadcrumb.map(p => [html`<a href="?page=${p.slug}">${p.name}</a>`, ' / '])}
       <div class="r ns">
         <h1 class=c>${page.name}</h1>
         ${

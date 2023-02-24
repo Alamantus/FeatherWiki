@@ -8,7 +8,7 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 export const gallery = (state, emit, options = {}) => {
-  const { events, root } = state;
+  const { events } = state;
   const {
     showDelete = false,
     showUsed = false,
@@ -35,7 +35,7 @@ export const gallery = (state, emit, options = {}) => {
               html`<details>
                 <summary class=b>Used in ${i.pgs.length} pages</summary>
                 <ul>
-                  ${ i.pgs.map(pg => html`<li><a href="${root}?page=${pg.slug}">${pg.name}</a></li>`) }
+                  ${ i.pgs.map(pg => html`<li><a href="?page=${pg.slug}">${pg.name}</a></li>`) }
                 </ul>
               </details>`
             ] : ''

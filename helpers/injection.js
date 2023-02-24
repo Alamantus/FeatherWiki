@@ -20,7 +20,7 @@ export function pg (content, state) {
       const exists = state.p.pages.some(pg => pg.slug === link[0]) || typeof state.views[link[0]] !== 'undefined';
       c = c.replace(
         `${l}]]`,
-        `<a href="${state.root}?page=${link.join('#')}"${!exists ? ' class=e' : ''}>${text}</a>`
+        `<a href="?page=${link.join('#')}"${!exists ? ' class=e' : ''}>${text}</a>`
       );
     });
   }
