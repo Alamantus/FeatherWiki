@@ -24,7 +24,7 @@ export const pageView = (state, emit, page) => {
   const mdFormat = FW.date(modified);
   return [
     html`<header>
-      ${breadcrumb.map(p => [html`<a href="?page=${p.slug}">${p.name}</a>`, ' / '])}
+      ${html.raw(breadcrumb.map(p => `<a href="?page=${p.slug}">${p.name}</a> /`).join(' '))}
       <div class="r ns">
         <h1 class=c>${page.name}</h1>
         ${
