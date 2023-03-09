@@ -143,6 +143,12 @@
         window.FW.data.doExport();
       }
     },
+    dl: (mime, b64, suffix) => {
+      const download = html`<a href="data:${mime};base64,${b64}" download="${window.FW.slug(state.p.name)}${suffix}">download</a>`;
+      document.body.appendChild(download);
+      download.click();
+      document.body.removeChild(download);
+    },
     doExport: () => {
       var zip = new JSZip();
       state.p.pages.forEach(pg => {
@@ -176,17 +182,22 @@
         zip.file(filename, content);
       });
       zip.generateAsync({type:"base64"}).then(function (base64) {
-        const download = html`<a href="data:application/zip;base64,${base64}" download="${window.FW.slug(state.p.name)}_pages.zip">Download pages</a>`;
-        document.body.appendChild(download);
-        download.click();
-        document.body.removeChild(download);
+        window.FW.data.dl('application/zip', base64, '_pages.zip');
       });
     },
     exportJson: () => {
-      const download = html`<a href="data:application/json;base64,${btoa(JSON.stringify(state.p))}" download="${window.FW.slug(state.p.name)}.json">Download JSON data</a>`;
-      document.body.appendChild(download);
-      download.click();
-      document.body.removeChild(download);
+      window.FW.data.dl('application/json', btoa(unescape(encodeURIComponent(JSON.stringify(state.p)))), '.json');
+    },
+    exportStaticHtml: () => {
+      const css = state.c + ' main>section>header{display:none;} @media print{main>.sb{display:none;}main>section>article{page-break-after:always;}main>section>header{display:unset;}}';
+      const st = { ...state, c: css, p: { ...state.p, static: true } };
+      const static = FW.gen(st)
+        .replace(/<script.+?<\/script>/gsm, '')
+        .replace(/<button>Edit<\/button>/g, '')
+        .replace(/<\/main> <footer>.+?<\/footer>/g, '</main>')
+        // Insert print-only header
+        .replace('</ul></nav></div> <section>', `</ul></nav></div> <section><header><span class=db><a href=? class=t>${st.p.name}</a></span>${ st.p.desc ? `<p class=pb>${st.p.desc}</p>` : ''}<hr></header>`);
+      window.FW.data.dl('text/html', btoa(unescape(encodeURIComponent(static))), '.html');
     },
   };
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -217,6 +228,7 @@
           <p class="h">Parent/child relationships are <em>not</em> preserved when exporting using this extension, and any internal images are injected into the content of the page. Likewise, internal links are transformed into regular HTML links linking to the output file.</p>
           <p class="h">Note: Content on the Wiki Settings page is not included in the export.</p>
           <button onclick=${() => window.FW.data.exportJson()}>Export Raw JSON Data</button>
+          <button onclick=${() => window.FW.data.exportStaticHtml()}>Export Static HTML</button>
         </div>
       </div>
     </section>`;
