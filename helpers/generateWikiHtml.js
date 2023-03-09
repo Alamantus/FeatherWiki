@@ -42,7 +42,7 @@ export function generateWikiHtml(state) {
     if (p.static) {
       // If "Include Static HTML" is checked, adjust URLs
       const page = doc.querySelector('main>section');
-      page.parentElement.replaceChild(allPagesHtml(), page);
+      page.parentElement.replaceChild(allPagesHtml(st), page);
       // Remove "All Pages" link
       doc.querySelector('.sb>nav>ul>li:last-child').remove();
     }
@@ -57,10 +57,10 @@ export function generateWikiHtml(state) {
     return doc.querySelector('main').outerHTML;
   }
 
-  function allPagesHtml() {
+  function allPagesHtml(st) {
     return html`<section>
       ${p.pages.map(pg => {
-        const pv = state.views.p(state, '', pg);
+        const pv = state.views.p(st, '', pg);
         pv[0].querySelector('h1').id = 'page=' + pg.slug;
         return html`<article>
           ${pv[0]}
