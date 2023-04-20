@@ -11,12 +11,7 @@
 // Only ASCII ranges are replaced to allow non-English characters to be used
 export const slugify = s => s?.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40[\\\]^`\x7B-\x7F]/g, '-');
 
-export const formatDate = d => {
-  const pad = s => s.toString().padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${d.getHours() % 12}:${pad(d.getMinutes())} ${d.getHours() / 12 < 1 ? 'a' : 'p'}m`;
-};
+export const formatDate = d => d.toLocaleString();
 
-export const tidyArray = ar => { // For arrays of strings (like tags) only
-  const a = ar.map(v => v.trim());
-  return a.filter((v, i) => v.length && a.indexOf(v) === i).sort();
-};
+// For arrays of strings (like tags) only
+export const tidyArray = ar => ar.map(v => v.trim()).filter((v, i) => v.length && a.indexOf(v) === i).sort();
