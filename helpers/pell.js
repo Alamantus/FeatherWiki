@@ -18,6 +18,11 @@ export const exec = (command, value = null) => document.execCommand(command, fal
 
 export const init = settings => {
   const actions = [
+    { // clear
+      icon: '☒',
+      title: 'Clear Formatting',
+      result: () => exec('removeFormat')
+    },
     { // bold
       icon: '<b>B</b>',
       title: 'Bold',
@@ -36,12 +41,12 @@ export const init = settings => {
       state: () => qcs('underline'),
       result: () => exec('underline')
     },
-    { // strikethrough
-      icon: '<strike>S</strike>',
-      title: 'Strike-through',
-      state: () => qcs('strikeThrough'),
-      result: () => exec('strikeThrough')
-    },
+    // { // strikethrough
+    //   icon: '<strike>S</strike>',
+    //   title: 'Strike-through',
+    //   state: () => qcs('strikeThrough'),
+    //   result: () => exec('strikeThrough')
+    // },
     { // heading2
       icon: '<b>H</b>',
       title: 'Heading',
@@ -53,22 +58,40 @@ export const init = settings => {
       result: () => exec(fb, '<h3>'),
     },
     { // paragraph
-      icon: '&#182;',
+      icon: '¶',
       title: 'Paragraph',
       result: () => exec(fb, '<p>')
     },
+    { // align left
+      icon: '↦',
+      title: 'Align Left',
+      state: () => qcs('justifyLeft'),
+      result: () => exec('justifyLeft')
+    },
+    { // align center
+      icon: '↔',
+      title: 'Align Center',
+      state: () => qcs('justifyCenter'),
+      result: () => exec('justifyCenter')
+    },
+    { // align right
+      icon: '↤',
+      title: 'Align Right',
+      state: () => qcs('justifyRight'),
+      result: () => exec('justifyRight')
+    },
     { // olist
-      icon: '&#35;',
+      icon: '#',
       title: 'Number List',
       result: () => exec('insertOrderedList')
     },
     { // ulist
-      icon: '&#8226;',
+      icon: '•',
       title: 'Bullet List',
       result: () => exec('insertUnorderedList')
     },
     { // quote
-      icon: '&#8220; &#8221;',
+      icon: '“ ”',
       title: 'Quote',
       result: () => exec(fb, '<blockquote>')
     },
@@ -78,12 +101,12 @@ export const init = settings => {
     //   result: () => exec(fb, '<pre>')
     // },
     { // line
-      icon: '&#8213;',
+      icon: '―',
       title: 'Separator',
       result: () => exec('insertHorizontalRule')
     },
     { // link
-      icon: '&#128279;',
+      icon: '🔗',
       title: 'Link',
       result: () => {
         const url = window.prompt('Link URL:')
@@ -154,7 +177,6 @@ export const init = settings => {
     ac(actionbar, button)
   })
 
-  if (settings.styleWithCSS) exec('styleWithCSS')
   exec('defaultParagraphSeparator', 'p')
 
   return settings.element
