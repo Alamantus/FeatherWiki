@@ -190,10 +190,9 @@
     },
     exportStaticHtml: () => {
       const css = state.c + ' main>section>header{display:none;} @media print{main>.sb{display:none;}main>section>article{page-break-after:always;}main>section>header{display:unset;}}';
-      const st = { ...state, c: css, p: { ...state.p, static: true } };
+      const st = { ...state, c: css, p: { ...state.p, static: true, published: true } };
       const static = FW.gen(st)
         .replace(/<script.+?<\/script>/gsm, '')
-        .replace(/<button>Edit<\/button>/g, '')
         .replace(/<\/main> <footer>.+?<\/footer>/g, '</main>')
         // Insert print-only header
         .replace('</ul></nav></div> <section>', `</ul></nav></div> <section><header><span class=db><a href=? class=t>${st.p.name}</a></span>${ st.p.desc ? `<p class=pb>${st.p.desc}</p>` : ''}<hr></header>`);
