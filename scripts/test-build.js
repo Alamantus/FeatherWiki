@@ -38,8 +38,13 @@ let app = http.createServer((req, res) => {
         });
     }
 
-    // Send back a response and end the connection
-    res.end(fs.readFileSync(servePath));
+    const url = req.url?.substring(1);
+    if (url && url.match(/\.\w+$/) && fs.existsSync(path.resolve(process.cwd(), url))) {
+        res.end(fs.readFileSync(path.resolve(process.cwd(), url)));
+    } else {
+        // Send back a response and end the connection
+        res.end(fs.readFileSync(servePath));
+    }
 });
 
 // Start the server on port 3000
