@@ -36,15 +36,15 @@ export function generateWikiHtml(state) {
 </html>`;
 
   function staticExport() {
-    const st = { ...state, edit: false, pg: undefined, query: { page: 'a' }, p: { ...p, published: true } };
+    const st = { ...state, edit: false, sb: true, sbx: new Set(), pg: undefined, query: { page: 'a' }, p: { ...p, published: true } };
     const doc = globalView(st);
     doc.querySelector('.sb .tabs').remove();
     if (p.static) {
       // If "Include Static HTML" is checked, adjust URLs
       const page = doc.querySelector('main>section');
       page.parentElement.replaceChild(allPagesHtml(st), page);
-      // Remove "All Pages" link
-      doc.querySelector('.sb>nav>ul>li:last-child').remove();
+      // Remove "All Pages" link & mobile toggle menu button
+      doc.querySelector('.sb>nav>ul>li:last-child,.sbt').remove();
     }
     doc.querySelectorAll('a').forEach(a => {
       a.classList.remove('a')
