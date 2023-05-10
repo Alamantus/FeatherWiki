@@ -27,3 +27,11 @@ If you have an existing Feather Wiki you want to host, simply open the empty one
 
 Note: The username and password are hashed together and saved in a `.featherwikiadmin` file as
 well, so you will need to set up your server to prevent download access to this file!
+
+## Deno
+
+[iacore](https://git.envs.net/iacore) helpfully wrote script using [Deno](https://deno.com/runtime) to
+set up a nest. You can find the code and instructions on their repo:  
+https://git.envs.net/iacore/featherwiki-deno-server
+
+Simply copy their code to your web server, follow their instructions, and you're ready to go!
