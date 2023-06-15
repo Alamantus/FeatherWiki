@@ -12,7 +12,6 @@ import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
 
-import { slugify, formatDate, tidyArray } from './helpers/formatting';
 import { extractFeatherWikiData } from './helpers/extractFeatherWikiData';
 import { generateWikiHtml } from './helpers/generateWikiHtml';
 import * as img from './helpers/handleImage';
@@ -27,11 +26,14 @@ html.raw = require('nanohtml/raw');
 window.pell = require('./helpers/pell').default;
 window.md = require('./helpers/md').default;
 
-window.FW = Choo();
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
-FW.slug = slugify;
-FW.date = formatDate;
-FW.tidy = tidyArray;
+window.FW = Choo();
+// Replace whitespace with _ then all ASCII punctuation (except _) & non-print characters with -
+// Only ASCII ranges are replaced to allow non-English characters to be used
+FW.slug = s => s?.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40[\\\]^`\x7B-\x7F]/g, '-');
+FW.date = d => d.toLocaleString();
+// For arrays of strings (like tags) only
+FW.tidy = ar => ar.map(v => v.trim()).filter((v, i) => v.length && a.indexOf(v) === i).sort();
 FW.xtr = extractFeatherWikiData;
 FW.gen = generateWikiHtml;
 FW.img = img;
