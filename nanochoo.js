@@ -124,11 +124,17 @@ Choo.prototype.start = function () {
 
   this._tree = render()
 
-  this.emitter.prependListener(self._events.RENDER, nanoraf(function (callback) {
-    var newTree = render()
-    nanomorph(self._tree, newTree)
-    if (typeof callback === 'function') setTimeout(callback, 9);
-  }))
+  this._rq = [] // render queue
+  this._rd = null // render debounce
+  this.emitter.prependListener(this._events.RENDER, cb => {
+    if (typeof cb === 'function') self._rq.push(cb)
+    if (self._rd !== null) clearTimeout(self._rd)
+    self._rd = setTimeout(nanoraf(() => {
+      var newTree = render()
+      nanomorph(self._tree, newTree)
+      while(self._rq.length > 0) (self._rq.shift())()
+    }), 9)
+  })
 
   documentReady(function () {
     self.emitter.emit(self._events.ONLOAD)
