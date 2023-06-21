@@ -33,7 +33,7 @@ window.FW = Choo();
 FW.slug = s => s?.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40[\\\]^`\x7B-\x7F]/g, '-');
 FW.date = d => d.toLocaleString();
 // For arrays of strings (like tags) only
-FW.tidy = ar => ar.map(v => v.trim()).filter((v, i) => v.length && a.indexOf(v) === i).sort();
+FW.tidy = ar => ar.map(v => v.trim()).filter((v, i, a) => v.length && a.indexOf(v) === i).sort();
 FW.xtr = extractFeatherWikiData;
 FW.gen = generateWikiHtml;
 FW.img = img;
