@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 54.432 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 54.429 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
@@ -35,7 +35,7 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.416 kilobytes) because it includes extra code for saving to certain web servers.
+Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.413 kilobytes) because it includes extra code for saving to certain web servers.
 
 You can use this version on [Tiddlyhost](https://tiddlyhost.com) or by using a [self-hosted nest](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/nests) from this repository!
 
