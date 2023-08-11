@@ -69,6 +69,11 @@ const letsVarConstsPlugin = {
   }
 };
 
+const outputDir = path.resolve(process.cwd(), 'builds');
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir);
+}
+
 Promise.all([
   build(),
   build(true),
@@ -126,15 +131,12 @@ function build(server = false, ruffled = false) {
       // const outputKb = out.contents.byteLength * 0.000977;
       // console.info(`${out.path} (${buildName})`, outputKb.toFixed(3) + ' KB');
       if (/\.css$/.test(out.path)) {
+        fs.writeFileSync(path.resolve(outputDir, `FeatherWiki.css`), output);
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
+        const jsBuildPath = path.resolve(outputDir, `FeatherWiki_${buildName}_ruffled.js`);
         if (!ruffled) {
-          const developDir = path.resolve(process.cwd(), 'develop');
-          if (!fs.existsSync(developDir)) {
-            fs.mkdirSync(developDir);
-          }
-          const jsBuildPath = path.resolve(developDir, buildName + '.js');
-          const jsOutPath = path.resolve(developDir, buildName + '_compressed.js');
+          const jsOutPath = path.resolve(outputDir, `FeatherWiki_${buildName}.js`);
           output = await new Promise(resolve => {
             fs.writeFileSync(jsBuildPath, output);
             // Compress the JS even more
@@ -145,9 +147,6 @@ function build(server = false, ruffled = false) {
               resolve(fs.readFileSync(jsOutPath));
             });
           });
-          // Remove generated JS files
-          fs.unlink(jsBuildPath, () => {});
-          fs.unlink(jsOutPath, () => {});
         }
 
         // Since there's regex stuff in here, I can't do replace!
@@ -185,10 +184,6 @@ function build(server = false, ruffled = false) {
     }
   }).then(async html => {
     html = html.replace(/{{buildVersion}}/g, buildName);
-    const outputDir = path.resolve(process.cwd(), 'builds');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
     const filePath = path.resolve(outputDir, `FeatherWiki_${buildName}.html`);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
