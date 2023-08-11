@@ -7,10 +7,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+import { handleTab } from './helpers/handleTab';
+
 export const initEmitter = (state, emitter) => {
   const { events, help, root, views } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const tab = () => setTimeout(() => document.querySelectorAll('textarea:not(.notab)').forEach(t => t.onkeydown = handleTab), 300);
   
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
@@ -23,10 +26,13 @@ export const initEmitter = (state, emitter) => {
     title();
     emit(events.COLLECT_TAGS);
     if (state.t.length) emit(events.RENDER);
+    else tab();
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
   });
+
+  emitter.on(events.RENDER, tab);
 
   emitter.on(events.HANDLE_404, () => {
     const { page } = state.query;
