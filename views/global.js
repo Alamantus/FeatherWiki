@@ -96,9 +96,12 @@ export const globalView = (state, emit) => {
           }
           ${
             sbTab === 'Recent'
-            ? html`<ol>
-              ${recents.map(pp => html`<li><a href="?page=${pp.slug}">${pp.name}</a></li>`)}
-            </ol>` : ''
+            ? html`<ul style="padding:0">
+              ${recents.map(pp => html`<li>
+                <a href="?page=${pp.slug}">${pp.name}</a>
+                <p class=h style="margin:0">${FW.date(new Date(pp.md ?? pp.cd))}</p>
+              </li>`)}
+            </ul>` : ''
           }
         </nav>
       </div>

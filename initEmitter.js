@@ -49,7 +49,6 @@ export const initEmitter = (state, emitter) => {
 
     stopEdit();
     state.pg = help.getPage();
-    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
     emit(events.HANDLE_404);
     title();
   });
@@ -87,6 +86,7 @@ export const initEmitter = (state, emitter) => {
 
     if (save) {
       state.p.pages.push(newPg);
+      state.recent = [{ p: newPg.id, t: newPg.cd }, ...state.recent].filter(p => !!p.p);
       emit(events.CHECK_CHANGED);
       emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
@@ -134,6 +134,7 @@ export const initEmitter = (state, emitter) => {
     } else {
       p.pages.push(page);
     }
+    state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)].filter(p => !!p.p);
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);
@@ -146,6 +147,7 @@ export const initEmitter = (state, emitter) => {
       if (pg.parent === id) delete pg.parent;
       return pg;
     }).filter(pg => pg.id !== id);
+    state.recent = state.recent.filter(p => p.p !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
     emit(events.GO, root);
