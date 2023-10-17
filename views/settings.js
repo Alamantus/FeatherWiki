@@ -32,7 +32,7 @@ export const settingsView = (state, emit) => {
           }
         </select>
         <label for=wPo>Page Order</label>
-        <textarea id=wPo>${o}</textarea>
+        <textarea id=wPo class=notab>${o}</textarea>
         <label for=wCss>Custom CSS</label>
         <textarea id=wCss>${c}</textarea>
         <label for=wJs>Custom JS</label>

@@ -7,10 +7,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+import { handleTab } from './helpers/handleTab';
+
 export const initEmitter = (state, emitter) => {
   const { events, help, root, views } = state;
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const tab = () => setTimeout(() => document.querySelectorAll('textarea:not(.notab)').forEach(t => t.onkeydown = handleTab), 300);
   
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
@@ -23,10 +26,13 @@ export const initEmitter = (state, emitter) => {
     title();
     emit(events.COLLECT_TAGS);
     if (state.t.length) emit(events.RENDER);
+    else tab();
     if (process.env.SERVER) {
       emit(events.DETECT_PUT_SUPPORT);
     }
   });
+
+  emitter.on(events.RENDER, tab);
 
   emitter.on(events.HANDLE_404, () => {
     const { page } = state.query;
@@ -49,7 +55,6 @@ export const initEmitter = (state, emitter) => {
 
     stopEdit();
     state.pg = help.getPage();
-    state.recent = [{ p: state.pg?.id, t: Date.now() }, ...state.recent.filter(p => p.p !== state.pg?.id)].filter(p => !!p.p);
     emit(events.HANDLE_404);
     title();
   });
@@ -87,6 +92,7 @@ export const initEmitter = (state, emitter) => {
 
     if (save) {
       state.p.pages.push(newPg);
+      state.recent = [{ p: newPg.id, t: newPg.cd }, ...state.recent].filter(p => !!p.p);
       emit(events.CHECK_CHANGED);
       emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
@@ -134,6 +140,7 @@ export const initEmitter = (state, emitter) => {
     } else {
       p.pages.push(page);
     }
+    state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)].filter(p => !!p.p);
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);
@@ -146,6 +153,7 @@ export const initEmitter = (state, emitter) => {
       if (pg.parent === id) delete pg.parent;
       return pg;
     }).filter(pg => pg.id !== id);
+    state.recent = state.recent.filter(p => p.p !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
     emit(events.GO, root);
