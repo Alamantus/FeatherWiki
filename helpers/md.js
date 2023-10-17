@@ -57,7 +57,9 @@ export default function md (markdown) {
   }
 
   var code = [];
-  var index = 0;
+  var cIdx = 0; // Code index
+  var html = [];
+  var hIdx = 0; // HTML index
   var length = markdown.length;
 
   // to allow matching trailing paragraphs
@@ -68,23 +70,28 @@ export default function md (markdown) {
   // format, removes tabs, leading and trailing spaces
   markdown = (
     markdown
+      // escaped characters
+      .replace(/\\(.)/g, (m, c) => (charMap[c] || m))
       // collect code blocks and replace with placeholder
       // we do this to avoid code blocks matching the paragraph regexp
-      .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, function (match, lang, block) {
-        var placeholder = '{code-block-'+index+'}';
-        var regex = new RegExp('{code-block-'+index+'}', 'g');
-
-        code[index++] = {lang: lang, block: htmlEntity(block), regex: regex};
-
+      .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, (m, lang, block) => {
+        var placeholder = '{code-' + cIdx + '}';
+        code[cIdx++] = {lang, block: htmlEntity(block)};
         return placeholder;
       })
-      // escaped characters
-      .replace(/\\(.)/g, (match, c) => (charMap[c] || match))
+      // inline code
+      .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
+      // HTML tags
+      .replace(/(<\/?[a-zA-Z]+[^>]*>)/gm, (m, tag) => {
+        var placeholder = '{html-' + hIdx + '}';
+        html[hIdx++] = tag;
+        return placeholder;
+      })
       // blockquotes
       .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
       .replace(/(<\/blockquote>\n?<blockquote>)+?/g, '')
       // headings
-      .replace(/^(#+) +(.*)/gm, (m, hash, content)  => `<h${ hash.length }>${ content }</h${ hash.length }>`)
+      .replace(/^(#+) +(.*)/gm, (m, hash, content) => `<h${ hash.length }>${ content }</h${ hash.length }>`)
       // headings h1 (commonmark)
       .replace(/^([^\n\t ])(.*)\n====+/gm, '<h1>$1$2</h1>')
       // headings h2 (commonmark)
@@ -97,40 +104,28 @@ export default function md (markdown) {
       .replace(/  +\n/gm, '<br>')
       // paragraphs - exclude lists, already-rendered HTML, & whitespace
       .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`)
-      // inline code
-      .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
       // auto links
       .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
       // links
-      .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, link, title) => {
+      .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, url, title) => {
         text = htmlEntity(text);
-        link = encodeURI(link);
+        url = encodeURI(url);
         title = title ? ` title="${ htmlEntity(title) }"` : '';
-        if (img) return `<img src="${ link }" alt="${text}"${title}>`;
-        return `<a href="${ link }"${ title }>${ text }</a>`;
+        if (img) return `<img src="${ url }" alt="${text}"${title}>`;
+        return `<a href="${ url }"${ title }>${ text }</a>`;
       })
       // lists
-      .replace(/^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm, (m, leading, bullet, numbered, content) => {
+      .replace(/^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm, (m, leading, b, numbered, content) => {
         leading = leading.replace(/  /g, '\t');
         const type = numbered ? 'o' : 'u';
         return `${leading}<${type}l><li>${content}</li></${type}l>`;
       })
   );
-  // Find any `a` tags with underscores in the href (must be wrapped in quotes) and any internal links
-  // and replace any instance of underscore or asterisk with replacement characters so they are not parsed
-  const u = '\uFFFC', a = '\uFFFD';
-  (markdown.match(/href="([^"]*[_*][^"]*)"|\[\[[^\]]+\]\]/gm) ?? []).forEach(m => {
-    markdown = markdown.replace(
-      m,
-      m.replace(/_/g, u)
-        .replace(/\*/g, a)
-    );
-  });
 
   // This handles *almost* all combinations, but some indented lists combining ul & ol don't render right
   var indentListRegExp = /<\/li><\/(u|o)l>\n(\t+)<(u|o)l><li>(.*)<\/li><\/(u|o)l>/;
   while (markdown.match(indentListRegExp)) {
-    markdown = markdown.replace(indentListRegExp, function(match, parentEnd, tabs, childStart, content, childEnd) {
+    markdown = markdown.replace(indentListRegExp, function(m, parentEnd, tabs, childStart, content, childEnd) {
       if (tabs.length > 0) {
         tabs = tabs.substring(1);
         if (tabs.length > 0) tabs = '\n' + tabs;
@@ -154,16 +149,19 @@ export default function md (markdown) {
       .replace(/(?:~~)([^~]+?)(?:~~)/g, '<del>$1</del>')
   );
 
-  // replace code block placeholders
-  for (var i = 0; i < index; i++) {
-    var item = code[i];
-    var lang = item.lang;
-    var block = item.block;
-
-    markdown = markdown.replace(item.regex, () => `<pre><code${lang ? ` class="language-${ lang }"` : ''}>${block}</code></pre>`);
+  // replace html tag placeholders
+  for (let i = 0; i < hIdx; i++) {
+    markdown = markdown.replace('{html-' + i + '}', html[i]);
   }
 
-  markdown = markdown.replace(new RegExp(u, 'g'), '_').replace(new RegExp(a, 'g'), '*');
+  // replace code block placeholders
+  for (let i = 0; i < cIdx; i++) {
+    const { lang, block } = code[i];
+    markdown = markdown.replace(
+      '{code-' + i + '}',
+      `<pre><code${lang ? ` class="language-${ lang }"` : ''}>${htmlEntity(block)}</code></pre>`
+    );
+  }
 
   return markdown.trim();
 }
