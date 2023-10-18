@@ -81,6 +81,8 @@ export default function md (markdown) {
       })
       // inline code
       .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
+      // auto links
+      .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
       // HTML tags
       .replace(/(<\/?[a-zA-Z]+[^>]*>)/gm, (m, tag) => {
         var placeholder = '{html-' + hIdx + '}';
@@ -104,11 +106,11 @@ export default function md (markdown) {
       .replace(/  +\n/gm, '<br>')
       // paragraphs - exclude lists, already-rendered HTML, & whitespace
       .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`)
-      // auto links
-      .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
       // links
       .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, url, title) => {
         text = htmlEntity(text);
+        // try to decode url before re-encoding it in case it has encoded values to prevent encoding the % character
+        try { url = decodeURI(url); } catch {} // using try/catch because a malformed URI throws an error
         url = encodeURI(url);
         title = title ? ` title="${ htmlEntity(title) }"` : '';
         if (img) return `<img src="${ url }" alt="${text}"${title}>`;
