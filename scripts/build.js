@@ -74,34 +74,27 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
 }
 
-Promise.all([
-  build(),
-  build(true),
-  build(false, true),
-  build(true, true),
-]).then(async results => {
-  const filePath = path.resolve(process.cwd(), 'README.md');
-  let readme = await fs.promises.readFile(filePath, 'utf8');
-  results.forEach(result => {
-    if (result.version === 'Wren') {
-      readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
-    } else if (result.version === 'Warbler') {
-      readme = readme.replace(/larger \(\d+\.?\d+ kilobytes\)/, `larger (${result.size})`);
-    }
-  });
-  await fs.writeFile(filePath, readme, (err) => {
-    if (err) throw err;
-    console.info('README.md updated for versions:', results.map(r => r.version));
-  });
-});
+// Minify the CSS to insert into the HTML
+const cssResult = esbuild.buildSync({
+  entryPoints: ['index.css'],
+  write: false,
+  bundle: true,
+  minify: true,
+  outdir: 'build',
+}).outputFiles[0];
+// Output the CSS as an optional download
+const cssOutput = new TextDecoder().decode(cssResult.contents);
+const cssPath = path.resolve(outputDir, `FeatherWiki.css`);
+fs.writeFileSync(cssPath, cssOutput);
+const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+console.info(cssPath, outputCssKb);
 
-async function injectVariables(content, buildName) {
-  const fileName = path.relative(process.cwd(), 'package.json');
-  const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
-  const packageJson = JSON.parse(packageJsonFile);
+// Get the package.json file so data like the version can be used.
+const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
+const packageJson = JSON.parse(packageJsonFile);
 
+function injectVariables(content, buildName) {
   const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
-
   let result = content;
   if (matches?.length > 0) {
     matches.map(match => {
@@ -147,34 +140,21 @@ function build(server = false, ruffled = false) {
   }).then(async result => {
     const fileName = path.relative(process.cwd(), 'index.html');
     let html = await fs.promises.readFile(fileName, 'utf8');
-    const cssResult = esbuild.buildSync({
-      entryPoints: ['index.css'],
-      write: false,
-      bundle: true,
-      minify: true,
-      outdir: 'build',
-    });
-    for (const out of [...cssResult.outputFiles, ...result.outputFiles]) {
+    for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
-      // const outputKb = out.contents.byteLength * 0.000977;
-      // console.info(`${out.path} (${buildName})`, outputKb.toFixed(3) + ' KB');
-      if (/\.css$/.test(out.path)) {
-        const cssPath = path.resolve(outputDir, `FeatherWiki.css`);
-        fs.writeFileSync(cssPath, output);
-        const outputCssKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-        console.info(cssPath, outputCssKb);
-        html = html.replace('{{cssOutput}}', output);
-      } else if (/\.js$/.test(out.path)) {
-        const jsBuildPath = path.resolve(outputDir, `FeatherWiki_ruffled-${buildName}.js`);
+      if (/\.js$/.test(out.path)) {
+        const jsOutPath = path.resolve(outputDir, `FeatherWiki_${buildName}.js`);
         output = await injectVariables(output, buildName);
-        if (!ruffled) {
-          const jsOutPath = path.resolve(outputDir, `FeatherWiki_${buildName}.js`);
+        if (ruffled) {
+          fs.writeFileSync(jsOutPath, output);
+          const ruffledJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+          console.info(jsOutPath, ruffledJsKb);
+        } else {
           output = await new Promise(resolve => {
-            fs.writeFileSync(jsBuildPath, output);
-            const ruffledJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-            console.info(jsBuildPath, ruffledJsKb);
+            // Google Closure Compiler requires an existing file to process, so save it first
+            fs.writeFileSync(jsOutPath, output);
             // Compress the JS even more
-            exec(`npx google-closure-compiler --js=${jsBuildPath} --js_output_file=${jsOutPath}`, {
+            exec(`npx google-closure-compiler --js=${jsOutPath} --js_output_file=${jsOutPath}`, {
               maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
             }, (err) => {
               if (err) throw err;
@@ -185,13 +165,15 @@ function build(server = false, ruffled = false) {
           console.info(jsOutPath, outputJsKb);
         }
 
-        // Since there's regex stuff in here, I can't do replace!
-        const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need
+        // I can't do replace because of the regex stuff in here,
+        const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need!
         html = htmlParts[0] + output + htmlParts[1];
       }
     }
     return html;
   }).then(async html => {
+    // Inject any hanging variables into the resulting HTML
+    html = html.replace('{{cssOutput}}', cssOutput);
     html = await injectVariables(html, buildName);
     const filePath = path.resolve(outputDir, `FeatherWiki_${buildName}.html`);
     const outHtml = minify(html, minifyOptions);
@@ -206,3 +188,25 @@ function build(server = false, ruffled = false) {
     process.exit(1)
   });
 }
+
+// Build all versions (ruffled + regular), then update README with new sizes
+Promise.all([
+  build(false, false),
+  build(true, false),
+  build(false, true),
+  build(true, true),
+]).then(async results => {
+  const filePath = path.resolve(process.cwd(), 'README.md');
+  let readme = await fs.promises.readFile(filePath, 'utf8');
+  results.forEach(result => {
+    if (result.version === 'Wren') {
+      readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
+    } else if (result.version === 'Warbler') {
+      readme = readme.replace(/larger \(\d+\.?\d+ kilobytes\)/, `larger (${result.size})`);
+    }
+  });
+  await fs.writeFile(filePath, readme, (err) => {
+    if (err) throw err;
+    console.info('README.md updated for versions:', results.map(r => r.version));
+  });
+});
