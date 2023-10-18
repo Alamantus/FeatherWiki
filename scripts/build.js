@@ -93,7 +93,35 @@ Promise.all([
     if (err) throw err;
     console.info('README.md updated for versions:', results.map(r => r.version));
   });
-})
+});
+
+async function injectVariables(content, buildName) {
+  const fileName = path.relative(process.cwd(), 'package.json');
+  const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
+  const packageJson = JSON.parse(packageJsonFile);
+
+  const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
+
+  let result = content;
+  if (matches?.length > 0) {
+    matches.map(match => {
+      const value = match.replace('package.json:', '').trim();
+      const replace = value.split('.').reduce((result, current) => {
+        if (result === null) {
+          return packageJson[current] ?? '';
+        }
+        return result[current] ?? '';
+      }, null);
+      return {
+        match: `{{${match}}}`,
+        replace,
+      };
+    }).forEach(m => {
+      result = result.replace(m.match, m.replace);
+    });
+  }
+  return result.replace(/{{buildVersion}}/g, buildName);
+}
 
 function build(server = false, ruffled = false) {
   const buildName = (ruffled ? 'ruffled-' : '') + (server ? 'Warbler' : 'Wren');
@@ -131,14 +159,20 @@ function build(server = false, ruffled = false) {
       // const outputKb = out.contents.byteLength * 0.000977;
       // console.info(`${out.path} (${buildName})`, outputKb.toFixed(3) + ' KB');
       if (/\.css$/.test(out.path)) {
-        fs.writeFileSync(path.resolve(outputDir, `FeatherWiki.css`), output);
+        const cssPath = path.resolve(outputDir, `FeatherWiki.css`);
+        fs.writeFileSync(cssPath, output);
+        const outputCssKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+        console.info(cssPath, outputCssKb);
         html = html.replace('{{cssOutput}}', output);
       } else if (/\.js$/.test(out.path)) {
-        const jsBuildPath = path.resolve(outputDir, `FeatherWiki_${buildName}_ruffled.js`);
+        const jsBuildPath = path.resolve(outputDir, `FeatherWiki_ruffled-${buildName}.js`);
+        output = await injectVariables(output, buildName);
         if (!ruffled) {
           const jsOutPath = path.resolve(outputDir, `FeatherWiki_${buildName}.js`);
           output = await new Promise(resolve => {
             fs.writeFileSync(jsBuildPath, output);
+            const ruffledJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+            console.info(jsBuildPath, ruffledJsKb);
             // Compress the JS even more
             exec(`npx google-closure-compiler --js=${jsBuildPath} --js_output_file=${jsOutPath}`, {
               maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
@@ -147,6 +181,8 @@ function build(server = false, ruffled = false) {
               resolve(fs.readFileSync(jsOutPath));
             });
           });
+          const outputJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+          console.info(jsOutPath, outputJsKb);
         }
 
         // Since there's regex stuff in here, I can't do replace!
@@ -156,34 +192,7 @@ function build(server = false, ruffled = false) {
     }
     return html;
   }).then(async html => {
-    const fileName = path.relative(process.cwd(), 'package.json');
-    const packageJsonFile = await fs.promises.readFile(fileName, 'utf8');
-    const packageJson = JSON.parse(packageJsonFile);
-
-    const matches = html.match(/(?<={{)package\.json:.+?(?=}})/g);
-
-    if (matches?.length > 0) {
-      let result = html;
-      matches.map(match => {
-        const value = match.replace('package.json:', '').trim();
-        const replace = value.split('.').reduce((result, current) => {
-          if (result === null) {
-            return packageJson[current] ?? '';
-          }
-          return result[current] ?? '';
-        }, null);
-        return {
-          match: `{{${match}}}`,
-          replace,
-        };
-      }).forEach(m => {
-        result = result.replace(m.match, m.replace);
-      });
-
-      return result;
-    }
-  }).then(async html => {
-    html = html.replace(/{{buildVersion}}/g, buildName);
+    html = await injectVariables(html, buildName);
     const filePath = path.resolve(outputDir, `FeatherWiki_${buildName}.html`);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
