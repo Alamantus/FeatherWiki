@@ -50,9 +50,12 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(events.GO, () => {
+    const { p, pg } = state;
+    const slug = state.query.page ?? null;
+    const isSame = pg?.slug === slug || (!slug && pg?.id === p.home);
     // Prevent navigation if editing and they don't confirm
-    if (keepEditing()) return history.go(-1);
-
+    if (!isSame && keepEditing()) return history.go(-1);
+    if (isSame) return;
     stopEdit();
     state.pg = help.getPage();
     emit(events.HANDLE_404);
@@ -144,7 +147,7 @@ export const initEmitter = (state, emitter) => {
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);
-    emit(events.GO, root + '?page=' + page.slug);
+    state.pg = help.getPage();
     emit(events.CHECK_CHANGED);
   });
 
@@ -156,6 +159,7 @@ export const initEmitter = (state, emitter) => {
     state.recent = state.recent.filter(p => p.p !== id);
     stopEdit();
     emit(events.COLLECT_TAGS);
+    delete state.pg;
     emit(events.GO, root);
     emit(events.CHECK_CHANGED);
   });
