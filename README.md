@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 54.429 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 55.592 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
@@ -10,6 +10,8 @@ Check out the [Documentation](https://feather.wiki) to see it in action and lear
 Feather Wiki has two primary builds depending on your needs, Wren for everyday use and Warbler for web servers to trigger a save if set up correctly. The vast majority of people will likely only use Wren—if you don't plan on setting up a web server that can support saving the HTML file over the existing file directly on the server, then you're the majority of people.
 
 Both of these builds have an alternative "ruffled" option that uses less minification to allow for better compatibility with certain web browsers at the cost of a couple of extra kilobytes in size. If you're not able to get Feather Wiki running in your browser of choice, give the ruffled option a try. All builds can be found on the [website](https://feather.wiki/?page=downloads) or on the repository's [Releases page](https://codeberg.org/Alamantus/FeatherWiki/releases).
+
+Feather Wiki's CSS and JavaScript files are also available separately for each version, but it is important to note that the JavaScript currently expects both its code and the CSS to be _on the HTML page_ that is loaded _in full_ in order to save! Specifically, the contents of the `.js` file _must_ be in the HTML output inside of a `<script id="a">` script tag with the id as specified (`a`), and the contents of the `.css` _must_ be in the HTML output inside of a `<script id="s">` style tag with the id as specified (`s`). If you don't need to save your wiki, then you don't need to do this.
 
 Feather Wiki will only run on browsers that support [ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
@@ -35,7 +37,7 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (55.413 kilobytes) because it includes extra code for saving to certain web servers.
+Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (56.576 kilobytes) because it includes extra code for saving to certain web servers.
 
 You can use this version on [Tiddlyhost](https://tiddlyhost.com) or by using a [self-hosted nest](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/nests) from this repository!
 
