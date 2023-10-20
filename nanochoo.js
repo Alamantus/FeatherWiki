@@ -18,15 +18,14 @@ var nanohref = require('nanohref') // Prevents browser navigation within wiki
 var nanomorph = require('nanomorph') // Efficiently diffs DOM elements for render
 var nanoraf = require('nanoraf') // Prevents too many renders
 
-function documentReady (f) {
+var ready = (f) => {
   if (document.readyState === 'complete' || document.readyState === 'interactive') f()
   else document.addEventListener('DOMContentLoaded', f)
 }
 
-function getParams () {
+var params = () => {
   const p = {};
-  const s = new URLSearchParams(window.location.search);
-  s.forEach((v, k) => {
+  (new URLSearchParams(window.location.search)).forEach((v, k, s) => {
     v = s.getAll(k);
     p[k] = v.length > 1 ? v : v[0];
   });
@@ -38,8 +37,6 @@ var HISTORY = {};
 export default function Choo () {
   if (!(this instanceof Choo)) return new Choo()
 
-  var self = this
-
   // define events used by choo
   this._events = {
     ONLOAD: 'DOMContentLoaded',
@@ -50,9 +47,9 @@ export default function Choo () {
 
   // properties for internal use only
   this._loaded = false
-  this._stores = []
   this._tree = null
-  this._viewHandler = null
+  this._view = () => {};
+
 
   // properties that are part of the API
   this.emitter = nanobus('choo.emit')
@@ -61,101 +58,78 @@ export default function Choo () {
   this.state = {
     events: this._events,
     title: document.title,
-    query: getParams(),
+    query: params(),
   }
 
-  this.emitter.prependListener(this._events.TITLE, function (title) {
-    self.state.title = document.title = title
-  })
-}
-
-Choo.prototype.view = function (handler) {
-  this._viewHandler = handler
-}
-
-Choo.prototype.use = function (cb) {
-  var self = this
-  this._stores.push(function () {
-    cb(self.state, self.emitter, self)
+  this.emitter.prependListener(this._events.TITLE, (title) => {
+    this.state.title = document.title = title
   })
 }
 
 Choo.prototype.start = function () {
-  var self = this
   const hashScroll = () => {
     const el = document.getElementById(location.hash.substring(1));
     if (!el) return false;
     el?.scrollIntoView();
     return true;
   }
-  this.emitter.prependListener(this._events.GO, function (to = null, action = 'push') {
+  this.emitter.prependListener(this._events.GO, (to = null, action = 'push') => {
     if (to) {
-      history[action + 'State'](HISTORY, self.state.title, to)
+      history[action + 'State'](HISTORY, this.state.title, to)
     }
-    self.state.query = getParams()
-    if (self._loaded) {
-      self.emitter.emit(self._events.RENDER, function () {
+    this.state.query = params()
+    if (this._loaded) {
+      this.emit(this._events.RENDER, () => {
         // Scroll to top of page if no location hash is set
         hashScroll() || window.scroll(0, 0);
       })
     }
   })
 
-  window.onpopstate = function () {
-    self.emitter.emit(self._events.GO)
+  window.onpopstate = () => {
+    this.emit(this._events.GO)
   }
 
-  nanohref(function (location) {
-    var href = location.href
+  nanohref(({ href }) => {
     var currHref = window.location.href
     if (href === currHref) return
-    self.emitter.emit(self._events.GO, href)
+    this.emit(this._events.GO, href)
   })
 
-  this._stores.forEach(function (initStore) {
-    initStore()
-  })
-
-  function render () {
-    return self._viewHandler(self.state, function (eventName, data) {
-      self.emitter.emit.apply(self.emitter, arguments)
-    })
-  }
+  var render = () => this._view(this.state, this.emit)
 
   this._tree = render()
 
   this._rq = [] // render queue
   this._rd = null // render debounce
   this.emitter.prependListener(this._events.RENDER, cb => {
-    if (typeof cb === 'function') self._rq.push(cb)
-    if (self._rd !== null) clearTimeout(self._rd)
-    self._rd = setTimeout(nanoraf(() => {
+    if (typeof cb === 'function') this._rq.push(cb)
+    if (this._rd !== null) clearTimeout(this._rd)
+    this._rd = setTimeout(nanoraf(() => {
       var newTree = render()
-      nanomorph(self._tree, newTree)
-      while(self._rq.length > 0) (self._rq.shift())()
+      nanomorph(this._tree, newTree)
+      while(this._rq.length > 0) (this._rq.shift())()
     }), 9)
   })
 
-  documentReady(function () {
-    self.emitter.emit(self._events.ONLOAD)
-    self._loaded = true
+  ready(() => {
+    this.emit(this._events.ONLOAD)
+    this._loaded = true
     hashScroll();
   })
 
   return this._tree
 }
 
-Choo.prototype.mount = function mount (selector) {
-  var self = this
-
-  documentReady(function () {
-    var newTree = self.start()
+Choo.prototype.mount = function (selector) {
+  ready(() => {
+    var newTree = this.start()
     if (typeof selector === 'string') {
-      self._tree = document.querySelector(selector)
+      this._tree = document.querySelector(selector)
     } else {
-      self._tree = selector
+      this._tree = selector
     }
 
-    nanomorph(self._tree, newTree)
+    nanomorph(this._tree, newTree)
   })
 }

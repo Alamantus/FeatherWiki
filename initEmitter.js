@@ -178,7 +178,7 @@ export const initEmitter = (state, emitter) => {
 
   emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
     const i = Date.now();
-    const rm = () => emitter.emit(events.REMOVE_NOTI, i);
+    const rm = () => emit(events.REMOVE_NOTI, i);
     const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="Click to close">
       <span role=alert>${text}</span><span class=fr>×</span>
     </div>`;
@@ -225,7 +225,7 @@ export const initEmitter = (state, emitter) => {
           emit(events.NOTIFY, 'Saved.')
 
           state.prev = FW.hash.object(p);
-          emitter.emit(events.CHECK_CHANGED);
+          emit(events.CHECK_CHANGED);
         })
         .catch(err => {
           emit(events.NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
@@ -243,7 +243,7 @@ export const initEmitter = (state, emitter) => {
         .then(resp => {
           if (resp.ok && resp.headers.get('dav')) {
             state.canSave = true;
-            emitter.emit(events.RENDER);
+            emit(events.RENDER);
           } else {
             emit(events.NOTIFY, 'Cannot save to server.', 9999, 'background:#e88');
           }
