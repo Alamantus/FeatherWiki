@@ -49,11 +49,10 @@ export function img (content, state, includeId = false) {
 export function out (content) {
   let c = content ?? null;
   if (c) {
-    (content?.match(/<a href=".+?(?=")/gi) ?? []).forEach(url => {
-      // `url` contains something like `<a href="some/url`, leaving a dangling quote, so replacement doesn't need last quote
+    (content?.match(/<a href="[^"]+">/gi) ?? []).forEach(url => {
       c = c.replace(
         url,
-        `${url}" target="_blank" rel="noopener noreferrer`
+        url.replace('>', 'target="_blank" rel="noopener noreferrer">')
       );
     });
   }
