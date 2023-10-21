@@ -23,7 +23,7 @@ import { uploadFile } from './helpers/uploadFile';
 // Populate window with dependencies and helpers before starting app
 window.html = require('nanohtml');
 html.raw = require('nanohtml/raw');
-window.pell = require('./helpers/pell').default;
+window.ed = require('./helpers/ed').default;
 window.md = require('./helpers/md').default;
 
 // Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`

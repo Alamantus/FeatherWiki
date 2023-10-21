@@ -28,7 +28,7 @@ export const pageEdit = (state, emit, page) => {
     html`<div class="w1 tr">
       <button onclick=${toggleEditor}>${useMd ? 'Use Editor' : 'Use Markdown'}</button>
     </div>`,
-    require(useMd ? './md-editor' : './pell-editor').editor(state, emit),
+    require(useMd ? './md-editor' : './ed-editor').editor(state, emit),
   ];
 
   return html`<form onsubmit=${save}>

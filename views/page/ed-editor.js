@@ -10,7 +10,7 @@
 import { modal } from '../gallery';
 
 export const editor = (state, emit) => {
-  const { init, exec } = pell; // From `window`
+  const { init, exec } = ed; // From `window`
   const { src, edits } = state;
   const { content } = edits;
   let element = document.querySelector('#e');

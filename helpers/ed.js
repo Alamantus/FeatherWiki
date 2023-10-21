@@ -132,21 +132,15 @@ export const init = settings => {
       result: () => document.getElementById('g').showModal(),
     },
   ];
-  const classes = {
-    actionbar: 'pell-actionbar',
-    button: 'pell-button',
-    content: 'pell-content',
-    selected: 'pell-button-selected'
-  };
 
   const actionbar = ce('div')
-  actionbar.className = classes.actionbar
+  actionbar.className = 'ed-actionbar'
   actionbar.role = 'toolbar'
   ac(settings.element, actionbar)
 
   const content = settings.element.content = ce('div')
   content.contentEditable = true
-  content.className = classes.content
+  content.className = 'ed-content'
   content.oninput = ({ target: { firstChild } }) => {
     if (firstChild && firstChild.nodeType === 3) exec(fb, `<p>`)
     else if (content.innerHTML === '<br>') content.innerHTML = ''
@@ -161,14 +155,14 @@ export const init = settings => {
 
   actions.forEach(action => {
     const button = ce('button')
-    button.className = classes.button
+    button.className = 'ed-button'
     button.innerHTML = action.icon
     button.title = action.title
     button.setAttribute('type', 'button')
     button.onclick = () => action.result() && content.focus()
 
     if (action.state) {
-      const handler = () => button.classList[action.state() ? 'add' : 'remove'](classes.selected)
+      const handler = () => button.classList[action.state() ? 'add' : 'remove']('ed-selected')
       ael(content, 'keyup', handler)
       ael(content, 'mouseup', handler)
       ael(button, 'click', handler)
