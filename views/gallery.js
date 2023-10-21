@@ -80,7 +80,7 @@ export const gallery = (state, emit, options = {}) => {
     if (i.pgs.length > 0) {
       state.p.pages = state.p.pages.map(pg => {
         if (pg.content) {
-          pg.content = pg.content.replaceAll(`<img src="img:${i.id}:img">`, '');
+          pg.content = pg.content.replaceAll(`img:${i.id}:img`, 'deleted');
         }
         return pg;
       });
