@@ -10,7 +10,14 @@
 export const pageDisplay = (state, page) => {
   const { img, pg, out, hLink } = FW.inject;
   const { help } = state;
-  let c = FW.img.fix(page.content ?? '');
+  let nowiki = [];
+  let nIdx = 0; // nowiki index
+  // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
+  let c = (page.content ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
+    nowiki[nIdx] = content;
+    return `{nowiki-${nIdx++}}`;
+  });
+  c = FW.img.fix(c);
   c = page.editor === 'md' ? md(c) : c;
   c = img(
     pg(
@@ -21,6 +28,9 @@ export const pageDisplay = (state, page) => {
     ),
     state
   );
+  for (let i = 0; i < nIdx; i++) {
+    c = c.replace(`{nowiki-${i}}`, nowiki[i]);
+  }
   const children = help.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length

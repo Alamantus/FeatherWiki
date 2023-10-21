@@ -75,9 +75,8 @@ export default function md (markdown) {
       // collect code blocks and replace with placeholder
       // we do this to avoid code blocks matching the paragraph regexp
       .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, (m, lang, block) => {
-        var placeholder = '{code-' + cIdx + '}';
-        code[cIdx++] = {lang, block: htmlEntity(block)};
-        return placeholder;
+        code[cIdx] = {lang, block: htmlEntity(block)};
+        return `{code-${cIdx++}}`;
       })
       // inline code
       .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
@@ -85,9 +84,8 @@ export default function md (markdown) {
       .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
       // HTML tags
       .replace(/(<\/?[a-zA-Z]+[^>]*>)/gm, (m, tag) => {
-        var placeholder = '{html-' + hIdx + '}';
-        html[hIdx++] = tag;
-        return placeholder;
+        html[hIdx] = tag;
+        return `{html-${hIdx++}}`;
       })
       // blockquotes
       .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
@@ -153,14 +151,14 @@ export default function md (markdown) {
 
   // replace html tag placeholders
   for (let i = 0; i < hIdx; i++) {
-    markdown = markdown.replace('{html-' + i + '}', html[i]);
+    markdown = markdown.replace(`{html-${i}}`, html[i]);
   }
 
   // replace code block placeholders
   for (let i = 0; i < cIdx; i++) {
     const { lang, block } = code[i];
     markdown = markdown.replace(
-      '{code-' + i + '}',
+      `{code-${i}}`,
       `<pre><code${lang ? ` class="language-${ lang }"` : ''}>${htmlEntity(block)}</code></pre>`
     );
   }
