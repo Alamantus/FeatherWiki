@@ -17,14 +17,11 @@ export const pageDisplay = (state, page) => {
     nowiki[nIdx] = content;
     return `{nowiki-${nIdx++}}`;
   });
-  c = FW.img.fix(c);
+  c = pg(FW.img.fix(c), state);
   c = page.editor === 'md' ? md(c) : c;
   c = img(
-    pg(
-      hLink(
-        out(c)
-      ),
-      state
+    hLink(
+      out(c)
     ),
     state
   );
