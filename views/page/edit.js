@@ -17,7 +17,7 @@ export const pageEdit = (state, emit, page) => {
     e.preventDefault();
     const { useMd, content } = edits;
     if (useMd) {
-      if (confirm('Convert Markdown to HTML?')) state.edits.content = md(content);
+      if (confirm('Convert Markdown to HTML?\n("Cancel" to go without converting)')) state.edits.content = md(content);
     } else {
       state.edits.content = FW.img.abbr(content);
     }
@@ -45,7 +45,7 @@ export const pageEdit = (state, emit, page) => {
           <button onclick=${slugifyTitle}>Slugify Title</button>
         </div>
     </header>
-    <span class=h style=float:left>Use [[Page Title]] or [[text|page_slug]] for internal links.</span>
+    <span class=h style=float:left>Internal links (hash optional): [[Page Title]] or [[text|page_slug#heading]].</span>
     ${ editor }
     <footer class=r>
       <div class="c w13">
