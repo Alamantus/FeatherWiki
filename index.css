@@ -243,6 +243,9 @@ abbr[title] { cursor: help; }
   min-height: 300px;
   max-height: 600px;
 }
+.pell-content nowiki {
+  background: #EEE;
+}
 :is(.pell-content, textarea, .uc) * { max-width: 100%; }
 
 .pell-actionbar {
