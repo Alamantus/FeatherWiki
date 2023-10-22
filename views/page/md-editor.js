@@ -10,11 +10,16 @@
 import { modal } from '../gallery';
 
 export const editor = (state) => {
-  const textChange = event => state.edits.content = event.target.value;
-  const element = html`<textarea onchange=${textChange}>${state.edits.content}</textarea>`;
-
+  const textChange = (event) => {
+    state.edits.content = event.target.value;
+    preview.innerHTML = md(state.edits.content);
+  }
+  const element = html`<textarea oninput=${textChange}>${state.edits.content}</textarea>`;
+  const preview = html`<div id="preview" class="pell-content" style="display:none">${md(state.edits.content)}</div>`;
   return [
     element,
+    preview,
+    html`<button onclick=${e => {e.preventDefault(); preview.style.display = preview.style.display == "none" ? "block" : "none";}}>Preview</button>`,
     html`<button onclick=${e => {e.preventDefault(); FW.img.upload(state, insert)}}>Insert Image from File</button>`,
     html`<button onclick=${e => {e.preventDefault(); document.getElementById('g').showModal()}}>Add Existing Image</button>`,
     modal(state, insert),
