@@ -97,6 +97,7 @@ export const settingsView = (state, emit) => {
       FW.xtr(file, result => {
         if (result) {
           state.p = result[0];
+          state.recent = state.help.getRecent();
           handleCustomCss(result[1]);
           handleCustomJs(result[2]);
           emit(events.ONLOAD);
