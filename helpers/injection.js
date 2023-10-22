@@ -8,7 +8,7 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // Replace [[page links]] with internal `a` tag links
-export function pg (content, state) {
+export function pg (content) {
   let c = content ?? null;
   if (c) {
     (content?.match(/\[\[.+?(?=\]\])/g) ?? []).forEach(l => {
@@ -17,7 +17,7 @@ export function pg (content, state) {
       const link = (match[1] ?? match[0]).trim().split('#');
       if (!match[1]) link[0] = FW.slug(link[0]);
       // Find a page with the slug or view with the slug name
-      const exists = state.p.pages.some(pg => pg.slug === link[0]) || typeof state.views[link[0]] !== 'undefined';
+      const exists = FW.state.p.pages.some(pg => pg.slug === link[0]) || typeof FW.state.views[link[0]] !== 'undefined';
       c = c.replace(
         `${l}]]`,
         `<a internal href="?page=${link.join('#')}"${!exists ? ' class=e' : ''}>${text}</a>`
@@ -28,12 +28,12 @@ export function pg (content, state) {
 }
 
 // Replace truncated img:imageids:img with filled `img` tags
-export function img (content, state, includeId = false) {
+export function img (content, includeId = false) {
   let c = content ?? null;
   if (c) {
     (content?.match(/img:.+?(?=:img)/g) ?? []).forEach(idMatch => {
       id = idMatch.replace('img:', '');
-      const i = state.p.img[id];
+      const i = FW.state.p.img[id];
       if (typeof i !== 'undefined') {
         c = c.replace(
           `${idMatch}:img`,

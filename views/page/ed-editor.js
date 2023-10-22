@@ -26,7 +26,7 @@ export const editor = (state, emit) => {
       });
       element.isSameNode = () => true; // Do not re-render editor
     }
-    element.content.innerHTML = content.includes('<img ') ? FW.inject.img(content, state, true) : content;
+    element.content.innerHTML = content.includes('<img ') ? FW.inject.img(content, true) : content;
   }
 
   return [

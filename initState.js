@@ -65,7 +65,7 @@ export const initState = state => {
     },
     missing: () => state.p.pages.reduce((result, current) => {
       const c = document.createElement('div');
-      c.innerHTML = FW.inject.pg(current.content, state);
+      c.innerHTML = FW.inject.pg(current.content);
       const newEl = [...c.getElementsByClassName('e')].filter(el => result.every(r => r.href !== el.href));
       return [...result, ...newEl];
     }, []).sort(),
