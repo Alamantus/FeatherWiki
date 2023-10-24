@@ -11,15 +11,18 @@ import { parseContent } from './display';
 import { modal } from '../gallery';
 
 export const editor = (state) => {
-  const parsed = () => parseContent({ ...state.edits, editor: 'md' });
-  const preview = html`<div id="preview" class="ed ed-content" style="display:none">${html.raw(parsed())}</div>`;
+  const preview = html`<div class="ed ed-content" style="display:none"></div>`;
   const textChange = (event) => {
     state.edits.content = event.target.value;
-    preview.innerHTML = parsed();
+    clearTimeout(state.debounce);
+    state.debounce = setTimeout(() => {
+      preview.innerHTML = parseContent({ ...state.edits, editor: 'md' });
+    }, 500);
   }
-  const element = html`<textarea oninput=${textChange}>${state.edits.content}</textarea>`;
+  const edit = html`<textarea oninput=${textChange}>${state.edits.content}</textarea>`;
+  textChange({ target: edit });
   return [
-    element,
+    edit,
     preview,
     html`<button onclick=${e => {e.preventDefault(); preview.style.display = preview.style.display == 'none' ? 'block' : 'none';}}>Preview</button>`,
     html`<button onclick=${e => {e.preventDefault(); FW.img.upload(state, insert)}}>Insert Image from File</button>`,
@@ -30,23 +33,23 @@ export const editor = (state) => {
   // Modified from https://stackoverflow.com/a/19961519
   function insert ({ id }) {
     const text = `![](img:${id}:img)`;
-    if (document.activeElement !== element) element.focus();
+    if (document.activeElement !== edit) edit.focus();
     if (document.selection) {
       // IE
       const sel = document.selection.createRange();
       sel.text = text;
-    } else if (element.selectionStart || element.selectionStart === 0) {
+    } else if (edit.selectionStart || edit.selectionStart === 0) {
       // Others
-      var startPos = element.selectionStart;
-      var endPos = element.selectionEnd;
-      element.value = element.value.substring(0, startPos) +
+      var startPos = edit.selectionStart;
+      var endPos = edit.selectionEnd;
+      edit.value = edit.value.substring(0, startPos) +
         text +
-        element.value.substring(endPos, element.value.length);
-      element.selectionStart = startPos + text.length;
-      element.selectionEnd = startPos + text.length;
+        edit.value.substring(endPos, edit.value.length);
+      edit.selectionStart = startPos + text.length;
+      edit.selectionEnd = startPos + text.length;
     } else {
-      element.value += text;
+      edit.value += text;
     }
-    textChange({ target: element });
+    textChange({ target: edit });
   };
 }
