@@ -18,11 +18,6 @@ var nanohref = require('nanohref') // Prevents browser navigation within wiki
 var nanomorph = require('nanomorph') // Efficiently diffs DOM elements for render
 var nanoraf = require('nanoraf') // Prevents too many renders
 
-var ready = (f) => {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') f()
-  else document.addEventListener('DOMContentLoaded', f)
-}
-
 var params = () => {
   const p = {};
   (new URLSearchParams(window.location.search)).forEach((v, k, s) => {
@@ -36,6 +31,11 @@ var HISTORY = {};
 
 export default function Choo () {
   if (!(this instanceof Choo)) return new Choo()
+
+  this.ready = (f) => {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') f()
+    else document.addEventListener('DOMContentLoaded', f)
+  }
 
   // define events used by choo
   this._events = {
@@ -112,7 +112,7 @@ Choo.prototype.start = function () {
     }), 9)
   })
 
-  ready(() => {
+  this.ready(() => {
     this.emit(this._events.ONLOAD)
     this._loaded = true
     hashScroll();
@@ -122,7 +122,7 @@ Choo.prototype.start = function () {
 }
 
 Choo.prototype.mount = function (selector) {
-  ready(() => {
+  this.ready(() => {
     var newTree = this.start()
     if (typeof selector === 'string') {
       this._tree = document.querySelector(selector)

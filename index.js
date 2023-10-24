@@ -42,13 +42,16 @@ FW.inject = inject;
 FW.json = json;
 FW.upload = uploadFile;
 
-initState(FW.state);
-initEmitter(FW.state, FW.emitter);
+FW.ready(() => {
+	initState(FW.state);
+	initEmitter(FW.state, FW.emitter);
+});
+FW._view = globalView;
+FW.mount('body');
+
 window.addEventListener('beforeunload', event => {
 	if (FW.state.changed) {
 		event.preventDefault();
 		return event.returnValue = "Lose unsaved changes?";
 	}
 }, { capture: true });
-FW._view = globalView;
-FW.mount('body');
