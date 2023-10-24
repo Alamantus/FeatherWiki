@@ -12,13 +12,12 @@ import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
 
-import { extractFeatherWikiData } from './helpers/extractFeatherWikiData';
-import { generateWikiHtml } from './helpers/generateWikiHtml';
+import xtr from './helpers/extractFeatherWikiData';
+import gen from './helpers/generateWikiHtml';
 import * as img from './helpers/handleImage';
 import * as hash from './helpers/hashString';
 import * as inject from './helpers/injection';
 import * as json from './helpers/jsonCompress';
-import { uploadFile } from './helpers/uploadFile';
 
 // Populate window with dependencies and helpers before starting app
 window.html = require('nanohtml');
@@ -34,13 +33,21 @@ FW.slug = s => s?.toLowerCase().replace(/\s/g, '_').replace(/[\x00-\x2F\x3A-\x40
 FW.date = d => d.toLocaleString();
 // For arrays of strings (like tags) only
 FW.tidy = ar => ar.map(v => v.trim()).filter((v, i, a) => v.length && a.indexOf(v) === i).sort();
-FW.xtr = extractFeatherWikiData;
-FW.gen = generateWikiHtml;
+FW.xtr = xtr;
+FW.gen = gen;
 FW.img = img;
 FW.hash = hash;
 FW.inject = inject;
 FW.json = json;
-FW.upload = uploadFile;
+FW.upload = (mime, cb) => {
+  const input = html`<input type="file" accept=${mime} onchange=${e => {
+    const f = e.target.files;
+    if (f.length > 0) cb(f[0]);
+  }} />`;
+  document.body.appendChild(input);
+  input.click();
+  document.body.removeChild(input);
+};
 
 FW.ready(() => {
 	initState(FW.state);

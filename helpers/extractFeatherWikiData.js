@@ -7,7 +7,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export function extractFeatherWikiData (file, callback = () => {}) {
+// Extract Feather Wiki data from an imported HTML file
+export default function (file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = async event => {
     const file = event.target.result;

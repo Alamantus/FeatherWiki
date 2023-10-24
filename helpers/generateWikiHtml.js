@@ -11,7 +11,7 @@
 import { globalView } from "../views/global";
 
 // Generate full html doc for saving. See also index.html
-export function generateWikiHtml(state) {
+export default function (state) {
   const { c, p, j } = state;
   return `<!DOCTYPE html>
 <html lang="en">
