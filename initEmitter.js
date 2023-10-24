@@ -24,6 +24,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(events.ONLOAD, () => {
     emit(events.HANDLE_404);
     title();
+    state.recent = state.p.pages.map(p => ({ p: p.id, t: p.md ?? p.cd })).sort((a, b) => a.t > b.t ? -1 : 1)
     emit(events.COLLECT_TAGS);
     if (state.t.length) emit(events.RENDER);
     else tab();
@@ -95,7 +96,7 @@ export const initEmitter = (state, emitter) => {
 
     if (save) {
       state.p.pages.push(newPg);
-      state.recent = [{ p: newPg.id, t: newPg.cd }, ...state.recent].filter(p => !!p.p);
+      state.recent.unshift({ p: newPg.id, t: newPg.cd });
       emit(events.CHECK_CHANGED);
       emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
@@ -143,7 +144,7 @@ export const initEmitter = (state, emitter) => {
     } else {
       p.pages.push(page);
     }
-    state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)].filter(p => !!p.p);
+    state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)];
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(events.COLLECT_TAGS);

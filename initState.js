@@ -18,6 +18,7 @@ export const initState = state => {
   state.sb = false; // show sidebar
   state.sbTab = 'Pages';
   state.sbx = new Set(); // expanded sidebar menu items
+  state.recent = [];
   state.edit = false;
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
@@ -32,7 +33,6 @@ export const initState = state => {
       const { query, help, p } = state;
       return (!query.page && p.home) ? help.find(p.home, 'id') : help.find(query.page);
     },
-    getRecent: () => state.p.pages.map(p => ({ p: p.id, t: p.md ?? p.cd })).sort((a, b) => a.t > b.t ? -1 : 1),
     getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
     getChildren: (p, hide) => state.p.pages.filter(pg => pg.parent === p?.id && (!hide || !pg.hide)),
     getChildList: (p, collapse) => {
@@ -118,7 +118,6 @@ export const initState = state => {
     state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
   state.pg = state.help.getPage();
-  state.recent = state.help.getRecent();
   
   // determine last-used editor
   const lastModified = state.p.pages.find(p => p.id === state.recent[0]?.p);
