@@ -35,3 +35,10 @@ set up a nest. You can find the code and instructions on their repo:
 https://git.envs.net/iacore/featherwiki-deno-server
 
 Simply copy their code to your web server, follow their instructions, and you're ready to go!
+
+## Node.js
+
+Download and modify the first few lines of `index.mjs` to set your username, password, and other
+configuration settings for the server. Run it with `node`.
+
+This is based on the Deno server.
