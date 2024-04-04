@@ -11,128 +11,11 @@
 const fb = 'formatBlock'
 const ael = (parent, type, listener) => parent.addEventListener(type, listener)
 const ac = (parent, child) => parent.appendChild(child)
-const ce = tag => document.createElement(tag)
-const qcs = command => document.queryCommandState(command)
+// const qcs = command => document.queryCommandState(command)
 
-export const exec = (command, value = null) => document.execCommand(command, false, value)
+const exec = (command, value = null) => document.execCommand(command, false, value)
 
-export const init = settings => {
-  const actions = [
-    { // clear
-      icon: '☒',
-      title: 'Clear Formatting',
-      result: () => exec('removeFormat')
-    },
-    { // bold
-      icon: '<b>B</b>',
-      title: 'Bold',
-      state: () => qcs('bold'),
-      result: () => exec('bold')
-    },
-    { // italic
-      icon: '<i>I</i>',
-      title: 'Italic',
-      state: () => qcs('italic'),
-      result: () => exec('italic')
-    },
-    { // underline
-      icon: '<u>U</u>',
-      title: 'Underline',
-      state: () => qcs('underline'),
-      result: () => exec('underline')
-    },
-    // { // strikethrough
-    //   icon: '<strike>S</strike>',
-    //   title: 'Strike-through',
-    //   state: () => qcs('strikeThrough'),
-    //   result: () => exec('strikeThrough')
-    // },
-    { // heading2
-      icon: '<b>H</b>',
-      title: 'Heading',
-      result: () => exec(fb, '<h2>'),
-    },
-    { // heading3
-      icon: '<b>H<sub>2</sub></b>',
-      title: 'Sub-Heading',
-      result: () => exec(fb, '<h3>'),
-    },
-    { // paragraph
-      icon: '¶',
-      title: 'Paragraph',
-      result: () => exec(fb, '<p>')
-    },
-    { // align left
-      icon: '↦',
-      title: 'Align Left',
-      state: () => qcs('justifyLeft'),
-      result: () => exec('justifyLeft')
-    },
-    { // align center
-      icon: '↔',
-      title: 'Align Center',
-      state: () => qcs('justifyCenter'),
-      result: () => exec('justifyCenter')
-    },
-    { // align right
-      icon: '↤',
-      title: 'Align Right',
-      state: () => qcs('justifyRight'),
-      result: () => exec('justifyRight')
-    },
-    { // olist
-      icon: '#',
-      title: 'Number List',
-      result: () => exec('insertOrderedList')
-    },
-    { // ulist
-      icon: '•',
-      title: 'Bullet List',
-      result: () => exec('insertUnorderedList')
-    },
-    { // quote
-      icon: '“ ”',
-      title: 'Quote',
-      result: () => exec(fb, '<blockquote>')
-    },
-    // { // code
-    //   icon: '&lt;/&gt;',
-    //   title: 'Code',
-    //   result: () => exec(fb, '<pre>')
-    // },
-    { // line
-      icon: '―',
-      title: 'Separator',
-      result: () => exec('insertHorizontalRule')
-    },
-    { // link
-      icon: '🔗',
-      title: 'Link',
-      result: () => {
-        const url = window.prompt('Link URL:')
-        if (url) exec('createLink', url)
-      }
-    },
-    { // externalImage
-      title: 'Link External Image',
-      icon: '🖼️',
-      result: () => {
-        const url = window.prompt('Image URL:');
-        if (url) exec('insertImage', url);
-      },
-    },
-    { // insertImage
-      title: 'Insert Image from File',
-      icon: '📸',
-      result: settings.insert,
-    },
-    { // existingImage
-      title: 'Add Existing Image',
-      icon: '📎',
-      result: () => document.getElementById('g').showModal(),
-    },
-  ];
-
+const init = settings => {
   const content = settings.element.content = html`<div class="ed-content" contenteditable="true" oninput=${({ target: { firstChild } }) => {
     if (firstChild && firstChild.nodeType === 3) exec(fb, '<p>');
     else if (content.innerHTML === '<br>') content.innerHTML = '';
@@ -148,7 +31,10 @@ export const init = settings => {
   }}></div>`;
 
   const actionbar = html`<div class="ed-actionbar" role="toolbar">
-    ${actions.map(action => {
+    ${FW.state.edActions.map(action => {
+      if (action.result === 'settings.insert') {
+        action.result = settings.insert;
+      }
       const button = html`<button class="ed-button" type="button" title="${action.title}" onclick=${() => action.result() && content.focus()}>
         ${html.raw(action.icon)}
       </button>`;
