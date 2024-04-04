@@ -1,6 +1,6 @@
 export const taggedView = (state, emit) => {
   const { p, query } = state;
-  const pages = p.pages.filter(pg => pg.tags?.includes(query.tag));
+  const pages = p.pages.filter(pg => pg.tags?.split(',')?.includes(query.tag));
   return [
     html`<header>
       <h1>Pages Tagged <code>${ query.tag }</code></h1>
