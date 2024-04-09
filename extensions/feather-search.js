@@ -71,9 +71,12 @@
       if (val.length < 2) return resultsContainer.style.display = 'none';
       const index = state.p.pages.map(p => {
         const { id, name, slug, content, editor } = p;
-        const contentHtml = (html`<div></div>`);
-        contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
-        const textContent = contentHtml.innerText.trim();
+        let textContent = '';
+        if (content) {
+          const contentHtml = (html`<div></div>`);
+          contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
+          textContent = contentHtml.innerText.trim();
+        }
         return { id, name, searchName: name.toLowerCase(), slug, content: textContent, searchContent: textContent.toLowerCase() };
       });
       const matches = [];
