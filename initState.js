@@ -24,9 +24,8 @@ export const initState = state => {
   state.keep = false; // Keep Editor, Prevent navigation if editing
   state.src = false; // Show HTML in editor
   state.notis = {}; // Notifications
-  if (process.env.SERVER) {
-    state.canSave = false; // Show "Save Wiki to Server" button
-  }
+  state.canPut = false; // Show "Save Wiki to Server" button
+
   state.help = { // Helper functions that use state to do various things
     find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
     getPage: () => {
@@ -93,14 +92,9 @@ export const initState = state => {
     SAVE_WIKI: 'sw',
     NOTIFY: 'n',
     REMOVE_NOTI: 'rn',
+    PUT_SAVE_WIKI: 'psw',
+    DETECT_PUT_SUPPORT: 'dps',
   };
-  if (process.env.SERVER) {
-    state.events = {
-      ...state.events,
-      PUT_SAVE_WIKI: 'psw',
-      DETECT_PUT_SUPPORT: 'dps',
-    };
-  }
 
   state.views = {
     a: pagesView,

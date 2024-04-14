@@ -20,8 +20,8 @@ export default function (state) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${p.name}</title>
   ${p.desc ? `<meta name="description" content="${p.desc.replace(/"/g, '\\"')}">` : ''}
-  <meta name="version" content="{{buildVersion}}_{{package.json:version}}" />
   <meta name="application-name" content="{{package.json: title}}" />
+  <meta name="version" content="{{package.json:version}}" />
   <style id="s">${document.getElementById('s').innerHTML}</style>
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>

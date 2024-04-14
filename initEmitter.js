@@ -28,9 +28,8 @@ export const initEmitter = (state, emitter) => {
     emit(events.COLLECT_TAGS);
     if (state.t.length) emit(events.RENDER);
     else tab();
-    if (process.env.SERVER) {
-      emit(events.DETECT_PUT_SUPPORT);
-    }
+
+    emit(events.DETECT_PUT_SUPPORT);
   });
 
   emitter.on(events.RENDER, tab);
@@ -206,52 +205,47 @@ export const initEmitter = (state, emitter) => {
     el.click();
     document.body.removeChild(el);
 
-    if (!process.env.SERVER) {
+    if (!state.canPut) {
       // Only clear the "save needed" indicator on server save
       state.prev = FW.hash.object(p);
       emit(events.CHECK_CHANGED);
     }
   });
 
-  if (process.env.SERVER) {
-    emitter.on(events.PUT_SAVE_WIKI, () => {
-      const output = FW.gen(state);
-      const { p } = state;
-      fetch(root, { method: 'PUT', body: output })
-        .then(resp => resp.text()
-          .then(text => ({ ok: resp.ok, status: resp.status, text: text }))
-        )
-        .then(result => {
-          if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
-          emit(events.NOTIFY, 'Saved.')
+  emitter.on(events.PUT_SAVE_WIKI, () => {
+    const output = FW.gen(state);
+    const { p } = state;
+    fetch(root, { method: 'PUT', body: output })
+      .then(resp => resp.text()
+        .then(text => ({ ok: resp.ok, status: resp.status, text: text }))
+      )
+      .then(result => {
+        if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
+        emit(events.NOTIFY, 'Saved.')
 
-          state.prev = FW.hash.object(p);
-          emit(events.CHECK_CHANGED);
-        })
-        .catch(err => {
-          emit(events.NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
-        });
-    });
+        state.prev = FW.hash.object(p);
+        emit(events.CHECK_CHANGED);
+      })
+      .catch(err => {
+        emit(events.NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
+      });
+  });
 
-    emitter.on(events.DETECT_PUT_SUPPORT, () => {
-      // Assumptions:
-      // * build make process.env.SERVER === true
-      // * This only needs to run once at startup
-      // * There's no need to turn it off again once it's set
-      // * If any 'dav' header is present then a put save could work
-      if (!location.protocol.startsWith('http') || state.canSave) return;
-      fetch(root, { method: 'OPTIONS' })
-        .then(resp => {
-          if (resp.ok && resp.headers.get('dav')) {
-            state.canSave = true;
-            emit(events.RENDER);
-          } else {
-            emit(events.NOTIFY, 'Cannot save to server.', 9999, 'background:#e88');
-          }
-        })
-        .catch(err => {})
-    });
-  }
+  emitter.on(events.DETECT_PUT_SUPPORT, () => {
+    // Assumptions:
+    // * This only needs to run once at startup
+    // * There's no need to turn it off again once it's set
+    // * If any 'dav' header is present then a put save could work
+    if (!location.protocol.startsWith('http') || state.canPut) return;
+    fetch(root, { method: 'OPTIONS' })
+      .then(resp => {
+        if (resp.ok && resp.headers.get('dav')) {
+          state.canPut = true;
+          emit(events.RENDER);
+        }
+      })
+      .catch(err => {})
+  });
 
   return emitter;
 }

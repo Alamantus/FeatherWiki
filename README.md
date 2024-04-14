@@ -97,11 +97,9 @@ Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base Jav
 minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/pell.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for
 its [Markdown parsing](./helpers/md.js).
 
-If you want to restrict a feature to one build or another (which I request you do if it's only specific to the regular or server build),
-use `process.env.SERVER` in an `if` statement to ensure that esbuild removes the code on build for the irrelevant versions. It will be auto-populated with `true` or `false` during the build process.
-
-The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's
-a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
+The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features.
+Unfortunately, that's a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably
+won't go too far astray.
 
 ## License Clarification
 

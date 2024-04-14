@@ -92,9 +92,9 @@
 
   function saveUpgradedHtml() {
     if (!state.upgradeHtml) return emitter.emit(events.NOTIFY, `Upgrade failed! Couldn't get new version.`, 9999, 'background:#e88');
-    if (state.canSave && !confirm('This attempts to insert the current wiki\'s data into the newest version & save over the file on the server.\n\nPlease save a copy of your wiki before continuing!\n\nContinue?')) return;
+    if ((state.canPut || state.canSave) && !confirm('This attempts to insert the current wiki\'s data into the newest version & save over the file on the server.\n\nPlease save a copy of your wiki before continuing!\n\nContinue?')) return;
     const { root } = state;
-    if (state.canSave) {
+    if ((state.canPut || state.canSave)) {
       fetch(root, { method: 'PUT', body: state.upgradeHtml })
         .then(resp => resp.text()
           .then(text => ({ ok: resp.ok, status: resp.status, text: text }))

@@ -113,16 +113,15 @@ function injectVariables(content, buildName) {
       result = result.replace(m.match, m.replace);
     });
   }
-  return result.replace(/{{buildVersion}}/g, buildName);
+  return result;
 }
 
-function build(server = false, ruffled = false) {
-  const buildName = (ruffled ? 'ruffled-' : '') + (server ? 'Warbler' : 'Wren');
+function build(ruffled = false) {
+  const buildName = (ruffled ? 'ruffled-' : '') + 'FeatherWiki';
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
       'process.env.NODE_ENV': '"production"',
-      'process.env.SERVER': (server === true).toString(),
     },
     sourcemap: false,
     write: false,
@@ -191,10 +190,8 @@ function build(server = false, ruffled = false) {
 
 // Build all versions (ruffled + regular), then update README with new sizes
 Promise.all([
-  build(false, false),
-  build(true, false),
-  build(false, true),
-  build(true, true),
+  build(false),
+  build(true),
 ]).then(async results => {
   const filePath = path.resolve(process.cwd(), 'README.md');
   let readme = await fs.promises.readFile(filePath, 'utf8');

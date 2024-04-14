@@ -15,7 +15,7 @@
   const { events } = state;
   [events.UPDATE_PAGE, events.NOTIFY].forEach(ev => {
     emitter.on(ev, (noti = null) => {
-      if (!state.canSave) {
+      if (!state.canSave && !state.canPut) {
         emitter.emit(events.NOTIFY, 'Cannot autosave', 5000, 'background:#e88');
       } else if (typeof noti !== 'string' || noti === 'Settings updated') {
         emitter.emit(events.PUT_SAVE_WIKI);
