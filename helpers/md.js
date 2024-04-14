@@ -28,6 +28,7 @@ const charMap = {
   '>': '&gt;',
   '"': '&quot;',
   "'": '&#39;',
+  '$': '&#36;',
   '&': '&amp;',
   '[': '&#91;',
   ']': '&#93;',
@@ -41,7 +42,7 @@ const charMap = {
 const doubleEscaped = Object.keys(charMap).filter(c => c != '&').map(c => charMap[c].replace(c != '&' ? '&' : '', ''));
 
 const htmlEntity = str => {
-  return str.replace(/[<>&\(\)\[\]"']/g, c => (charMap[c] || c))
+  return str.replace(/[<>$&\(\)\[\]"']/g, c => (charMap[c] || c))
     .replace(new RegExp(`&amp;(${doubleEscaped.join('|')})`, 'g'), '&$1');
 }
 
