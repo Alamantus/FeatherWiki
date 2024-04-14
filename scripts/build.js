@@ -93,7 +93,7 @@ console.info(cssPath, outputCssKb);
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
 
-function injectVariables(content, buildName) {
+function injectVariables(content) {
   const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
   let result = content;
   if (matches?.length > 0) {
@@ -116,8 +116,7 @@ function injectVariables(content, buildName) {
   return result;
 }
 
-function build(ruffled = false) {
-  const buildName = (ruffled ? 'ruffled-' : '') + 'FeatherWiki';
+function build() {
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
@@ -142,27 +141,11 @@ function build(ruffled = false) {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsOutPath = path.resolve(outputDir, `FeatherWiki_${buildName}.js`);
-        output = await injectVariables(output, buildName);
-        if (ruffled) {
-          fs.writeFileSync(jsOutPath, output);
-          const ruffledJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-          console.info(jsOutPath, ruffledJsKb);
-        } else {
-          output = await new Promise(resolve => {
-            // Google Closure Compiler requires an existing file to process, so save it first
-            fs.writeFileSync(jsOutPath, output);
-            // Compress the JS even more
-            exec(`npx google-closure-compiler --js=${jsOutPath} --js_output_file=${jsOutPath}`, {
-              maxBuffer: 2 * 1024 * 1024, // Double the default maxBuffer
-            }, (err) => {
-              if (err) throw err;
-              resolve(fs.readFileSync(jsOutPath));
-            });
-          });
-          const outputJsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-          console.info(jsOutPath, outputJsKb);
-        }
+        const jsOutPath = path.resolve(outputDir, 'FeatherWiki.js');
+        output = await injectVariables(output);
+        fs.writeFileSync(jsOutPath, output);
+        const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+        console.info(jsOutPath, jsKb);
 
         // I can't do replace because of the regex stuff in here,
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need!
@@ -172,38 +155,30 @@ function build(ruffled = false) {
     return html;
   }).then(async html => {
     // Inject any hanging variables into the resulting HTML
-    html = html.replace('{{cssOutput}}', cssOutput);
-    html = await injectVariables(html, buildName);
-    const filePath = path.resolve(outputDir, `FeatherWiki_${buildName}.html`);
+    const htmlParts = html.split('{{cssOutput}}');
+    html = htmlParts[0] + cssOutput + htmlParts[1];
+    html = await injectVariables(html);
+    const filePath = path.resolve(outputDir, 'FeatherWiki.html');
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
       console.info(filePath, outputKb);
     });
-    return { version: buildName, size: outputKb };
+    return { size: outputKb };
   }).catch((e) => {
     console.error(e);
-    process.exit(1)
+    process.exit(1);
   });
 }
 
-// Build all versions (ruffled + regular), then update README with new sizes
-Promise.all([
-  build(false),
-  build(true),
-]).then(async results => {
+// Build, then update README with new size
+build().then(async result => {
   const filePath = path.resolve(process.cwd(), 'README.md');
   let readme = await fs.promises.readFile(filePath, 'utf8');
-  results.forEach(result => {
-    if (result.version === 'Wren') {
-      readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
-    } else if (result.version === 'Warbler') {
-      readme = readme.replace(/larger \(\d+\.?\d+ kilobytes\)/, `larger (${result.size})`);
-    }
-  });
+  readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
   await fs.writeFile(filePath, readme, (err) => {
     if (err) throw err;
-    console.info('README.md updated for versions:', results.map(r => r.version));
+    console.info('README.md updated');
   });
 });
