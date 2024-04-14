@@ -77,6 +77,7 @@ export const initState = state => {
       }
       return b;
     },
+    customJs: js => js.replace(/^FW\.ready\(\(\)=>\{\/\*\*\/(.*)\/\*\*\/\}\);$/gs, '$1'),
   };
 
   state.events = {
@@ -105,7 +106,7 @@ export const initState = state => {
   };
 
   state.c = document.querySelector('style#c')?.innerHTML ?? '';
-  state.j = document.querySelector('script#j')?.innerHTML ?? '';
+  state.j = state.help.customJs(document.querySelector('script#j')?.innerHTML ?? '');
   try {
     state.p = FW.json.decompress(JSON.parse(document.querySelector('script#p').innerHTML));
   } catch (e) {

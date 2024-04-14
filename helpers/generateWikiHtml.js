@@ -31,7 +31,7 @@ export default function (state) {
 <body>
   ${staticExport()}
   <footer><a href="https://src.feather.wiki/#versions">JavaScript required to edit</a></footer>
-  ${j ? `<script id=j>${j}</script>` : ''}
+  ${j ? `<script id=j>FW.ready(()=>{/**/${j}/**/});</script>` : ''}
 </body>
 </html>`;
 
