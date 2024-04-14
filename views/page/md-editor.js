@@ -11,7 +11,7 @@ import { parseContent } from './display';
 import { modal } from '../gallery';
 
 export const editor = (state) => {
-  const preview = html`<div class="ed ed-content" style="display:none"></div>`;
+  const preview = html`<div class="ed ed-c" style="display:none"></div>`;
   const textChange = (e) => {
     state.edits.content = e.target.value;
     clearTimeout(state.debounce);
