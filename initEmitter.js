@@ -10,9 +10,15 @@
 import { handleTab } from './helpers/handleTab';
 
 export const initEmitter = (state, emitter) => {
-  const { events, help, root, views } = state;
+  const { help, root, views } = state;
+  const {
+    ONLOAD, TITLE, RENDER, GO, HANDLE_404,
+    CREATE_PAGE, START_EDIT, CANCEL_EDIT, UPDATE_PAGE, DELETE_PAGE,
+    COLLECT_TAGS, CHECK_CHANGED, SAVE_WIKI, PUT_SAVE_WIKI, DETECT_PUT_SUPPORT,
+    NOTIFY, REMOVE_NOTI,
+  } = state.events;
   const emit = (...args) => emitter.emit(...args);
-  const title = () => emit(events.TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
+  const title = () => emit(TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const tab = () => setTimeout(() => document.querySelectorAll('textarea:not(.notab)').forEach(t => t.onkeydown = handleTab), 300);
   
   const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
@@ -21,35 +27,35 @@ export const initEmitter = (state, emitter) => {
     state.edits = null;
   };
 
-  emitter.on(events.ONLOAD, () => {
-    emit(events.HANDLE_404);
+  emitter.on(ONLOAD, () => {
+    emit(HANDLE_404);
     title();
     state.recent = state.p.pages.map(p => ({ p: p.id, t: p.md ?? p.cd })).sort((a, b) => a.t > b.t ? -1 : 1)
-    emit(events.COLLECT_TAGS);
-    if (state.t.length) emit(events.RENDER);
+    emit(COLLECT_TAGS);
+    if (state.t.length) emit(RENDER);
     else tab();
 
-    emit(events.DETECT_PUT_SUPPORT);
+    emit(DETECT_PUT_SUPPORT);
   });
 
-  emitter.on(events.RENDER, tab);
+  emitter.on(RENDER, tab);
 
-  emitter.on(events.HANDLE_404, () => {
+  emitter.on(HANDLE_404, () => {
     const { page } = state.query;
     if (page?.length > 1) {
       const slug = FW.slug(page);
       const pg = help.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
-        emit(events.CREATE_PAGE, name, false);
+        emit(CREATE_PAGE, name, false);
       }
     } else if (page?.length > 0 && !views[page]) {
       state.pg = { e: true, name: '404', content: '<p>Page not found</p>'};
-      emit(events.RENDER);
+      emit(RENDER);
     }
   });
 
-  emitter.on(events.GO, () => {
+  emitter.on(GO, () => {
     const { p, pg } = state;
     const slug = state.query.page ?? null;
     const isSame = pg?.slug === slug || (!slug && pg?.id === p.home);
@@ -58,11 +64,11 @@ export const initEmitter = (state, emitter) => {
     if (isSame) return;
     stopEdit();
     state.pg = help.getPage();
-    emit(events.HANDLE_404);
+    emit(HANDLE_404);
     title();
   });
 
-  emitter.on(events.CREATE_PAGE, (name, save = true) => {
+  emitter.on(CREATE_PAGE, (name, save = true) => {
     if (name.length < 2) return;
     if (keepEditing()) return;
     stopEdit();
@@ -96,15 +102,15 @@ export const initEmitter = (state, emitter) => {
     if (save) {
       state.p.pages.push(newPg);
       state.recent.unshift({ p: newPg.id, t: newPg.cd });
-      emit(events.CHECK_CHANGED);
-      emit(events.GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
+      emit(CHECK_CHANGED);
+      emit(GO, root + '?page=' + slug, query.page !== slug ? 'replace' : 'push');
     } else {
       state.pg = newPg;
     }
-    emit(events.START_EDIT);
+    emit(START_EDIT);
   });
 
-  emitter.on(events.START_EDIT, () => {
+  emitter.on(START_EDIT, () => {
     const { pg } = state;
     state.edit = true;
     const store = {
@@ -119,16 +125,16 @@ export const initEmitter = (state, emitter) => {
     store.useMd = pg.editor === 'md' || (!store.content && state.useMd);
     state.edits = store;
     state.src = false;
-    emit(events.RENDER);
+    emit(RENDER);
   });
 
-  emitter.on(events.CANCEL_EDIT, () => {
+  emitter.on(CANCEL_EDIT, () => {
     if (keepEditing()) return;
     stopEdit();
-    emit(events.RENDER);
+    emit(RENDER);
   });
 
-  emitter.on(events.UPDATE_PAGE, (page) => {
+  emitter.on(UPDATE_PAGE, (page) => {
     const { p } = state;
     if (p.pages.some(pg => pg.slug === page.slug && pg.id !== page.id)) {
       return alert('A page with the slug "' + page.slug + '" already exists!');
@@ -146,39 +152,39 @@ export const initEmitter = (state, emitter) => {
     state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)];
     stopEdit();
     state.useMd = page.editor === 'md';
-    emit(events.COLLECT_TAGS);
+    emit(COLLECT_TAGS);
     state.pg = help.getPage();
-    emit(events.CHECK_CHANGED);
+    emit(CHECK_CHANGED);
   });
 
-  emitter.on(events.DELETE_PAGE, id => {
+  emitter.on(DELETE_PAGE, id => {
     state.p.pages = state.p.pages.map(pg => {
       if (pg.parent === id) delete pg.parent;
       return pg;
     }).filter(pg => pg.id !== id);
     state.recent = state.recent.filter(p => p.p !== id);
     stopEdit();
-    emit(events.COLLECT_TAGS);
+    emit(COLLECT_TAGS);
     delete state.pg;
-    emit(events.GO, root);
-    emit(events.CHECK_CHANGED);
+    emit(GO, root);
+    emit(CHECK_CHANGED);
   });
 
-  emitter.on(events.COLLECT_TAGS, () => {
+  emitter.on(COLLECT_TAGS, () => {
     state.t = FW.tidy(state.p.pages.reduce((r, p) => {
       return [...r, ...(p.tags?.split(',') ?? [])];
     }, []));
   });
 
-  emitter.on(events.CHECK_CHANGED, callback => {
+  emitter.on(CHECK_CHANGED, callback => {
     state.now = FW.hash.object(state.p);
     state.changed = state.prev !== state.now;
-    emit(events.RENDER, callback);
+    emit(RENDER, callback);
   });
 
-  emitter.on(events.NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
+  emitter.on(NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
     const i = Date.now();
-    const rm = () => emit(events.REMOVE_NOTI, i);
+    const rm = () => emit(REMOVE_NOTI, i);
     const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="Click to close">
       <span role=alert>${text}</span><span class=fr>×</span>
     </div>`;
@@ -188,13 +194,13 @@ export const initEmitter = (state, emitter) => {
     document.querySelector('.notis').appendChild(n);
   });
 
-  emitter.on(events.REMOVE_NOTI, i => {
+  emitter.on(REMOVE_NOTI, i => {
     const e = state.notis[i];
     e?.parentNode.removeChild(e);
     delete state.notis[i];
   });
 
-  emitter.on(events.SAVE_WIKI, () => {
+  emitter.on(SAVE_WIKI, () => {
     const output = FW.gen(state);
     const { p } = state;
     const el = document.createElement('a');
@@ -208,11 +214,11 @@ export const initEmitter = (state, emitter) => {
     if (!state.canPut) {
       // Only clear the "save needed" indicator on server save
       state.prev = FW.hash.object(p);
-      emit(events.CHECK_CHANGED);
+      emit(CHECK_CHANGED);
     }
   });
 
-  emitter.on(events.PUT_SAVE_WIKI, () => {
+  emitter.on(PUT_SAVE_WIKI, () => {
     const output = FW.gen(state);
     const { p } = state;
     fetch(root, { method: 'PUT', body: output })
@@ -221,17 +227,17 @@ export const initEmitter = (state, emitter) => {
       )
       .then(result => {
         if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
-        emit(events.NOTIFY, 'Saved.')
+        emit(NOTIFY, 'Saved.')
 
         state.prev = FW.hash.object(p);
-        emit(events.CHECK_CHANGED);
+        emit(CHECK_CHANGED);
       })
       .catch(err => {
-        emit(events.NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
+        emit(NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
       });
   });
 
-  emitter.on(events.DETECT_PUT_SUPPORT, () => {
+  emitter.on(DETECT_PUT_SUPPORT, () => {
     // Assumptions:
     // * This only needs to run once at startup
     // * There's no need to turn it off again once it's set
@@ -241,7 +247,7 @@ export const initEmitter = (state, emitter) => {
       .then(resp => {
         if (resp.ok && resp.headers.get('dav')) {
           state.canPut = true;
-          emit(events.RENDER);
+          emit(RENDER);
         }
       })
       .catch(err => {})
