@@ -32,16 +32,11 @@ export const pageView = (state, emit, page) => {
           ? ''
           : html`<div class="c w14 tr">
             <time datetime=${modified.toISOString()}>
-              ${
-                crFormat !== mdFormat
-                ? html`<abbr title="Created: ${crFormat}">${mdFormat}</abbr>`
-                : mdFormat
-              }
+              <abbr title="Created: ${crFormat}">${mdFormat}</abbr>
             </time>
           ${
             !p.published
-            ? html`<button onclick=${() => emit(events.START_EDIT)}>Edit</button>
-            `
+            ? html`<button onclick=${() => emit(events.START_EDIT)}>Edit</button>`
             : ''
           }
           </div>`

@@ -43,10 +43,10 @@ export const settingsView = (state, emit) => {
         <textarea id=wHead>${FW.inject.esc(p.head, true)}</textarea>
         <label for=wOut>Include Static HTML</label>
         <input id=wOut type=checkbox checked=${p.static ?? false}>
-        <span class=h>Include your wiki content in simple HTML for non-JS browsers. Nearly doubles output size.</span>
+        <span class=h>Include the wiki content in plain HTML for non-JS browsers. Nearly doubles output size.</span>
         <label for=wPub>Publish</label>
         <input id=wPub type=checkbox checked=${p.published ?? false}>
-        <span class=h>Hides Save, New Page, & Wiki Settings buttons. You will need to manually visit <code>?page=s</code> to unset this when set.</span>
+        <span class=h>Hides Save, New Page, & Wiki Settings buttons. You must manually visit <code>?page=s</code> to unset this.</span>
         <div class=tr>
           <button type="submit">Update</button>
         </div>

@@ -14,7 +14,7 @@ export const missingView = (state, emit) => {
       <h1>Missing Pages</h1>
     </header>`,
     html`<article>
-      <p>This wiki has ${missing.length} page${missing.length !== 1 ? 's' : ''} referenced that don't exist:</p>
+      <p>These referenced page${missing.length !== 1 ? 's' : ''} don't exist:</p>
       <ul>
         ${
           missing.map(el => html`<li>${el}</li>`)

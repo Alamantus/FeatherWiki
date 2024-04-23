@@ -10,7 +10,6 @@
 export const globalView = (state, emit) => {
   const {
     root,
-    file,
     help,
     pg,
     p,
@@ -40,18 +39,17 @@ export const globalView = (state, emit) => {
   let saveButton = [
     changed ? html`<div>Wiki has changed!</div>` : '',
   ];
+  const saveTitle = 'Download wiki in its current state';
   if (state.canPut) {
-    saveButton = [
-      ...saveButton,
-      html`<div><button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button></div>`,
-      html`<div><button title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki Locally</button></div>`,
-    ]
-  } else {
-    saveButton = [
-      ...saveButton,
-      html`<div><button class=${changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>Save Wiki</button></div>`,
-    ]
+    saveButton.push(html`<div>
+      <button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button>
+    </div>`);
   }
+  saveButton.push(html`<div>
+    <button class=${!state.canPut && changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>
+      Save Wiki${state.canPut ? ' Locally' : ''}
+    </button>
+  </div>`);
 
   return html`<body>
     <main>
@@ -108,7 +106,7 @@ export const globalView = (state, emit) => {
       <section>${ pageToRender }</section>
     </main>
     <footer>
-      <span class="fr">Powered by <a href="{{package.json:homepage}}" title="Version: {{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
+      <span class=fr>Powered by <a href="{{package.json:homepage}}" title="Version: {{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
     <div class=notis>
       ${Object.values(notis)}
