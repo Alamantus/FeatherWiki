@@ -7,8 +7,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const missingView = (state, emit) => {
-  const missing = state.help.missing();
+export const missingView = (s, e) => {
+  const missing = FW.missing();
   return [
     html`<header>
       <h1>Missing Pages</h1>

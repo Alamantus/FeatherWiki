@@ -8,7 +8,7 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 export const pagesView = (state, emit) => {
-  const { p, help } = state;
+  const { p } = state;
   return [
     html`<header>
       <h1>All Pages</h1>
@@ -16,7 +16,7 @@ export const pagesView = (state, emit) => {
     html`<ul>
       ${
         p.pages.filter(pg => !pg.parent)
-          .map(page => help.getChildList(page))
+          .map(page => FW.getChildList(page))
       }
     </ul>`
   ];

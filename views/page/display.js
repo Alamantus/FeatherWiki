@@ -29,10 +29,9 @@ export const parseContent = (page) => {
   return c;
 }
 
-export const pageDisplay = (state, page) => {
-  const { help } = state;
+export const pageDisplay = (page) => {
   const c = parseContent(page);
-  const children = help.getChildren(page, true);
+  const children = FW.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length
       ? html`<aside class="db r">
@@ -48,7 +47,7 @@ export const pageDisplay = (state, page) => {
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>
       <ul>
-        ${children.map(c => help.getChildList(c, true))}
+        ${children.map(c => FW.getChildList(c, true))}
       </ul>
     </footer>` : null,
   ];

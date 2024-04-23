@@ -11,13 +11,20 @@ import { pageDisplay } from './display';
 import { pageEdit } from './edit';
 
 export const pageView = (state, emit, page) => {
-  const { edit, help, p, events } = state;
+  const { edit, p, events } = state;
   const { cd, md } = page; // created date & modified date
 
   if (edit) {
     return pageEdit(state, emit, page);
   }
-  const breadcrumb = help.breadcrumb(page);
+
+  const getParent = pp => p.pages.find(pg => pg.id === pp?.parent);
+  const breadcrumb = [];
+  let parent = getParent(page);
+  while (parent) {
+    breadcrumb.unshift(parent);
+    parent = getParent(parent);
+  }
   
   const crFormat = FW.date(new Date(cd));
   const modified = new Date(md ?? cd); // If no modified date, use created
@@ -43,6 +50,6 @@ export const pageView = (state, emit, page) => {
         }
       </div>
     </header>`,
-    pageDisplay(state, page)
+    pageDisplay(page),
   ];
 }

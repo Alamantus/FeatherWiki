@@ -20,7 +20,7 @@ export default function (file, callback = () => {}) {
     callback([
       pData,
       matchHtml(file, 'style', 'c'),
-      FW.state.help.customJs(matchHtml(file, 'script', 'j')),
+      FW.parseJs(matchHtml(file, 'script', 'j')),
     ]);
   };
   reader.onerror = function (e) {

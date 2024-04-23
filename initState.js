@@ -26,60 +26,6 @@ export const initState = state => {
   state.notis = {}; // Notifications
   state.canPut = false; // Show "Save Wiki to Server" button
 
-  state.help = { // Helper functions that use state to do various things
-    find: (s, a = 'slug') => state.p.pages.find(p => p[a] === s),
-    getPage: () => {
-      const { query, help, p } = state;
-      return (!query.page && p.home) ? help.find(p.home, 'id') : help.find(query.page);
-    },
-    getParent: p => state.p.pages.find(pg => pg.id === p?.parent),
-    getChildren: (p, hide) => state.p.pages.filter(pg => pg.parent === p?.id && (!hide || !pg.hide)),
-    getChildList: (p, collapse) => {
-      if (collapse && p.hide) return '';
-      const { getChildren, getChildList } = state.help;
-      const children = getChildren(p, collapse);
-      const current = state.pg?.slug;
-      const isCurrent = current === p.slug;
-      // Expand if the menu item is the current page, if it was opened manually, or if one of its children is the current page
-      const expand = (ch) => isCurrent || state.sbx.has(p.id) || (ch.find(c => c.slug === current || expand(getChildren(c, collapse))) ?? false);
-      const link = [
-        html`<a href="?page=${p.slug}" class=${isCurrent ? 'a' : ''}>${p.name}</a>`,
-        children.length > 0
-          ? html`<ul>${children.map(pg => getChildList(pg, collapse))}</ul>`
-          : '',
-      ]
-      // If getChildList is passed with `collapse == true`, use a details element to allow collapsing the list
-      const el = collapse && link[1]
-        ? html`<details open=${expand(children)}
-          onclick=${e => state.sbx.add(p.id)}
-          ontoggle=${e => { if (!e.target.open) state.sbx.delete(p.id) }}
-        >
-          <summary>${link[0]}</summary>
-          ${link[1]}
-        </details>`
-        : link;
-      return html`<li>
-        ${el}
-      </li>`;
-    },
-    missing: () => state.p.pages.reduce((result, current) => {
-      const c = document.createElement('div');
-      c.innerHTML = FW.inject.pg(current.content);
-      const newEl = [...c.getElementsByClassName('e')].filter(el => result.every(r => r.href !== el.href));
-      return [...result, ...newEl];
-    }, []).sort(),
-    breadcrumb: p => {
-      const b = [];
-      let parent = state.help.getParent(p);
-      while (parent) {
-        b.unshift(parent);
-        parent = state.help.getParent(parent);
-      }
-      return b;
-    },
-    customJs: js => js.replace(/^FW\.ready\(\(\)=>\{\/\*\*\/(.*)\/\*\*\/\}\);$/gs, '$1'),
-  };
-
   state.events = {
     ...state.events,
     HANDLE_404: '404',
@@ -106,13 +52,13 @@ export const initState = state => {
   };
 
   state.c = document.querySelector('style#c')?.innerHTML ?? '';
-  state.j = state.help.customJs(document.querySelector('script#j')?.innerHTML ?? '');
+  state.j = FW.parseJs(document.querySelector('script#j')?.innerHTML ?? '');
   try {
     state.p = FW.json.decompress(JSON.parse(document.querySelector('script#p').innerHTML));
   } catch (e) {
     state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
   }
-  state.pg = state.help.getPage();
+  state.pg = FW.getPage();
   
   // determine last-used editor
   const lastModified = state.p.pages.find(p => p.id === state.recent[0]?.p);

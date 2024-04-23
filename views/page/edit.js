@@ -8,8 +8,8 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 export const pageEdit = (state, emit, page) => {
-  const { events, edits, p, help } = state;
-  const children = help.getChildren(page).map(c => c.id);
+  const { events, edits, p } = state;
+  const children = FW.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
   const { useMd } = edits;

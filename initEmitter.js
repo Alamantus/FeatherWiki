@@ -10,7 +10,7 @@
 import { handleTab } from './helpers/handleTab';
 
 export const initEmitter = (state, emitter) => {
-  const { help, root, views } = state;
+  const { root, views } = state;
   const {
     ONLOAD, TITLE, RENDER, GO, HANDLE_404,
     CREATE_PAGE, START_EDIT, CANCEL_EDIT, UPDATE_PAGE, DELETE_PAGE,
@@ -44,7 +44,7 @@ export const initEmitter = (state, emitter) => {
     const { page } = state.query;
     if (page?.length > 1) {
       const slug = FW.slug(page);
-      const pg = help.find(slug);
+      const pg = FW.find(slug);
       if (!pg && !views[slug]) {
         const name = page.split('_').map(w => w[0].toUpperCase() + w.substring(1)).join(' ');
         emit(CREATE_PAGE, name, false);
@@ -63,7 +63,7 @@ export const initEmitter = (state, emitter) => {
     if (!isSame && keepEditing()) return history.go(-1);
     if (isSame) return;
     stopEdit();
-    state.pg = help.getPage();
+    state.pg = FW.getPage();
     emit(HANDLE_404);
     title();
   });
@@ -153,7 +153,7 @@ export const initEmitter = (state, emitter) => {
     stopEdit();
     state.useMd = page.editor === 'md';
     emit(COLLECT_TAGS);
-    state.pg = help.getPage();
+    state.pg = FW.getPage();
     emit(CHECK_CHANGED);
   });
 
