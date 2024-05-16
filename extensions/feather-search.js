@@ -74,7 +74,7 @@ FW.ready(() => {
         if (content) {
           const contentHtml = (html`<div></div>`);
           contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
-          textContent = contentHtml.innerText.trim();
+          textContent = contentHtml.textContent.trim();
         }
         return { id, name, searchName: name.toLowerCase(), slug, content: textContent, searchContent: textContent.toLowerCase() };
       });
