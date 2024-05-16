@@ -28,6 +28,7 @@ const charMap = {
   '>': '&gt;',
   '"': '&quot;',
   "'": '&#39;',
+  '$': '&#36;',
   '&': '&amp;',
   '[': '&#91;',
   ']': '&#93;',
@@ -41,7 +42,7 @@ const charMap = {
 const doubleEscaped = Object.keys(charMap).filter(c => c != '&').map(c => charMap[c].replace(c != '&' ? '&' : '', ''));
 
 const htmlEntity = str => {
-  return str.replace(/[<>&\(\)\[\]"']/g, c => (charMap[c] || c))
+  return str.replace(/[<>$&\(\)\[\]"']/g, c => (charMap[c] || c))
     .replace(new RegExp(`&amp;(${doubleEscaped.join('|')})`, 'g'), '&$1');
 }
 
@@ -68,59 +69,61 @@ export default function md (markdown) {
   }
 
   // format, removes tabs, leading and trailing spaces
-  markdown = (
-    markdown
-      // escaped characters
-      .replace(/\\(.)/g, (m, c) => (charMap[c] || m))
-      // collect code blocks and replace with placeholder
-      // we do this to avoid code blocks matching the paragraph regexp
-      .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, (m, lang, block) => {
-        code[cIdx] = {lang, block: htmlEntity(block)};
-        return `{code-${cIdx++}}`;
-      })
-      // inline code
-      .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
-      // auto links
-      .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
-      // links
-      .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, url, title) => {
-        text = htmlEntity(text);
-        // try to decode url before re-encoding it in case it has encoded values to prevent encoding the % character
-        try { url = decodeURI(url); } catch {} // using try/catch because a malformed URI throws an error
-        url = encodeURI(url);
-        title = title ? ` title="${ htmlEntity(title) }"` : '';
-        if (img) return `<img src="${ url }" alt="${text}"${title}>`;
-        return `<a href="${ url }"${ title }>${ text }</a>`;
-      })
-      // HTML tags
-      .replace(/(<\/?[a-zA-Z]+[^>]*>)/gm, (m, tag) => {
-        html[hIdx] = tag;
-        return `{html-${hIdx++}}`;
-      })
-      // blockquotes
-      .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
-      .replace(/(<\/blockquote>\n?<blockquote>)+?/g, '')
-      // headings
-      .replace(/^(#+) +(.*)/gm, (m, hash, content) => `<h${ hash.length }>${ content }</h${ hash.length }>`)
-      // headings h1 (commonmark)
-      .replace(/^([^\n\t ])(.*)\n====+/gm, '<h1>$1$2</h1>')
-      // headings h2 (commonmark)
-      .replace(/^([^\n\t ])(.*)\n----+/gm, '<h2>$1$2</h2>')
-      // horizontal rule 
-      .replace(/\n( *[-*]){3,}\n/gm, '<hr>')
-      // checkboxes
-      .replace(/\[( |x)\]/g, (m, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`)
-      // line breaks
-      .replace(/  +\n/gm, '<br>')
-      // paragraphs - exclude lists, already-rendered HTML, & whitespace
-      .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`)
-      // lists
-      .replace(/^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm, (m, leading, b, numbered, content) => {
-        leading = leading.replace(/  /g, '\t');
-        const type = numbered ? 'o' : 'u';
-        return `${leading}<${type}l><li>${content}</li></${type}l>`;
-      })
-  );
+  markdown = markdown
+    // escaped characters
+    .replace(/\\(.)/g, (m, c) => (charMap[c] || m))
+    // collect code blocks and replace with placeholder
+    // we do this to avoid code blocks matching the paragraph regexp
+    .replace(/```(.*)\n([^\0]+?)```(?!```)/gm, (m, lang, block) => {
+      code[cIdx] = {lang, block: htmlEntity(block)};
+      return `{code-${cIdx++}}`;
+    })
+    // inline code
+    .replace(/`([^`]+?)`/g, (m, code) => `<code>${ htmlEntity(code) }</code>`)
+    // auto links
+    .replace(/<([^>\s]+(\/\/|@)[^>\s]+)>/g, (m, url, method) => `[${ url }](${ method === '@' ? 'mailto:' : '' }${url})`)
+    // links
+    .replace(/(!?)\[([^\]]*?)\]\(([^\s\n]*)(?:| "(.*)")\)/gm, (m, img, text, url, title) => {
+      text = htmlEntity(text);
+      // try to decode url before re-encoding it in case it has encoded values to prevent encoding the % character
+      try { url = decodeURI(url); } catch {} // using try/catch because a malformed URI throws an error
+      url = encodeURI(url);
+      title = title ? ` title="${ htmlEntity(title) }"` : '';
+      if (img) return `<img src="${ url }" alt="${text}"${title}>`;
+      return `<a href="${ url }"${ title }>${ text }</a>`;
+    })
+    // HTML tags
+    .replace(/(<\/?[a-zA-Z]+[^>]*>)/gm, (m, tag) => {
+      html[hIdx] = tag;
+      return `{html-${hIdx++}}`;
+    })
+    // blockquotes
+    .replace(/^[ \t]*>+ (.*)/gm, '<blockquote>\n$1\n</blockquote>')
+    .replace(/(<\/blockquote>\n?<blockquote>)+?/g, '')
+    // headings
+    .replace(/^(#+) +(.*)/gm, (m, hash, content) => `<h${ hash.length }>${ content }</h${ hash.length }>`)
+    // headings h1 (commonmark)
+    .replace(/^([^\n\t ])(.*)\n====+/gm, '<h1>$1$2</h1>')
+    // headings h2 (commonmark)
+    .replace(/^([^\n\t ])(.*)\n----+/gm, '<h2>$1$2</h2>')
+    // horizontal rule 
+    .replace(/\n( *[-*]){3,}\n/gm, '<hr>')
+    // checkboxes
+    .replace(/\[( |x)\]/g, (m, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`)
+    // line breaks
+    .replace(/  +\n/gm, '<br>')
+    // paragraphs - exclude lists, already-rendered HTML, & whitespace
+    .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`);
+
+  // lists
+  let spaces;
+  markdown = markdown.replace(/^([\t ]*)(?:(-|\+|\*)|(\d+(?:\)|\.))) (.*)/gm, (m, leading, b, numbered, content) => {
+    if (leading.length > 0 && !spaces) spaces = leading.replace(/[^ ]/g, '');
+    else if (leading.length === 0 && spaces) spaces = undefined;
+    if (spaces) leading = leading.replace(new RegExp(spaces, 'g'), '\t');
+    const type = numbered ? 'o' : 'u';
+    return `${leading}<${type}l><li>${content}</li></${type}l>`;
+  });
 
   // This handles *almost* all combinations, but some indented lists combining ul & ol don't render right
   var indentListRegExp = /<\/li><\/(u|o)l>\n(\t+)<(u|o)l><li>(.*)<\/li><\/(u|o)l>/;

@@ -10,42 +10,27 @@
 import { modal } from '../gallery';
 
 export const editor = (state, emit) => {
-  const { init, exec } = ed; // From `window`
+  const { init } = ed; // From `window`
   const { src, edits } = state;
   const { content } = edits;
-  let element = document.querySelector('#e');
+  let element;
   if (src) {
     element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
   } else {
-    if (!element) {
-      const fb = 'formatBlock';
-      element = init({
-        element: html`<div id=e class=ed></div>`, // Setting id here helps prevent re-render when other fields are changed
-        onChange: val => state.edits.content = val,
-        insert: () => FW.img.upload(state, insert),
-      });
-      element.isSameNode = () => true; // Do not re-render editor
-    }
-    element.content.innerHTML = content.includes('<img ') ? FW.inject.img(content, true) : content;
+    element = init({
+      onChange: val => state.edits.content = val,
+    });
+    element.isSameNode = () => true; // Do not re-render editor
+    element.edUc.innerHTML = content.includes('<img ') ? FW.inject.img(content, true) : content;
   }
 
   return [
     element,
     html`<div class="w1 tr pb">
-      <button onclick=${toggleShowSource}>${src ? 'Show Editor' : 'Show HTML'}</button>
+      <button type=button onclick=${() => { state.src = !src; emit(state.events.RENDER) }}>
+        Show ${src ? 'Editor' : 'HTML'}
+      </button>
     </div>`,
-    modal(state, insert),
+    modal(state, () => element.edUc?.img()),
   ];
-
-  function insert (i) {
-    const editor = element.children[1];
-    if (document.activeElement !== editor) editor.focus();
-    exec('insertHTML', `<p><img src="${i.img}#${i.id}"></p>`);
-  }
-
-  function toggleShowSource (e) {
-    e.preventDefault();
-    state.src = !src;
-    emit(state.events.RENDER);
-  }
 }

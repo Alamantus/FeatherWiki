@@ -17,7 +17,7 @@ export const parseContent = (page) => {
     return `{nowiki-${nIdx++}}`;
   });
   c = pg(FW.img.fix(c));
-  c = page.editor === 'md' ? md(c) : c;
+  c = page.editor === 'md' ? md(c ?? '') : c;
   c = img(
     hLink(
       out(c)
@@ -29,19 +29,16 @@ export const parseContent = (page) => {
   return c;
 }
 
-export const pageDisplay = (state, page) => {
-  const { help } = state;
+export const pageDisplay = (page) => {
   const c = parseContent(page);
-  const children = help.getChildren(page, true);
+  const children = FW.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length
-      ? html`<aside>
-        <dl class="db r">
-          <dt class=c><b>Tagged:</b></dt>
-          <dd class=c>
-            ${page.tags.replace(/,/g, ', ')}
-          </dd>
-        </dl>
+      ? html`<aside class="db r">
+        <b class=c>Tagged:</b>
+        <dd class=c>
+          ${page.tags.replace(/,/g, ', ')}
+        </dd>
       </aside>`
       : '',
     html`<article class=uc>
@@ -50,7 +47,7 @@ export const pageDisplay = (state, page) => {
     children.length > 0 ? html`<footer>
       <h2>Sub Pages</h2>
       <ul>
-        ${children.map(c => help.getChildList(c, true))}
+        ${children.map(c => FW.getChildList(c, true))}
       </ul>
     </footer>` : null,
   ];

@@ -8,19 +8,16 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 export const pagesView = (state, emit) => {
-  const { p, help } = state;
+  const { p } = state;
   return [
     html`<header>
       <h1>All Pages</h1>
     </header>`,
-    html`<article>
-      <p>This wiki has ${p.pages.length} page${p.pages.length !== 1 ? 's' : ''}:</p>
-      <ul>
-        ${
-          p.pages.filter(pg => !pg.parent)
-            .map(page => help.getChildList(page))
-        }
-      </ul>
-    </article>`
+    html`<ul>
+      ${
+        p.pages.filter(pg => !pg.parent)
+          .map(page => FW.getChildList(page))
+      }
+    </ul>`
   ];
 }

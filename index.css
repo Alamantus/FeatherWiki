@@ -30,7 +30,7 @@ html, body {
   max-width: 100vw;
 }
 
-* + *, p, .ed-content > *:not(:first-child) { /* Consolidating .ed-content here to reduce repetition */
+* + *, p, li > ul, li > ol, .ed-uc > *:not(:first-child) { /* Consolidating .ed-uc here to reduce repetition */
   margin: .5rem 0;
 }
 
@@ -232,32 +232,32 @@ abbr[title] { cursor: help; }
   margin: unset;
 }
 
-.ed-content, textarea, #g, .g { /* g here stands for gallery :) */
+.ed-uc, textarea, #g, .g { /* g here stands for gallery :) */
   width: 100%;
   overflow-y: auto;
   padding: 10px;
   margin: 0 auto;
 }
-.ed-content, textarea {
+.ed-uc, textarea {
   height: 50vh;
   min-height: 300px;
   max-height: 600px;
 }
-.ed-content nowiki {
+.ed-uc nowiki {
   background: #EEE;
 }
-:is(.ed-content, textarea, .uc) * { max-width: 100%; }
+:is(.ed-uc, textarea, .uc) * { max-width: 100%; }
 
-.ed-actionbar {
+.ed-bar {
   border-bottom: 1px solid #000;
 }
 
-.ed-button {
+.ed-btn {
   background: transparent;
   color: #000;
   vertical-align: middle;
 }
 
-.ed-selected {
+.ed-sel {
   background: #ddd;
 }

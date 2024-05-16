@@ -8,172 +8,176 @@
  */
 
 // Shorten the names of these to help the minifier
-const fb = 'formatBlock'
-const ael = (parent, type, listener) => parent.addEventListener(type, listener)
-const ac = (parent, child) => parent.appendChild(child)
-const ce = tag => document.createElement(tag)
-const qcs = command => document.queryCommandState(command)
+const fb = 'formatBlock';
+const ael = (parent, type, listener) => parent.addEventListener(type, listener);
+const ac = (parent, child) => parent.appendChild(child);
+const qcs = command => document.queryCommandState(command);
+const ex = (command, value = null) => document.execCommand(command, false, value);
 
-export const exec = (command, value = null) => document.execCommand(command, false, value)
+let edUc;
+
+export const bar = [
+  { // clear
+    icon: '☒',
+    title: 'Clear Formatting',
+    result: () => ex('removeFormat')
+  },
+  { // bold
+    icon: '<b>B</b>',
+    title: 'Bold',
+    state: () => qcs('bold'),
+    result: () => ex('bold')
+  },
+  { // italic
+    icon: '<i>I</i>',
+    title: 'Italic',
+    state: () => qcs('italic'),
+    result: () => ex('italic')
+  },
+  { // underline
+    icon: '<u>U</u>',
+    title: 'Underline',
+    state: () => qcs('underline'),
+    result: () => ex('underline')
+  },
+  // { // strikethrough
+  //   icon: '<strike>S</strike>',
+  //   title: 'Strike-through',
+  //   state: () => qcs('strikeThrough'),
+  //   result: () => ex('strikeThrough')
+  // },
+  { // heading2
+    icon: '<b>H</b>',
+    title: 'Heading',
+    result: () => ex(fb, '<h2>'),
+  },
+  { // heading3
+    icon: '<b>H<sub>2</sub></b>',
+    title: 'Sub-Heading',
+    result: () => ex(fb, '<h3>'),
+  },
+  { // paragraph
+    icon: '¶',
+    title: 'Paragraph',
+    result: () => ex(fb, '<p>')
+  },
+  { // align left
+    icon: '↦',
+    title: 'Align Left',
+    state: () => qcs('justifyLeft'),
+    result: () => ex('justifyLeft')
+  },
+  { // align center
+    icon: '↔',
+    title: 'Align Center',
+    state: () => qcs('justifyCenter'),
+    result: () => ex('justifyCenter')
+  },
+  { // align right
+    icon: '↤',
+    title: 'Align Right',
+    state: () => qcs('justifyRight'),
+    result: () => ex('justifyRight')
+  },
+  { // olist
+    icon: '#',
+    title: 'Number List',
+    result: () => ex('insertOrderedList')
+  },
+  { // ulist
+    icon: '•',
+    title: 'Bullet List',
+    result: () => ex('insertUnorderedList')
+  },
+  { // quote
+    icon: '“ ”',
+    title: 'Quote',
+    result: () => ex(fb, '<blockquote>')
+  },
+  // { // code
+  //   icon: '&lt;/&gt;',
+  //   title: 'Code',
+  //   result: () => ex(fb, '<pre>')
+  // },
+  { // line
+    icon: '―',
+    title: 'Separator',
+    result: () => ex('insertHorizontalRule')
+  },
+  { // link
+    icon: '🔗',
+    title: 'Link',
+    result: () => {
+      const url = window.prompt('Link URL:')
+      if (url) ex('createLink', url)
+    }
+  },
+  { // externalImage
+    title: 'Link External Image',
+    icon: '🖼️',
+    result: () => {
+      const url = window.prompt('Image URL:');
+      if (url) ex('insertImage', url);
+    },
+  },
+  { // insertImage
+    title: 'Insert Image from File',
+    icon: '📸',
+    result: () => edUc?.img(),
+  },
+  { // existingImage
+    title: 'Add Existing Image',
+    icon: '📎',
+    result: () => document.getElementById('g').showModal(),
+  },
+];
 
 export const init = settings => {
-  const actions = [
-    { // clear
-      icon: '☒',
-      title: 'Clear Formatting',
-      result: () => exec('removeFormat')
-    },
-    { // bold
-      icon: '<b>B</b>',
-      title: 'Bold',
-      state: () => qcs('bold'),
-      result: () => exec('bold')
-    },
-    { // italic
-      icon: '<i>I</i>',
-      title: 'Italic',
-      state: () => qcs('italic'),
-      result: () => exec('italic')
-    },
-    { // underline
-      icon: '<u>U</u>',
-      title: 'Underline',
-      state: () => qcs('underline'),
-      result: () => exec('underline')
-    },
-    // { // strikethrough
-    //   icon: '<strike>S</strike>',
-    //   title: 'Strike-through',
-    //   state: () => qcs('strikeThrough'),
-    //   result: () => exec('strikeThrough')
-    // },
-    { // heading2
-      icon: '<b>H</b>',
-      title: 'Heading',
-      result: () => exec(fb, '<h2>'),
-    },
-    { // heading3
-      icon: '<b>H<sub>2</sub></b>',
-      title: 'Sub-Heading',
-      result: () => exec(fb, '<h3>'),
-    },
-    { // paragraph
-      icon: '¶',
-      title: 'Paragraph',
-      result: () => exec(fb, '<p>')
-    },
-    { // align left
-      icon: '↦',
-      title: 'Align Left',
-      state: () => qcs('justifyLeft'),
-      result: () => exec('justifyLeft')
-    },
-    { // align center
-      icon: '↔',
-      title: 'Align Center',
-      state: () => qcs('justifyCenter'),
-      result: () => exec('justifyCenter')
-    },
-    { // align right
-      icon: '↤',
-      title: 'Align Right',
-      state: () => qcs('justifyRight'),
-      result: () => exec('justifyRight')
-    },
-    { // olist
-      icon: '#',
-      title: 'Number List',
-      result: () => exec('insertOrderedList')
-    },
-    { // ulist
-      icon: '•',
-      title: 'Bullet List',
-      result: () => exec('insertUnorderedList')
-    },
-    { // quote
-      icon: '“ ”',
-      title: 'Quote',
-      result: () => exec(fb, '<blockquote>')
-    },
-    // { // code
-    //   icon: '&lt;/&gt;',
-    //   title: 'Code',
-    //   result: () => exec(fb, '<pre>')
-    // },
-    { // line
-      icon: '―',
-      title: 'Separator',
-      result: () => exec('insertHorizontalRule')
-    },
-    { // link
-      icon: '🔗',
-      title: 'Link',
-      result: () => {
-        const url = window.prompt('Link URL:')
-        if (url) exec('createLink', url)
-      }
-    },
-    { // externalImage
-      title: 'Link External Image',
-      icon: '🖼️',
-      result: () => {
-        const url = window.prompt('Image URL:');
-        if (url) exec('insertImage', url);
-      },
-    },
-    { // insertImage
-      title: 'Insert Image from File',
-      icon: '📸',
-      result: settings.insert,
-    },
-    { // existingImage
-      title: 'Add Existing Image',
-      icon: '📎',
-      result: () => document.getElementById('g').showModal(),
-    },
-  ];
+  const current = document.querySelector('#e');
+  if (current && !settings.rebuild) return current;
 
-  const actionbar = ce('div')
-  actionbar.className = 'ed-actionbar'
-  actionbar.role = 'toolbar'
-  ac(settings.element, actionbar)
-
-  const content = settings.element.content = ce('div')
-  content.contentEditable = true
-  content.className = 'ed-content'
-  content.oninput = ({ target: { firstChild } }) => {
-    if (firstChild && firstChild.nodeType === 3) exec(fb, `<p>`)
-    else if (content.innerHTML === '<br>') content.innerHTML = ''
-    settings.onChange(content.innerHTML)
-  }
-  content.onkeydown = event => {
-    if (event.key === 'Enter' && document.queryCommandValue(fb) === 'blockquote') {
-      setTimeout(() => exec(fb, `<p>`), 0)
+  current?.parentNode.removeChild(current);
+  const el = html`<div id=e class=ed></div>`;
+  edUc = el.edUc = html`<div class="ed-uc" contenteditable="true" oninput=${({ target: { firstChild } }) => {
+    if (firstChild && firstChild.nodeType === 3) ex(fb, '<p>');
+    else if (edUc.innerHTML === '<br>') edUc.innerHTML = '';
+    settings.onChange(edUc.innerHTML);
+  }} onkeydown=${event => {
+    if (event.key === 'Enter' && document.queryCommandValue(fb).match(/blockquote|h\d/)) {
+      setTimeout(() => ex(fb, '<p>'), 0);
     }
-  }
-  ac(settings.element, content)
-
-  actions.forEach(action => {
-    const button = ce('button')
-    button.className = 'ed-button'
-    button.innerHTML = action.icon
-    button.title = action.title
-    button.setAttribute('type', 'button')
-    button.onclick = () => action.result() && content.focus()
-
-    if (action.state) {
-      const handler = () => button.classList[action.state() ? 'add' : 'remove']('ed-selected')
-      ael(content, 'keyup', handler)
-      ael(content, 'mouseup', handler)
-      ael(button, 'click', handler)
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      setTimeout(() => ex(event.shiftKey ? 'outdent' : 'indent'), 0);
     }
-
-    ac(actionbar, button)
+  }}></div>`;
+  edUc.img = () => FW.img.upload(FW.state, i => {
+    if (document.activeElement !== edUc) edUc.focus();
+    ex('insertHTML', `<p><img src="${i.img}#${i.id}"></p>`);
   })
 
-  exec('defaultParagraphSeparator', 'p')
+  const barHtml = html`<div class=ed-bar role=toolbar>
+    ${(ed.bar ?? bar).map(b => {
+      const button = html`<button class=ed-btn type=button title="${b.title}" onclick=${() => b.result() && edUc.focus()}>
+        ${html.raw(b.icon)}
+      </button>`;
 
-  return settings.element
+      if (b.state) {
+        const handler = () => button.classList[b.state() ? 'add' : 'remove']('ed-sel')
+        ael(edUc, 'keyup', handler)
+        ael(edUc, 'mouseup', handler)
+        ael(button, 'click', handler)
+      }
+
+      return button
+    })}
+  </div>`;
+  ac(el, barHtml);
+  ac(el, edUc);
+
+  ex('defaultParagraphSeparator', 'p')
+
+  return el;
 }
 
-export default { exec, init }
+export default { bar, init }

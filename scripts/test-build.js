@@ -11,8 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 
-const version = process.argv[2] ?? 'ruffled-Warbler';
-const servePath = path.resolve(process.cwd(), 'builds', `FeatherWiki_${version}.html`);
+const servePath = path.resolve(process.cwd(), 'builds', `FeatherWiki.html`);
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {

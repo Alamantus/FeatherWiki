@@ -10,10 +10,9 @@
 // This extension adds a button that toggles the visibility of the sidebar when outside of mobile view.
 // Set default sidebar state with `window.toggleSidebarHiddenDefault = true`
 // Remove toggle button with `window.toggleSidebarButtonHidden = true`
-(function toggleSidebarExtension () {
-  if (!window.FW._loaded) return setTimeout(toggleSidebarExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running toggleSidebarExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running toggle-meu.js');
   state.sidebarHidden = window.toggleSidebarHiddenDefault ?? false;
   state.hideToggleButton = window.toggleSidebarButtonHidden ?? false;
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -66,4 +65,4 @@
       document.querySelector('main>section').style.paddingLeft = '2.5rem';
     }
   }
-})();
+});

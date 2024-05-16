@@ -12,10 +12,9 @@
 // is newer than the current version. If using Warbler and server saving is available, clicking this button will save the upgraded file to the server,
 // overwriting the existing file. Otherwise, it will prompt for a download of the upgraded file.
 // Please only use this extension when checking for an upgrade, and please remove it when you're done!
-(function upgradeFeatherWikiExtension () {
-  if (!window.FW._loaded) return setTimeout(upgradeFeatherWikiExtension, 1);
-  console.log('running upgradeFeatherWikiExtension');
-  const { state, emitter } = window.FW;
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running upgrade-feather-wiki.js');
   const { events } = state;
   const version = document.head.getElementsByTagName('meta').namedItem('version')?.content?.split('_');
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -40,14 +39,14 @@
   }
 
   async function needsUpgrade() {
-    const current = version[1];
+    const current = version[1] ?? version[0];
     let latest = state.upgradeToVersion;
     if (!latest) {
       state.upgradeHtml = await getUpgradedHtml();
       if (!state.upgradeHtml) return false;
       const doc = document.implementation.createHTMLDocument();
       doc.write(state.upgradeHtml);
-      state.upgradeToVersion = doc.getElementsByTagName('meta').namedItem('version')?.content?.split('_')[1];
+      state.upgradeToVersion = doc.getElementsByTagName('meta').namedItem('version')?.content;
       latest = state.upgradeToVersion;
     }
     cParts = current.split('.');
@@ -65,7 +64,7 @@
   }
 
   async function getUpgradedHtml() {
-    const upgrade = await fetch(`https://feather.wiki/builds/FeatherWiki_${version[0]}.html`).then(r => r.text()).then(h => {
+    const upgrade = await fetch('https://feather.wiki/builds/FeatherWiki.html').then(r => r.text()).then(h => {
 	  	const { c, p, j } = state;
 	    const static = FW.gen(state).replace(new RegExp(`.*<body> (.*?) <${j ? 'script' : '/body'}.*`, 's'), '$1');
       // Try to match the most specific pieces of HTML possible
@@ -117,4 +116,4 @@
       document.body.removeChild(el);
     }
   }
-})();
+});

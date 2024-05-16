@@ -8,9 +8,8 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension adds Turndown.js from a CDN and overrides the toggle button behavior for switching between HTML and markdown editors.
-(function htmlToMarkdownExtension () {
-  if (!window.FW._loaded) return setTimeout(htmlToMarkdownExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
+FW.ready(() => {
+  const { state, emitter } = FW;
   const turndownScript = document.createElement('script');
   turndownScript.src = 'https://unpkg.com/turndown@7.1.1/dist/turndown.js';
   document.body.appendChild(turndownScript);
@@ -57,4 +56,4 @@
       emitter.emit(state.events.RENDER);
     });
   }
-})();
+});

@@ -49,6 +49,48 @@ FW.upload = (mime, cb) => {
   document.body.removeChild(input);
 };
 
+FW.find = (s, a = 'slug') => FW.state.p.pages.find(p => p[a] === s);
+FW.getPage = () => {
+  const { query, p } = FW.state;
+  return (!query.page && p.home) ? FW.find(p.home, 'id') : FW.find(query.page);
+};
+FW.getChildren = (p, hide) => FW.state.p.pages.filter(pg => pg.parent === p?.id && (!hide || !pg.hide));
+FW.getChildList = (p, collapse) => {
+  if (collapse && p.hide) return '';
+  const { getChildren, getChildList } = FW;
+  const children = getChildren(p, collapse);
+  const current = FW.state.pg?.slug;
+  const isCurrent = current === p.slug;
+  // Expand if the menu item is the current page, if it was opened manually, or if one of its children is the current page
+  const expand = (ch) => isCurrent || FW.state.sbx.has(p.id) || (ch.find(c => c.slug === current || expand(getChildren(c, collapse))) ?? false);
+  const link = [
+    html`<a href="?page=${p.slug}" class=${isCurrent ? 'a' : ''}>${p.name}</a>`,
+    children.length > 0
+      ? html`<ul>${children.map(pg => getChildList(pg, collapse))}</ul>`
+      : '',
+  ]
+  // If getChildList is passed with `collapse == true`, use a details element to allow collapsing the list
+  const el = collapse && link[1]
+    ? html`<details open=${expand(children)}
+      onclick=${e => FW.state.sbx.add(p.id)}
+      ontoggle=${e => { if (!e.target.open) FW.state.sbx.delete(p.id) }}
+    >
+      <summary>${link[0]}</summary>
+      ${link[1]}
+    </details>`
+    : link;
+  return html`<li>
+    ${el}
+  </li>`;
+};
+FW.missing = () => FW.state.p.pages.reduce((result, current) => {
+  const c = document.createElement('div');
+  c.innerHTML = FW.inject.pg(current.content);
+  const newEl = [...c.getElementsByClassName('e')].filter(el => result.every(r => r.href !== el.href));
+  return [...result, ...newEl];
+}, []).sort();
+FW.parseJs = js => js.replace(/^FW\.ready\(\(\)=>\{\/\*\*\/(.*)\/\*\*\/\}\);$/gs, '$1');
+
 FW.ready(() => {
 	initState(FW.state);
 	initEmitter(FW.state, FW.emitter);

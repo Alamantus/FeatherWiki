@@ -8,10 +8,9 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension takes all heading elements (h1–8) and generates a table of contents if `<toc></toc>` is found in the page content.
-(function tableOfContentsExtension () {
-  if (!window.FW._loaded) return setTimeout(tableOfContentsExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW; // Extract state & emitter for easier use
-  console.log('running tableOfContentsExtension'); // Indicate that the extension has been added
+FW.ready(() => {
+  const { emitter } = FW;
+  console.log('running table-of-contents.js'); // Indicate that the extension has been added
   // If you need to add variables to the Feather Wiki state, you can do so here
   // Make the extension run *both* when the page renders *and* when the page first loads
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -57,4 +56,4 @@
     const regex = `(<p>\\s*)?${tocMatch.toString().replace(/^\/|\/$/g, '')}(<br\\s*\\/?>)?(\\s*<\\/p>)?`;
     uc.innerHTML = uc.innerHTML.replace(new RegExp(regex, 'ms'), content);
   }
-})();
+});

@@ -17,17 +17,17 @@ export const gallery = (state, emit, options = {}) => {
   const images = getImageDetails();
 
   return html`<section>
-    <h1>Existing Images</h1>
+    <h1>Embedded Images</h1>
     ${
       images.map(i => html`<div class="ib at ed w14">
         <div class=g>
-          <img src=${i.img} class=w1 aria-describedby=alt />
-          <span id=alt class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
+          <img src=${i.img} class=w1 aria-describedby="${i.id}_alt" />
+          <span id="${i.id}_alt" class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
           <div class=pb>
-            <button onclick=${e => viewImage(e, i.img)}>View</button>
-            ${showDelete ? html`<button onclick=${e => editAlt(e, i)}>Edit Alt</button>` : ''}
-            ${showDelete ? html`<button class=del onclick=${e => deleteImage(e, i)}>Delete</button>` : ''}
-            ${insert ? html`<button onclick=${e => insert(e, i)}>Insert</button>` : ''}
+            <button type="button" onclick=${e => viewImage(i.img)}>View</button>
+            ${showDelete ? html`<button type="button" onclick=${e => editAlt(i)}>Edit Alt</button>` : ''}
+            ${showDelete ? html`<button type="button" class=del onclick=${e => deleteImage(i)}>Delete</button>` : ''}
+            ${insert ? html`<button type="button" onclick=${e => insert(e, i)}>Insert</button>` : ''}
           </div>
           ${
             showUsed
@@ -58,23 +58,20 @@ export const gallery = (state, emit, options = {}) => {
     });
   }
 
-  function viewImage(e, img) {
-    e.preventDefault();
-    var image = new Image();
-    image.src = img;
+  function viewImage(i) {
+    var img = new Image();
+    img.src = i;
 
     var w = window.open('');
-    w.document.write(image.outerHTML);
+    w.document.write(img.outerHTML);
   }
 
-  function editAlt(e, i) {
-    e.preventDefault();
+  function editAlt(i) {
     state.p.img[i.id].alt = prompt('Alt text:', i.alt) ?? i.alt;
     emit(events.CHECK_CHANGED);
   }
 
-  function deleteImage(e, i) {
-    e.preventDefault();
+  function deleteImage(i) {
     if (!confirm('Permanently delete image from all pages in wiki?')) return false;
     delete state.p.img[i.id];
     if (i.pgs.length > 0) {

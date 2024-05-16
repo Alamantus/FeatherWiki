@@ -1,17 +1,11 @@
 # Feather Wiki
 
-A 55.929 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for simple, self-contained wikis! The idea is that it's like
+A 58.049 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
-## Versions
-
-Feather Wiki has two primary builds depending on your needs, Wren for everyday use and Warbler for web servers to trigger a save if set up correctly. The vast majority of people will likely only use Wren—if you don't plan on setting up a web server that can support saving the HTML file over the existing file directly on the server, then you're the majority of people.
-
-Both of these builds have an alternative "ruffled" option that uses less minification to allow for better compatibility with certain web browsers at the cost of a couple of extra kilobytes in size. If you're not able to get Feather Wiki running in your browser of choice, give the ruffled option a try. All builds can be found on the [website](https://feather.wiki/?page=downloads) or on the repository's [Releases page](https://codeberg.org/Alamantus/FeatherWiki/releases).
-
-Feather Wiki's CSS and JavaScript files are also available separately for each version, but it is important to note that the JavaScript currently expects both its code and the CSS to be _on the HTML page_ that is loaded _in full_ in order to save! Specifically, the contents of the `.js` file _must_ be in the HTML output inside of a `<script id="a">` script tag with the id as specified (`a`), and the contents of the `.css` _must_ be in the HTML output inside of a `<script id="s">` style tag with the id as specified (`s`). If you don't need to save your wiki, then you don't need to do this.
+## Browser Compatibility
 
 Feather Wiki will only run on browsers that support [ECMAScript 2015](https://caniuse.com/es6) (also known as ES6) features.
 
@@ -37,17 +31,17 @@ you'll have to check yourself if it supports [features from ECMAScript 2015](htt
 
 ### Server-Saving
 
-Warbler is the server build of Feather Wiki, and it is exactly the same as Wren except that it is larger (56.923 kilobytes) because it includes extra code for saving to certain web servers.
-
-You can use this version on [Tiddlyhost](https://tiddlyhost.com) or by using a [self-hosted nest](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/nests) from this repository!
-
-#### Server Setup
-
-Warbler expects a `dav` header with any value to be returned by an `OPTIONS` call to the server at the same address as the Feather Wiki file is served. If the server looks compatible, Feather Wiki will display a new "Save Wiki to Server" button above a "Save Wiki Locally" button.
+Feather Wiki includes code for saving to web servers that are set up in a particular way. It expects a `dav` header with any value to be returned by an `OPTIONS` call to the server at the same address as the Feather Wiki file is served. If the server looks compatible, Feather Wiki will display a "Save Wiki to Server" button above a "Save Wiki Locally" button.
 
 When the user clicks the "Save Wiki to Server" button, Feather Wiki will send a `PUT` request to the server with a body that contains the full HTML output of the Feather Wiki file that would normally be downloaded to the computer. If you want password protection on your wiki (and I think you _should_), then you'll need to implement that in a way that the server can understand, whether by having the user log in on a different page and saving to a domain cookie or by using basic HTTP auth—the choice is yours.
 
 After sending to the server, Feather Wiki expects either a success or failed response with an optional text message as the body to explain a failure. If not text is returned in the response body on a failure, it will simply display the status code in a message box, eg. "Save Failed! Status 403." On success, Feather Wiki will display "Saved."
+
+You can see this functionality on [Tiddlyhost](https://tiddlyhost.com) or by using a [self-hosted nest](https://codeberg.org/Alamantus/FeatherWiki/src/branch/main/nests) from this repository!
+
+## Plumage & Bones
+
+Feather Wiki's CSS and JavaScript files are available separately from the full HTML, but it is important to note that the JavaScript currently expects both its code and the CSS to be _on the HTML page_ that is loaded _in full_ in order to save! Specifically, the contents of the `.js` file _must_ be in the HTML output inside of a `<script id="a">` script tag with the id as specified (`a`), and the contents of the `.css` _must_ be in the HTML output inside of a `<script id="s">` style tag with the id as specified (`s`). If you don't need to save your wiki, then you don't need to do this.
 
 ## Contribution
 
@@ -71,7 +65,7 @@ The observant among you may have noticed that there is a [mirror on GitHub](http
 
 ## Development
 
-Feather Wiki uses only a few JavaScript libraries to function on the front end, but it requires more to develop.
+Feather Wiki uses only a few JavaScript dependencies to function on the front end, but it requires more to develop.
 
 To get your computer set up to develop:
 
@@ -85,23 +79,21 @@ To get your computer set up to develop:
 1. Start making changes to the JavaScript to update your build—you will need to refresh your browser to see your changes
   - Note: Changing the CSS doesn't automatically update the build, so you'll need to modify some JS or restart the script to see those changes
 
-When you're ready to build, simply use the `npm run build` to build all versions of Feather Wiki at once!
+When you're ready to build, simply use the `npm run build` to build Feather Wiki.
 
-To test a build, you can use `npm test` to build all versions and serve the Server build on a local server. The test script will allow
+To test a build, you can use `npm test` to build and serve the Server build on a local http server. The test script will allow
 Feather Wiki to use the "Save Wiki to Server" button—the output gets saved to `develop/put-save.html` if you need
 to check it.
 
 ### Details
 
 Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./nanochoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
-minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/pell.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for
+minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/ed.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for
 its [Markdown parsing](./helpers/md.js).
 
-If you want to restrict a feature to one build or another (which I request you do if it's only specific to the regular or server build),
-use `process.env.SERVER` in an `if` statement to ensure that esbuild removes the code on build for the irrelevant versions. It will be auto-populated with `true` or `false` during the build process.
-
-The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's
-a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
+The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features.
+Unfortunately, that's a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably
+won't go too far astray.
 
 ## License Clarification
 

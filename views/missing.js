@@ -7,14 +7,14 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const missingView = (state, emit) => {
-  const missing = state.help.missing();
+export const missingView = (s, e) => {
+  const missing = FW.missing();
   return [
     html`<header>
       <h1>Missing Pages</h1>
     </header>`,
     html`<article>
-      <p>This wiki has ${missing.length} page${missing.length !== 1 ? 's' : ''} referenced that don't exist:</p>
+      <p>These referenced page${missing.length !== 1 ? 's' : ''} don't exist:</p>
       <ul>
         ${
           missing.map(el => html`<li>${el}</li>`)
