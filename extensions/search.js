@@ -59,12 +59,15 @@
         state.results.length
         ? state.results.map(r => {
           const { name, slug, content, tags, editor } = r.item;
-          const contentHtml = (html`<div></div>`);
-          contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
-          const textOnlyContent = contentHtml.innerText;
+          let textContent = '';
+          if (content) {
+            const contentHtml = (html`<div></div>`);
+            contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
+            textContent = contentHtml.textContent.trim();
+          }
           return html`<article class="g ed">
             <h3><a href="?page=${slug}">${name} <span class=h>(${slug})</span></a></h3>
-            <div class=uc>${textOnlyContent.substring(0, 200)}${textOnlyContent.length > 200 ? '...' : ''}</div>
+            <div class=uc>${textContent.substring(0, 200)}${textContent.length > 200 ? '...' : ''}</div>
             ${tags?.length
               ? html`<aside>
                 <dl class="db r">
