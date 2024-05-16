@@ -8,10 +8,9 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension adds a "Clone Page" button next to the "Edit" button on every page. Click it, set a new name, and a copy of the current page will appear for editing.
-(function clonePageExtension () {
-  if (!window.FW._loaded) return setTimeout(clonePageExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running clonePageExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running clone-page.js');
 
   ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
@@ -42,4 +41,4 @@
     }}>Clone Page</button>`;
     editButton.parentElement.insertBefore(cloneButton, editButton.nextSibling);
   }
-})();
+});

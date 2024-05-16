@@ -10,10 +10,9 @@
 // This extension adds Fuse.js from a CDN, creates a search results view, adds a search bar to the menu each render,
 // and displays search results when you press enter within the search box. This can likely be expanded or improved,
 // but it should at least get you started!
-(function searchExtension () {
-  if (!window.FW._loaded) return setTimeout(searchExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running searchExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running full-search.js');
   const fuseScript = document.createElement('script');
   document.body.appendChild(fuseScript);
   fuseScript.onload = () => {if (state.query.search) emitter.emit('search', state.query.search);}
@@ -59,15 +58,12 @@
         state.results.length
         ? state.results.map(r => {
           const { name, slug, content, tags, editor } = r.item;
-          let textContent = '';
-          if (content) {
-            const contentHtml = (html`<div></div>`);
-            contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
-            textContent = contentHtml.innerText.trim();
-          }
+          const contentHtml = (html`<div></div>`);
+          contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
+          const textOnlyContent = contentHtml.innerText;
           return html`<article class="g ed">
             <h3><a href="?page=${slug}">${name} <span class=h>(${slug})</span></a></h3>
-            <div class=uc>${textContent.substring(0, 200)}${textContent.length > 200 ? '...' : ''}</div>
+            <div class=uc>${textOnlyContent.substring(0, 200)}${textOnlyContent.length > 200 ? '...' : ''}</div>
             ${tags?.length
               ? html`<aside>
                 <dl class="db r">
@@ -84,4 +80,4 @@
       ),
     ];
   }
-})();
+});

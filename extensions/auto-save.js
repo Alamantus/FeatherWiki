@@ -8,18 +8,17 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension makes Warbler versions of Feather Wiki automatically save to the server when changes are made to pages
-(function autoSaveExtension () {
-  if (!window.FW._loaded) return setTimeout(autoSaveExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running autoSaveExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running auto-save.js');
   const { events } = state;
   [events.UPDATE_PAGE, events.NOTIFY].forEach(ev => {
     emitter.on(ev, (noti = null) => {
-      if (!state.canSave && !state.canPut) {
+      if (!state.canSave) {
         emitter.emit(events.NOTIFY, 'Cannot autosave', 5000, 'background:#e88');
       } else if (typeof noti !== 'string' || noti === 'Settings updated') {
         emitter.emit(events.PUT_SAVE_WIKI);
       }
     });
   });
-})();
+});

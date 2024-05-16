@@ -10,10 +10,9 @@
 // This extension adds a "Data Management" section to the Wiki settings page that allows you to import multiple HTML, Markdown, and plain text files as new pages in your wiki and
 // export all of your current wiki's pages as HTML or Markdown files. It loads JSZip from a CDN when exporting to package up all the pages into a single .zip file.
 // You can also export your entire wiki's raw JSON data in its uncompressed format, but this may be less useful to you if you don't know how to manipulate JSON data.
-(function importExportExtension () {
-  if (!window.FW._loaded) return setTimeout(importExportExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running importExportExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running data-import-export.js');
 
   window.FW.data = {
     import: () => {
@@ -234,4 +233,4 @@
     const page = document.querySelector('article.mw');
     page.appendChild(section);
   }
-})();
+});

@@ -8,10 +8,9 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension adds next/previous buttons to the bottom of your pages for navigating the the next/previous page in the Page Order as set in the Wiki Settings. It's not useful for every kind of Feather Wiki, but it's handy for certain use cases.
-(function simpleNavigationExtension () {
-  if (!window.FW._loaded) return setTimeout(simpleNavigationExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running simpleNavigationExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running simple-navigation.js');
 
   ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
@@ -37,4 +36,4 @@
     }
     document.querySelector('main>section').appendChild(html`<footer id=simpleNavigationExtension style="padding:1rem 0;">${buttons}</footer>`);
   }
-})();
+});

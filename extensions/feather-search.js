@@ -8,10 +8,9 @@
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
 // This extension adds a search box with a very simple text search with results that drop down from the box if there are any matches.
-(function featherSearchExtension () {
-  if (!window.FW._loaded) return setTimeout(featherSearchExtension, 1); // wait until FW is mounted
-  const { state, emitter } = window.FW;
-  console.log('running featherSearchExtension');
+FW.ready(() => {
+  const { state, emitter } = FW;
+  console.log('running feather-search.js');
   state.searchDebounce = null;
   ['DOMContentLoaded', 'render'].forEach(ev => {
     emitter.on(ev, () => {
@@ -71,9 +70,12 @@
       if (val.length < 2) return resultsContainer.style.display = 'none';
       const index = state.p.pages.map(p => {
         const { id, name, slug, content, editor } = p;
-        const contentHtml = (html`<div></div>`);
-        contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
-        const textContent = contentHtml.innerText.trim();
+        let textContent = '';
+        if (content) {
+          const contentHtml = (html`<div></div>`);
+          contentHtml.innerHTML = FW.inject.pg((typeof md !== 'undefined' && editor === 'md') ? md(content) : content, state);
+          textContent = contentHtml.innerText.trim();
+        }
         return { id, name, searchName: name.toLowerCase(), slug, content: textContent, searchContent: textContent.toLowerCase() };
       });
       const matches = [];
@@ -111,4 +113,4 @@
       resultsContainer.style.display = null;
     }, 500);
   }
-})();
+});
