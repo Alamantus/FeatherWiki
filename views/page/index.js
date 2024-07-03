@@ -39,11 +39,11 @@ export const pageView = (state, emit, page) => {
           ? ''
           : html`<div class="c w14 tr">
             <time datetime=${modified.toISOString()}>
-              <abbr title="Created: ${crFormat}">${mdFormat}</abbr>
+              <abbr title="{{translate:pageCreated}} ${crFormat}">${mdFormat}</abbr>
             </time>
           ${
             !p.published
-            ? html`<button onclick=${() => emit(events.START_EDIT)}>Edit</button>`
+            ? html`<button onclick=${() => emit(events.START_EDIT)}>{{translate:pageEditButton}}</button>`
             : ''
           }
           </div>`

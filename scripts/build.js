@@ -9,7 +9,6 @@
  */
 import path from 'path';
 import fs from 'fs';
-import { exec } from 'child_process';
 import esbuild from 'esbuild';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
@@ -89,11 +88,40 @@ fs.writeFileSync(cssPath, cssOutput);
 const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
 console.info(cssPath, outputCssKb);
 
+const englishFilePath = path.resolve(process.cwd(), 'locales', 'en-US.json');
+const englishFile = fs.readFileSync(englishFilePath, 'utf-8');
+const english = JSON.parse(englishFile);
+
+function localize (localeFileName, string) {
+  let locale = english;
+  if (localeFileName !== 'en-US.json') {
+    const localeFilePath = path.resolve(process.cwd(), 'locales', localeFileName);
+    const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
+    locale = JSON.parse(localeFile);
+  }
+  
+  // const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
+  // string = string.replace(new RegExp('\{\{\s?localeName\s?\}\}', 'g'))
+
+  // Use default English locale file to fill any missing translations
+  Object.keys(english).forEach(key => {
+    const regex = new RegExp('\{\{\s?translate:' + key + '\s?\}\}', 'g');
+    let translation = (locale[key] ?? english[key]).replace(/(['"])/g, '\\$1'); // Escape quotes, just in case
+    if (key === 'javascriptRequired') {
+      translation = `<a href="https://src.feather.wiki/#browser-compatibility">${translation}</a>`;
+    }
+    string = string.replace(regex, translation);
+  });
+
+  return string;
+}
+
 // Get the package.json file so data like the version can be used.
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
 
 function injectVariables(content) {
+  content = localize(content);
   const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
   let result = content;
   if (matches?.length > 0) {

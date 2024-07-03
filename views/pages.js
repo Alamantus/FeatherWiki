@@ -11,7 +11,7 @@ export const pagesView = (state, emit) => {
   const { p } = state;
   return [
     html`<header>
-      <h1>All Pages</h1>
+      <h1>{{translate:allPages}}</h1>
     </header>`,
     html`<ul>
       ${

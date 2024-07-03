@@ -3,7 +3,7 @@ export const taggedView = (state, emit) => {
   const pages = p.pages.filter(pg => pg.tags?.split(',')?.includes(query.tag));
   return [
     html`<header>
-      <h1>Pages Tagged <code>${ query.tag }</code></h1>
+      <h1>{{translate:pagesTagged}} <code>${ query.tag }</code></h1>
     </header>`,
     html`<article>
       ${
@@ -11,7 +11,7 @@ export const taggedView = (state, emit) => {
         ? html`<ul>
           ${ pages.map(pg => html`<li><a href="?page=${pg.slug}">${pg.name}</a></li>`) }
         </ul>`
-        : 'None Found'
+        : '{{translate:noneFound}}'
       }
     </article>`
   ];

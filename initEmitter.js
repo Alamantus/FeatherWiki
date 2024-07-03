@@ -21,7 +21,7 @@ export const initEmitter = (state, emitter) => {
   const title = () => emit(TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const tab = () => setTimeout(() => document.querySelectorAll('textarea:not(.notab)').forEach(t => t.onkeydown = handleTab), 300);
   
-  const keepEditing = () => state.edits && !confirm('Lose unsaved changes?'); // True if editing & clicks cancel
+  const keepEditing = () => state.edits && !confirm('{{translate:unsavedWarning}}'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
     state.edits = null;
@@ -50,7 +50,7 @@ export const initEmitter = (state, emitter) => {
         emit(CREATE_PAGE, name, false);
       }
     } else if (page?.length > 0 && !views[page]) {
-      state.pg = { e: true, name: '404', content: '<p>Page not found</p>'};
+      state.pg = { e: true, name: '404', content: '<p>{{translate:pageNotFound}}</p>'};
       emit(RENDER);
     }
   });
@@ -137,7 +137,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(UPDATE_PAGE, (page) => {
     const { p } = state;
     if (p.pages.some(pg => pg.slug === page.slug && pg.id !== page.id)) {
-      return alert('A page with the slug "' + page.slug + '" already exists!');
+      return alert(`{{translate:slugExists}}`);
     }
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
     Object.keys(page).forEach(key => {
@@ -185,7 +185,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
     const i = Date.now();
     const rm = () => emit(REMOVE_NOTI, i);
-    const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="Click to close">
+    const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="{{translate:clickToClose}}">
       <span role=alert>${text}</span><span class=fr>×</span>
     </div>`;
     state.notis[i] = n;
@@ -226,14 +226,14 @@ export const initEmitter = (state, emitter) => {
         .then(text => ({ ok: resp.ok, status: resp.status, text: text }))
       )
       .then(result => {
-        if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
-        emit(NOTIFY, 'Saved.')
+        if (!result.ok) throw result.text ? result.text : `{{translate:status}} ${result.status}.`
+        emit(NOTIFY, '{{translate:saved}}')
 
         state.prev = FW.hash.object(p);
         emit(CHECK_CHANGED);
       })
       .catch(err => {
-        emit(NOTIFY, `Save failed! ${err}`, 9999, 'background:#e88');
+        emit(NOTIFY, `{{translate:saveFailed}} ${err}`, 9999, 'background:#e88');
       });
   });
 

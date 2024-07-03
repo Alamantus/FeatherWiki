@@ -14,49 +14,49 @@ export const settingsView = (state, emit) => {
   const o = p.pages.map(pg => pg.slug).join('\n');
   return [
     html`<header>
-      <h1>Wiki Settings</h1>
+      <h1>{{translate:wikiSettings}}</h1>
     </header>`,
     html`<article class=mw>
       <form onsubmit=${saveSettings} class=pb>
-        <label for=wTitle>Wiki Title</label>
+        <label for=wTitle>{{translate:wikiTitle}}</label>
         <input class=w1 id=wTitle value=${p.name} minlength=1 required>
-        <label for=wDesc>Wiki Description</label>
+        <label for=wDesc>{{translate:wikiDescription}}</label>
         <input class=w1 id=wDesc value=${p.desc}>
-        <label for=home>Home Page</label>
+        <label for=home>{{translate:homePage}}</label>
         <select id=home>
-          <option value="" selected=${!p.home}>All Pages (default)</option>
+          <option value="" selected=${!p.home}>{{translate:allPages}} ({{translate:default}})</option>
           ${
             p.pages.map(pg => {
               return html`<option selected=${pg.id === p.home} value=${pg.id}>${pg.name} (${pg.slug})</option>`;
             })
           }
         </select>
-        <label for=wPo>Page Order</label>
+        <label for=wPo>{{translate:pageOrder}}</label>
         <textarea id=wPo class=notab>${o}</textarea>
-        <label for=wCss>Custom CSS</label>
+        <label for=wCss>{{translate:customCss}}</label>
         <textarea id=wCss>${c}</textarea>
-        <label for=wJs>Custom JS</label>
-        <span class=h>Only runs once on wiki load. To test, save wiki & load that file.</span>
+        <label for=wJs>{{translate:customJs}}</label>
+        <span class=h>{{translate:customJsHelpText}}</span>
         <textarea id=wJs>${j}</textarea>
-        <label for=wHead>Custom Head</label>
-        <span class=h>Add HTML directly to <code>${ html.raw('&lt;head&gt;') }</code>. To test, save wiki & load that file. Be careful! Malformed HTML will break wiki.</span>
+        <label for=wHead>{{translate:customHead}}</label>
+        <span class=h>{{translate:customHeadHelpText}}</span>
         <textarea id=wHead>${FW.inject.esc(p.head, true)}</textarea>
-        <label for=wOut>Include Static HTML</label>
+        <label for=wOut>{{translate:includeStaticHtml}}</label>
         <input id=wOut type=checkbox checked=${p.static ?? false}>
-        <span class=h>Include the wiki content in plain HTML for non-JS browsers. Nearly doubles output size.</span>
-        <label for=wPub>Publish</label>
+        <span class=h>{{translate:includeStaticHtmlHelpText}}</span>
+        <label for=wPub>{{translate:publish}}</label>
         <input id=wPub type=checkbox checked=${p.published ?? false}>
-        <span class=h>Hides Save, New Page, & Wiki Settings buttons. You must manually visit <code>?page=s</code> to unset this.</span>
+        <span class=h>{{translate:publishHelpText}} <code>?page=s</code></span>
         <div class=tr>
-          <button type="submit">Update</button>
+          <button type="submit">{{translate:update}}</button>
         </div>
       </form>
       <div class=tr>
         <p class="pb h">
-          {{package.json:title}} Version: {{package.json:version}}
+          {{package.json:title}} {{translate:version}}: {{package.json:version}}
         </p>
         <p>
-          <button class=del onclick=${() => promptOverwrite()}>Import & Overwrite with Other {{package.json:title}} file</button>
+          <button class=del onclick=${() => promptOverwrite()}>{{translate:importButton}}</button>
         </p>
       </div>
       ${ gallery(state, emit, { showDelete: true, showUsed: true })}
@@ -67,7 +67,7 @@ export const settingsView = (state, emit) => {
     e.preventDefault();
     const form = e.currentTarget;
     const title = form.wTitle.value.trim();
-    if (title.length < 1) return alert('Title is required');
+    if (title.length < 1) return alert('{{translate:titleRequiredError}}');
     state.p.name = title;
     state.p.desc = form.wDesc.value.trim();
     if (form.home.value.length > 1) {
@@ -89,7 +89,7 @@ export const settingsView = (state, emit) => {
     state.p.static = form.wOut.checked;
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);
-    emit(events.NOTIFY, 'Settings updated');
+    emit(events.NOTIFY, '{{translate:settingsUpdated}}');
   }
 
   function promptOverwrite () {
@@ -101,7 +101,7 @@ export const settingsView = (state, emit) => {
           handleCustomJs(result[2]);
           emit(events.ONLOAD);
           emit(events.CHECK_CHANGED);
-          emit(events.NOTIFY, 'Wiki Loaded');
+          emit(events.NOTIFY, '{{translate:wikiLoaded}}');
         }
       });
     });
@@ -121,7 +121,7 @@ export const settingsView = (state, emit) => {
 
   function handleCustomJs (content) {
     if (content.trim()) {
-      if (state.j !== content) alert('You must save & reload to run your JavaScript');
+      if (state.j !== content) alert('{{translate:reloadCustomJsAlert}}');
       state.j = content;
     } else {
       delete state.j;

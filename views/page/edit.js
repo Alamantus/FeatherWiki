@@ -17,7 +17,7 @@ export const pageEdit = (state, emit, page) => {
     e.preventDefault();
     const { useMd, content } = edits;
     if (useMd) {
-      if (confirm('Convert Markdown to HTML?\n("Cancel" to go without converting)')) state.edits.content = md(content);
+      if (confirm('{{translate:convertMarkdownPrompt}}\n({{translate:convertMarkdownHelpText}})')) state.edits.content = md(content);
     } else {
       state.edits.content = FW.img.abbr(content);
     }
@@ -26,34 +26,34 @@ export const pageEdit = (state, emit, page) => {
   }
   const editor = [
     html`<div class="w1 tr">
-      <button onclick=${toggleEditor}>Use ${useMd ? 'Editor' : 'Markdown'}</button>
+      <button onclick=${toggleEditor}>${useMd ? '{{translate:useEditor}}' : '{{translate:useMarkdown}}'}</button>
     </div>`,
     require(useMd ? './md-editor' : './ed-editor').editor(state, emit),
   ];
 
   return html`<form onsubmit=${save}>
     <header>
-      <h1>Edit Page</h1>
+      <h1>{{translate:editPage}}</h1>
       <div class=r>
         <div class="c w12">
-          <label for=name>Page Title</label>
+          <label for=name>{{translate:pageTitle}}</label>
           <input id=name value=${edits.name} required minlength=2 onchange=${store}>
         </div>
         <div class="c w12">
-          <label for=slug>Page Slug</label>
+          <label for=slug>{{translate:pageSlug}}</label>
           <input id=slug value=${edits.slug} required minlength=2 onchange=${store}>
-          <button onclick=${slugifyTitle}>Slugify Title</button>
+          <button onclick=${slugifyTitle}>{{translate:slugifyTitle}}</button>
         </div>
     </header>
-    <span class=h style=float:left>Internal links (hash optional): [[Page Title]] or [[text|page_slug#heading]].</span>
+    <span class=h style=float:left>{{translate:internalLinkHelpText}}</span>
     ${ editor }
     <footer class=r>
       <div class="c w13">
-        <label for=tags>Page Tags</label>
+        <label for=tags>{{translate:pageTags}}</label>
         <input id=tags
-          value=${ edits.tags } placeholder="Comma, Separated, List" onchange=${store}>
+          value=${ edits.tags } placeholder="{{translate:pageTagsPlaceholder}}" onchange=${store}>
         <select onchange=${addTag}>
-          <option value="" selected disabled>Add Existing Tag</option>
+          <option value="" selected disabled>{{translate:addExistingTag}}</option>
           ${
             state.t.filter(t => !edits.tags.split(',').includes(t))
               .map(t => {
@@ -63,9 +63,9 @@ export const pageEdit = (state, emit, page) => {
         </select>
       </div>
       <div class="c w13">
-        <label for=parent>Parent</label>
+        <label for=parent>{{translate:pageParent}}</label>
         <select id=parent onchange=${store}>
-          <option value="" selected=${edits.parent === ''}>None</option>
+          <option value="" selected=${edits.parent === ''}>{{translate:noPageParent}}</option>
           ${
             p.pages.filter(pg => {
               return pg.id !== page?.id && !children.includes(pg.id);
@@ -74,15 +74,15 @@ export const pageEdit = (state, emit, page) => {
               })
           }
         </select>
-        <label>Hide Page <input type=checkbox id=hide onchange=${e => state.edits.hide = e.target.checked} checked=${edits.hide} /></label>
+        <label>{{translate:hidePage}} <input type=checkbox id=hide onchange=${e => state.edits.hide = e.target.checked} checked=${edits.hide} /></label>
       </div>
       <div class="c w13 tr">
-        <div class=pb><button type=submit>Save</button></div>
+        <div class=pb><button type=submit>{{translate:savePage}}</button></div>
         ${
           !isNew
           ? [
-            html`<div class=pb><button onclick=${e => {e.preventDefault(); emit(events.CANCEL_EDIT)}}>Cancel</button></div>`,
-            html`<div><button class=del onclick=${e => deletePage(e)}>Delete</button></div>`,
+            html`<div class=pb><button onclick=${e => {e.preventDefault(); emit(events.CANCEL_EDIT)}}>{{translate:cancelEditPage}}</button></div>`,
+            html`<div><button class=del onclick=${e => deletePage(e)}>{{translate:deletePage}}</button></div>`,
           ] : ''
         }
       </div>
@@ -120,9 +120,9 @@ export const pageEdit = (state, emit, page) => {
     e.preventDefault();
     const f = e.currentTarget;
     const n = f.name.value.trim();
-    if (n.length < 1) return alert('Page Title cannot be blank.');
+    if (n.length < 1) return alert('{{translate:pageTitleEmptyError}}');
     const slug = f.slug.value.trim();
-    if (slug.length < 2) return alert('Page Slug must be more than 1 character long.');
+    if (slug.length < 2) return alert('{{translate:pageSlugLengthError}}');
     const pg = { ...page };
     pg.name = n;
     pg.slug = FW.slug(slug);
@@ -136,7 +136,7 @@ export const pageEdit = (state, emit, page) => {
 
   function deletePage (e) {
     e.preventDefault();
-    if (confirm("You can't undo this after saving your wiki! Delete this page?")) {
+    if (confirm("{{translate:confirmDeletePage}}")) {
       emit(events.DELETE_PAGE, page.id);
     }
   }
