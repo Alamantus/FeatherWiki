@@ -88,24 +88,25 @@ fs.writeFileSync(cssPath, cssOutput);
 const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
 console.info(cssPath, outputCssKb);
 
-const englishFilePath = path.resolve(process.cwd(), 'locales', 'en-US.json');
+const localesFilePath = path.resolve(process.cwd(), 'locales');
+const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
 const englishFile = fs.readFileSync(englishFilePath, 'utf-8');
 const english = JSON.parse(englishFile);
 
 function localize (localeFileName, string) {
   let locale = english;
   if (localeFileName !== 'en-US.json') {
-    const localeFilePath = path.resolve(process.cwd(), 'locales', localeFileName);
+    const localeFilePath = path.resolve(localesFilePath, localeFileName);
     const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
     locale = JSON.parse(localeFile);
   }
   
-  // const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
-  // string = string.replace(new RegExp('\{\{\s?localeName\s?\}\}', 'g'))
+  const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
+  string = string.replace(/\{\{localeName\}\}/g, localeName);
 
   // Use default English locale file to fill any missing translations
   Object.keys(english).forEach(key => {
-    const regex = new RegExp('\{\{\s?translate:' + key + '\s?\}\}', 'g');
+    const regex = new RegExp('\{\{translate: ?' + key + '\}\}', 'g');
     let translation = (locale[key] ?? english[key]).replace(/(['"])/g, '\\$1'); // Escape quotes, just in case
     if (key === 'javascriptRequired') {
       translation = `<a href="https://src.feather.wiki/#browser-compatibility">${translation}</a>`;
@@ -121,7 +122,6 @@ const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.js
 const packageJson = JSON.parse(packageJsonFile);
 
 function injectVariables(content) {
-  content = localize(content);
   const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
   let result = content;
   if (matches?.length > 0) {
@@ -144,7 +144,8 @@ function injectVariables(content) {
   return result;
 }
 
-function build() {
+function build(localeFileName) {
+  const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
@@ -169,8 +170,10 @@ function build() {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsOutPath = path.resolve(outputDir, 'FeatherWiki.js');
-        output = await injectVariables(output);
+        const jsFilename = localeName === 'en-US' ? 'FeatherWiki.js' : `FeatherWiki_${localeName}.js`;
+        const jsOutPath = path.resolve(outputDir, jsFilename);
+        output = localize(localeFileName, output);
+        output = injectVariables(output);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
         console.info(jsOutPath, jsKb);
@@ -185,8 +188,10 @@ function build() {
     // Inject any hanging variables into the resulting HTML
     const htmlParts = html.split('{{cssOutput}}');
     html = htmlParts[0] + cssOutput + htmlParts[1];
-    html = await injectVariables(html);
-    const filePath = path.resolve(outputDir, 'FeatherWiki.html');
+    html = localize(localeFileName, html);
+    html = injectVariables(html);
+    const filename = localeName === 'en-US' ? 'FeatherWiki.html' : `FeatherWiki_${localeName}.html`;
+    const filePath = path.resolve(outputDir, filename);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
@@ -200,10 +205,17 @@ function build() {
   });
 }
 
+// Build all locales except for the en-US locale.
+const locales = fs.readdirSync(localesFilePath, { encoding: 'utf-8' });
+locales.filter(locale => !locale.startsWith('en-US'))
+  .forEach(async (localeFileName) => {
+    await build(localeFileName);
+  });
+
 // Build, then update README with new size
-build().then(async result => {
+build('en-US.json').then(async result => {
   const filePath = path.resolve(process.cwd(), 'README.md');
-  let readme = await fs.promises.readFile(filePath, 'utf8');
+  let readme = await fs.promises.readFile(filePath, 'utf-8');
   readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
   await fs.writeFile(filePath, readme, (err) => {
     if (err) throw err;
