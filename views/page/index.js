@@ -39,7 +39,7 @@ export const pageView = (state, emit, page) => {
           ? ''
           : html`<div class="c w14 tr">
             <time datetime=${modified.toISOString()}>
-              <abbr title="{{translate:pageCreated}} ${crFormat}">${mdFormat}</abbr>
+              <abbr title="{{translate: pageCreated}} ${crFormat}">${mdFormat}</abbr>
             </time>
           ${
             !p.published

@@ -137,6 +137,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(UPDATE_PAGE, (page) => {
     const { p } = state;
     if (p.pages.some(pg => pg.slug === page.slug && pg.id !== page.id)) {
+      // Translation includes `template literal ${variable}`
       return alert(`{{translate:slugExists}}`);
     }
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
@@ -185,7 +186,7 @@ export const initEmitter = (state, emitter) => {
   emitter.on(NOTIFY, (text, time = 5000, css = 'background:#ddd; color:#000') => {
     const i = Date.now();
     const rm = () => emit(REMOVE_NOTI, i);
-    const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="{{translate:clickToClose}}">
+    const n = html`<div class=noti style="${css}" id="${i}" onclick=${() => rm()} title="{{translate: clickToClose}}">
       <span role=alert>${text}</span><span class=fr>×</span>
     </div>`;
     state.notis[i] = n;

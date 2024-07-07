@@ -51,7 +51,7 @@ export const pageEdit = (state, emit, page) => {
       <div class="c w13">
         <label for=tags>{{translate:pageTags}}</label>
         <input id=tags
-          value=${ edits.tags } placeholder="{{translate:pageTagsPlaceholder}}" onchange=${store}>
+          value=${ edits.tags } placeholder="{{translate: pageTagsPlaceholder}}" onchange=${store}>
         <select onchange=${addTag}>
           <option value="" selected disabled>{{translate:addExistingTag}}</option>
           ${

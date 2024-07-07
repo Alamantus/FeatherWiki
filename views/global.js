@@ -41,13 +41,13 @@ export const globalView = (state, emit) => {
   if (state.canPut) {
     const serverUrl = location.origin + root;
     saveButton.push(html`<div>
-      <button class=${changed ? 'chg' : ''} title="{{translate:saveToServerHelpText}}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>
+      <button class=${changed ? 'chg' : ''} title="{{translate: saveToServerHelpText}}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>
         {{translate:saveToServerButton}}
       </button>
     </div>`);
   }
   saveButton.push(html`<div>
-    <button class=${!state.canPut && changed ? 'chg' : ''} title="{{translate:saveWikiHelpText}}" onclick=${() => emit(events.SAVE_WIKI)}>
+    <button class=${!state.canPut && changed ? 'chg' : ''} title="{{translate: saveWikiHelpText}}" onclick=${() => emit(events.SAVE_WIKI)}>
       ${state.canPut ? '{{translate:saveWikiLocallyButton}}' : '{{translate:saveWikiButton}}'}
     </button>
   </div>`);
@@ -58,9 +58,7 @@ export const globalView = (state, emit) => {
         <span class=db><a href=? class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${ showEditFields ? saveButton : '' }
-        <button class=sbt onclick=${() => toggleSidebar()}>
-          ${sb ? '{{translate:hideMenuButton}}' : '{{translate:showMenuButton}}'}
-        </button>
+        <button class=sbt onclick=${() => toggleSidebar()}>${sb ? '{{translate:hideMenuButton}}' : '{{translate:showMenuButton}}'}</button>
         <nav class=${!sb ? 'n' : ''}>
           ${
             showEditFields
@@ -69,8 +67,8 @@ export const globalView = (state, emit) => {
               html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
                 <summary class=np>{{translate:newPageButton}}</summary>
                 <form onsubmit=${createNewPage}>
-                  <label class=sr for=np>{{translate:newPageTitleLabel}}</label>
-                  <input id=np placeholder="{{translate:newPageTitleLabel}}" autocomplete=off>
+                  <label class=sr for=np>{{translate: newPageTitleLabel}}</label>
+                  <input id=np placeholder="{{translate: newPageTitleLabel}}" autocomplete=off>
                   <button type=submit>{{translate:createNewPageButton}}</button>
                 </form>
               </details>`
