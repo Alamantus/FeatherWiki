@@ -14,7 +14,7 @@ import { globalView } from "../views/global";
 export default function (state) {
   const { c, p, j } = state;
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="{{localeName}}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
