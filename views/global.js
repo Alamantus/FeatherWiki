@@ -109,7 +109,7 @@ export const globalView = (state, emit) => {
       <section>${ pageToRender }</section>
     </main>
     <footer>
-      <span class=fr>{{translate:poweredBy}} <a href="{{package.json:homepage}}" title="Version: {{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
+      <span class=fr>{{translate:poweredBy}} <a href="{{package.json:homepage}}" title="{{translate:version}}: {{package.json:version}} ({{package.json:nickname}})" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
     <div class=notis>
       ${Object.values(notis)}
