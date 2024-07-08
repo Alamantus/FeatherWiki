@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 58.049 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis! The idea is that it's like
+A 58.051 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis! The idea is that it's like
 [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
@@ -45,23 +45,8 @@ Feather Wiki's CSS and JavaScript files are available separately from the full H
 
 ## Contribution
 
-### For anyone
-
-If you have a request to either add to or improve Feather Wiki or your have encountered a problem not related to browser
-compatibility, I encourage you to first browse the [current issues](https://codeberg.org/Alamantus/FeatherWiki/issues) and create a new issue
-with the details _only if_ one regarding your topic doesn't already exist, and I will try to reply promptly and add an appropriate label.
-I reserve the right to deny requests, but if a given request garners enough interest, I'll be much more likely to consider it!
-
-The observant among you may have noticed that there is a [mirror on GitHub](https://github.com/Alamantus/FeatherWiki) (if that's where you're reading this, hello to you!). I will review Issue tickets from the GitHub mirror, but I request that you submit make an attempt to submit them to the [Codeberg repository](https://codeberg.org/Alamantus/FeatherWiki)
-if at all possible. I will not be monitoring the GitHub repo closely, though I should receive email notifications.
-
-### For coders
-
-Feel free to fork this repo and submit pull requests to have your changes or additions reviewed! I might ask for changes
-to make the output smaller or improve organization, but as above, I also reserve the right to deny changes outright in favor of a future plugin/code
-extension system that allows users to inject their own code into their Feather Wiki instead of including it in the base.  
-The observant among you may have noticed that there is a [mirror on GitHub](https://github.com/Alamantus/FeatherWiki) (if that's where you're reading this, hello to you!). I will review pull requests from the GitHub mirror, but I request that you submit make an attempt to submit your pull requests to the
-[Codeberg repository](https://codeberg.org/Alamantus/FeatherWiki) if at all possible. I will not be monitoring the GitHub repo closely, though I should receive email notifications.
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how you can help with the project. Details on adding non-English
+translations to Feather Wiki are included there.
 
 ## Development
 
