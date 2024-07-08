@@ -13,61 +13,6 @@ import esbuild from 'esbuild';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
 
-const minifyOptions = {
-  collapseWhitespace: true,
-  conservativeCollapse: true,
-  collapseInlineTagWhitespace: true,
-  decodeEntities: true,
-  removeAttributeQuotes: true,
-  continueOnParseError: true,
-  removeComments: true,
-  removeEmptyAttributes: true,
-  removeRedundantAttributes: true,
-};
-
-const minifyHTMLLiteralsPlugin = {
-  name: 'minifyHTMLLiteralsPlugin',
-  setup(build) {
-    build.onLoad({ filter: /\.js$/ }, async (args) => {
-      const source = await fs.promises.readFile(args.path, 'utf8');
-      const fileName = path.relative(process.cwd(), args.path);
-
-      try {
-        const result = minifyHTMLLiterals(source, {
-          fileName,
-          minifyOptions,
-          shouldMinify(template) {
-            return (
-              defaultShouldMinify(template) ||
-              template.parts.some(part => {
-                return part.text.includes('<!DOCTYPE html>');
-              })
-            );
-          }
-        });
-
-        if (result) {
-          return { contents: result.code };
-        }
-        return { contents: source };
-      } catch (e) {
-        return { errors: [e] }
-      }
-    })
-  }
-};
-
-const letsVarConstsPlugin = {
-  name: 'letsVarConstsPlugin',
-  setup(build) {
-    build.onLoad({ filter: /\.js$/ }, async (args) => {
-      const source = await fs.promises.readFile(args.path, 'utf8');
-
-      return { contents: source.replace(/(let|const)\s/g, 'var ') };
-    })
-  }
-};
-
 const outputDir = path.resolve(process.cwd(), 'builds');
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
@@ -144,6 +89,18 @@ function injectVariables(content) {
   return result;
 }
 
+const htmlMinifyOptions = {
+  collapseWhitespace: true,
+  conservativeCollapse: true,
+  collapseInlineTagWhitespace: true,
+  decodeEntities: true,
+  removeAttributeQuotes: true,
+  continueOnParseError: true,
+  removeComments: true,
+  removeEmptyAttributes: true,
+  removeRedundantAttributes: true,
+};
+
 function build(localeFileName) {
   const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   return esbuild.build({
@@ -157,8 +114,51 @@ function build(localeFileName) {
     minify: true,
     treeShaking: true,
     plugins: [
-      minifyHTMLLiteralsPlugin,
-      letsVarConstsPlugin,
+      {
+        name: 'transformContentPlugin',
+        setup(build) {
+          build.onLoad({ filter: /\.js$/ }, async (args) => {
+            // All transformations are done in one plugin because filter by js file stops working in subsequent plugins
+            const fileName = path.relative(process.cwd(), args.path);
+            let contents = await fs.promises.readFile(fileName, 'utf8');
+
+            try {
+              const minified = minifyHTMLLiterals(contents, {
+                fileName,
+                htmlMinifyOptions,
+                shouldMinify(template) {
+                  return (
+                    defaultShouldMinify(template) ||
+                    template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
+                  );
+                }
+              });
+
+              if (minified) {
+                contents = minified.code;
+              }
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            try {
+              contents = localize(localeFileName, contents);
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            try {
+              contents = injectVariables(contents);
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            contents = contents.replace(/(let|const)\s/g, 'var ');
+
+            return { contents };
+          });
+        },
+      },
     ],
     platform: 'browser',
     format: 'iife',
@@ -172,8 +172,6 @@ function build(localeFileName) {
       if (/\.js$/.test(out.path)) {
         const jsFilename = localeName === 'en-US' ? 'FeatherWiki.js' : `FeatherWiki_${localeName}.js`;
         const jsOutPath = path.resolve(outputDir, jsFilename);
-        output = localize(localeFileName, output);
-        output = injectVariables(output);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
         console.info(jsOutPath, jsKb);
@@ -192,7 +190,7 @@ function build(localeFileName) {
     html = injectVariables(html);
     const filename = localeName === 'en-US' ? 'FeatherWiki.html' : `FeatherWiki_${localeName}.html`;
     const filePath = path.resolve(outputDir, filename);
-    const outHtml = minify(html, minifyOptions);
+    const outHtml = minify(html, htmlMinifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
