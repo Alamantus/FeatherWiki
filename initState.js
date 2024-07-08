@@ -16,7 +16,7 @@ import { missingView } from './views/missing';
 export const initState = state => {
   state.root = location.pathname || '/'; // path to file
   state.sb = false; // show sidebar
-  state.sbTab = 'Pages';
+  state.sbTab = '{{translate:pagesTab}}';
   state.sbx = new Set(); // expanded sidebar menu items
   state.recent = [];
   state.edit = false;
@@ -56,7 +56,7 @@ export const initState = state => {
   try {
     state.p = FW.json.decompress(JSON.parse(document.querySelector('script#p').innerHTML));
   } catch (e) {
-    state.p = {name:'New Wiki',desc:'',pages:[],img:{}};
+    state.p = {name:'{{translate:newWiki}}',desc:'',pages:[],img:{}};
   }
   state.pg = FW.getPage();
   

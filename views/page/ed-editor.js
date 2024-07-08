@@ -28,7 +28,7 @@ export const editor = (state, emit) => {
     element,
     html`<div class="w1 tr pb">
       <button type=button onclick=${() => { state.src = !src; emit(state.events.RENDER) }}>
-        Show ${src ? 'Editor' : 'HTML'}
+        ${src ? '{{translate:showEditor}}' : '{{translate:showHtml}}'}
       </button>
     </div>`,
     modal(state, () => element.edUc?.img()),

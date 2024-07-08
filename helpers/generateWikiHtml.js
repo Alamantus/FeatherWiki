@@ -14,7 +14,7 @@ import { globalView } from "../views/global";
 export default function (state) {
   const { c, p, j } = state;
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="{{localeName}}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -30,7 +30,7 @@ export default function (state) {
 </head>
 <body>
   ${staticExport()}
-  <footer><a href="https://src.feather.wiki/#versions">JavaScript required to edit</a></footer>
+  <footer>{{translate:javascriptRequired}}</footer>
   ${j ? `<script id=j>FW.ready(()=>{/**/${j}/**/});</script>` : ''}
 </body>
 </html>`;

@@ -1,7 +1,6 @@
 # Feather Wiki
 
-A 58.049 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis! The idea is that it's like
-[TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A 58.048 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
@@ -12,8 +11,7 @@ Feather Wiki will only run on browsers that support [ECMAScript 2015](https://ca
 <details>
 <summary>👨‍💻 Technical Talk: Supported Browsers</summary>
 
-According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es6/), the following
-browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
+According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es6/), the following browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
 
 - Chrome 86+
 - Edge 87+
@@ -24,8 +22,7 @@ browser versions should definitely be able to run Feather Wiki version 1.3.0 and
 - Safari 13+
 - Samsung Internet for Android 12+
 
-The chart linked above is incomplete, so if your browser is older than any of these, you _might_ still be able to run Feather Wiki, but
-you'll have to check yourself if it supports [features from ECMAScript 2015](https://caniuse.com/es6) (also known as ES6).
+The chart linked above is incomplete, so if your browser is older than any of these, you _might_ still be able to run Feather Wiki, but you'll have to check yourself if it supports [features from ECMAScript 2015](https://caniuse.com/es6).
 
 </details>
 
@@ -45,23 +42,7 @@ Feather Wiki's CSS and JavaScript files are available separately from the full H
 
 ## Contribution
 
-### For anyone
-
-If you have a request to either add to or improve Feather Wiki or your have encountered a problem not related to browser
-compatibility, I encourage you to first browse the [current issues](https://codeberg.org/Alamantus/FeatherWiki/issues) and create a new issue
-with the details _only if_ one regarding your topic doesn't already exist, and I will try to reply promptly and add an appropriate label.
-I reserve the right to deny requests, but if a given request garners enough interest, I'll be much more likely to consider it!
-
-The observant among you may have noticed that there is a [mirror on GitHub](https://github.com/Alamantus/FeatherWiki) (if that's where you're reading this, hello to you!). I will review Issue tickets from the GitHub mirror, but I request that you submit make an attempt to submit them to the [Codeberg repository](https://codeberg.org/Alamantus/FeatherWiki)
-if at all possible. I will not be monitoring the GitHub repo closely, though I should receive email notifications.
-
-### For coders
-
-Feel free to fork this repo and submit pull requests to have your changes or additions reviewed! I might ask for changes
-to make the output smaller or improve organization, but as above, I also reserve the right to deny changes outright in favor of a future plugin/code
-extension system that allows users to inject their own code into their Feather Wiki instead of including it in the base.  
-The observant among you may have noticed that there is a [mirror on GitHub](https://github.com/Alamantus/FeatherWiki) (if that's where you're reading this, hello to you!). I will review pull requests from the GitHub mirror, but I request that you submit make an attempt to submit your pull requests to the
-[Codeberg repository](https://codeberg.org/Alamantus/FeatherWiki) if at all possible. I will not be monitoring the GitHub repo closely, though I should receive email notifications.
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how you can help with the project. Details on adding non-English translations to Feather Wiki are included there.
 
 ## Development
 
@@ -87,13 +68,9 @@ to check it.
 
 ### Details
 
-Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./nanochoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for
-minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/ed.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for
-its [Markdown parsing](./helpers/md.js).
+Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./nanochoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/ed.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for its [Markdown parsing](./helpers/md.js).
 
-The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features.
-Unfortunately, that's a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably
-won't go too far astray.
+The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
 
 ## License Clarification
 

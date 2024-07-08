@@ -19,24 +19,24 @@ let edUc;
 export const bar = [
   { // clear
     icon: '☒',
-    title: 'Clear Formatting',
+    title: '{{translate:clearFormattingHelpText}}',
     result: () => ex('removeFormat')
   },
   { // bold
     icon: '<b>B</b>',
-    title: 'Bold',
+    title: '{{translate:boldHelpText}}',
     state: () => qcs('bold'),
     result: () => ex('bold')
   },
   { // italic
     icon: '<i>I</i>',
-    title: 'Italic',
+    title: '{{translate:italicHelpText}}',
     state: () => qcs('italic'),
     result: () => ex('italic')
   },
   { // underline
     icon: '<u>U</u>',
-    title: 'Underline',
+    title: '{{translate:underlineHelpText}}',
     state: () => qcs('underline'),
     result: () => ex('underline')
   },
@@ -48,50 +48,50 @@ export const bar = [
   // },
   { // heading2
     icon: '<b>H</b>',
-    title: 'Heading',
+    title: '{{translate:headingHelpText}}',
     result: () => ex(fb, '<h2>'),
   },
   { // heading3
     icon: '<b>H<sub>2</sub></b>',
-    title: 'Sub-Heading',
+    title: '{{translate:subheadingHelpText}}',
     result: () => ex(fb, '<h3>'),
   },
   { // paragraph
     icon: '¶',
-    title: 'Paragraph',
+    title: '{{translate:paragraphHelpText}}',
     result: () => ex(fb, '<p>')
   },
   { // align left
     icon: '↦',
-    title: 'Align Left',
+    title: '{{translate:alignLeftHelpText}}',
     state: () => qcs('justifyLeft'),
     result: () => ex('justifyLeft')
   },
   { // align center
     icon: '↔',
-    title: 'Align Center',
+    title: '{{translate:alignCenterHelpText}}',
     state: () => qcs('justifyCenter'),
     result: () => ex('justifyCenter')
   },
   { // align right
     icon: '↤',
-    title: 'Align Right',
+    title: '{{translate:alignRightHelpText}}',
     state: () => qcs('justifyRight'),
     result: () => ex('justifyRight')
   },
   { // olist
     icon: '#',
-    title: 'Number List',
+    title: '{{translate:numberListHelpText}}',
     result: () => ex('insertOrderedList')
   },
   { // ulist
     icon: '•',
-    title: 'Bullet List',
+    title: '{{translate:bulletListHelpText}}',
     result: () => ex('insertUnorderedList')
   },
   { // quote
     icon: '“ ”',
-    title: 'Quote',
+    title: '{{translate:quoteHelpText}}',
     result: () => ex(fb, '<blockquote>')
   },
   // { // code
@@ -101,33 +101,33 @@ export const bar = [
   // },
   { // line
     icon: '―',
-    title: 'Separator',
+    title: '{{translate:separatorHelpText}}',
     result: () => ex('insertHorizontalRule')
   },
   { // link
     icon: '🔗',
-    title: 'Link',
+    title: '{{translate:linkHelpText}}',
     result: () => {
-      const url = window.prompt('Link URL:')
+      const url = window.prompt('{{translate:linkPromptText}}')
       if (url) ex('createLink', url)
     }
   },
   { // externalImage
-    title: 'Link External Image',
     icon: '🖼️',
+    title: '{{translate:linkExternalImageHelpText}}',
     result: () => {
-      const url = window.prompt('Image URL:');
+      const url = window.prompt('{{translate:linkExternalImagePrompt}}');
       if (url) ex('insertImage', url);
     },
   },
   { // insertImage
-    title: 'Insert Image from File',
     icon: '📸',
+    title: '{{translate:insertImageHelpText}}',
     result: () => edUc?.img(),
   },
   { // existingImage
-    title: 'Add Existing Image',
     icon: '📎',
+    title: '{{translate:addExistingImageHelpText}}',
     result: () => document.getElementById('g').showModal(),
   },
 ];

@@ -9,65 +9,9 @@
  */
 import path from 'path';
 import fs from 'fs';
-import { exec } from 'child_process';
 import esbuild from 'esbuild';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
-
-const minifyOptions = {
-  collapseWhitespace: true,
-  conservativeCollapse: true,
-  collapseInlineTagWhitespace: true,
-  decodeEntities: true,
-  removeAttributeQuotes: true,
-  continueOnParseError: true,
-  removeComments: true,
-  removeEmptyAttributes: true,
-  removeRedundantAttributes: true,
-};
-
-const minifyHTMLLiteralsPlugin = {
-  name: 'minifyHTMLLiteralsPlugin',
-  setup(build) {
-    build.onLoad({ filter: /\.js$/ }, async (args) => {
-      const source = await fs.promises.readFile(args.path, 'utf8');
-      const fileName = path.relative(process.cwd(), args.path);
-
-      try {
-        const result = minifyHTMLLiterals(source, {
-          fileName,
-          minifyOptions,
-          shouldMinify(template) {
-            return (
-              defaultShouldMinify(template) ||
-              template.parts.some(part => {
-                return part.text.includes('<!DOCTYPE html>');
-              })
-            );
-          }
-        });
-
-        if (result) {
-          return { contents: result.code };
-        }
-        return { contents: source };
-      } catch (e) {
-        return { errors: [e] }
-      }
-    })
-  }
-};
-
-const letsVarConstsPlugin = {
-  name: 'letsVarConstsPlugin',
-  setup(build) {
-    build.onLoad({ filter: /\.js$/ }, async (args) => {
-      const source = await fs.promises.readFile(args.path, 'utf8');
-
-      return { contents: source.replace(/(let|const)\s/g, 'var ') };
-    })
-  }
-};
 
 const outputDir = path.resolve(process.cwd(), 'builds');
 if (!fs.existsSync(outputDir)) {
@@ -88,6 +32,35 @@ const cssPath = path.resolve(outputDir, `FeatherWiki.css`);
 fs.writeFileSync(cssPath, cssOutput);
 const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
 console.info(cssPath, outputCssKb);
+
+const localesFilePath = path.resolve(process.cwd(), 'locales');
+const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
+const englishFile = fs.readFileSync(englishFilePath, 'utf-8');
+const english = JSON.parse(englishFile);
+
+function localize (localeFileName, string) {
+  let locale = english;
+  if (localeFileName !== 'en-US.json') {
+    const localeFilePath = path.resolve(localesFilePath, localeFileName);
+    const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
+    locale = JSON.parse(localeFile);
+  }
+  
+  const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
+  string = string.replace(/\{\{localeName\}\}/g, localeName);
+
+  // Use default English locale file to fill any missing translations
+  Object.keys(english).forEach(key => {
+    const regex = new RegExp('\{\{translate: ?' + key + '\}\}', 'g');
+    let translation = (locale[key] ?? english[key]).replace(/(['"])/g, '\\$1'); // Escape quotes, just in case
+    if (key === 'javascriptRequired') {
+      translation = `<a href="https://src.feather.wiki/#browser-compatibility">${translation}</a>`;
+    }
+    string = string.replace(regex, translation);
+  });
+
+  return string;
+}
 
 // Get the package.json file so data like the version can be used.
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
@@ -116,7 +89,20 @@ function injectVariables(content) {
   return result;
 }
 
-function build() {
+const htmlMinifyOptions = {
+  collapseWhitespace: true,
+  conservativeCollapse: true,
+  collapseInlineTagWhitespace: true,
+  decodeEntities: true,
+  removeAttributeQuotes: true,
+  continueOnParseError: true,
+  removeComments: true,
+  removeEmptyAttributes: true,
+  removeRedundantAttributes: true,
+};
+
+function build(localeFileName) {
+  const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   return esbuild.build({
     entryPoints: ['index.js'],
     define: {
@@ -128,8 +114,51 @@ function build() {
     minify: true,
     treeShaking: true,
     plugins: [
-      minifyHTMLLiteralsPlugin,
-      letsVarConstsPlugin,
+      {
+        name: 'transformContentPlugin',
+        setup(build) {
+          build.onLoad({ filter: /\.js$/ }, async (args) => {
+            // All transformations are done in one plugin because filter by js file stops working in subsequent plugins
+            const fileName = path.relative(process.cwd(), args.path);
+            let contents = await fs.promises.readFile(fileName, 'utf8');
+
+            try {
+              const minified = minifyHTMLLiterals(contents, {
+                fileName,
+                htmlMinifyOptions,
+                shouldMinify(template) {
+                  return (
+                    defaultShouldMinify(template) ||
+                    template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
+                  );
+                }
+              });
+
+              if (minified) {
+                contents = minified.code;
+              }
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            try {
+              contents = localize(localeFileName, contents);
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            try {
+              contents = injectVariables(contents);
+            } catch (e) {
+              return { errors: [e] };
+            }
+
+            contents = contents.replace(/(let|const)\s/g, 'var ');
+
+            return { contents };
+          });
+        },
+      },
     ],
     platform: 'browser',
     format: 'iife',
@@ -141,8 +170,8 @@ function build() {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsOutPath = path.resolve(outputDir, 'FeatherWiki.js');
-        output = await injectVariables(output);
+        const jsFilename = localeName === 'en-US' ? 'FeatherWiki.js' : `FeatherWiki_${localeName}.js`;
+        const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
         console.info(jsOutPath, jsKb);
@@ -157,9 +186,11 @@ function build() {
     // Inject any hanging variables into the resulting HTML
     const htmlParts = html.split('{{cssOutput}}');
     html = htmlParts[0] + cssOutput + htmlParts[1];
-    html = await injectVariables(html);
-    const filePath = path.resolve(outputDir, 'FeatherWiki.html');
-    const outHtml = minify(html, minifyOptions);
+    html = localize(localeFileName, html);
+    html = injectVariables(html);
+    const filename = localeName === 'en-US' ? 'FeatherWiki.html' : `FeatherWiki_${localeName}.html`;
+    const filePath = path.resolve(outputDir, filename);
+    const outHtml = minify(html, htmlMinifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
@@ -172,10 +203,17 @@ function build() {
   });
 }
 
+// Build all locales except for the en-US locale.
+const locales = fs.readdirSync(localesFilePath, { encoding: 'utf-8' });
+locales.filter(locale => !locale.startsWith('en-US'))
+  .forEach(async (localeFileName) => {
+    await build(localeFileName);
+  });
+
 // Build, then update README with new size
-build().then(async result => {
+build('en-US.json').then(async result => {
   const filePath = path.resolve(process.cwd(), 'README.md');
-  let readme = await fs.promises.readFile(filePath, 'utf8');
+  let readme = await fs.promises.readFile(filePath, 'utf-8');
   readme = readme.replace(/^A \d+\.?\d+ kilobyte/m, `A ${result.size.replace(/s$/, '')}`);
   await fs.writeFile(filePath, readme, (err) => {
     if (err) throw err;

@@ -17,23 +17,23 @@ export const gallery = (state, emit, options = {}) => {
   const images = getImageDetails();
 
   return html`<section>
-    <h1>Embedded Images</h1>
+    <h1>{{translate:embeddedImagesHeading}}</h1>
     ${
       images.map(i => html`<div class="ib at ed w14">
         <div class=g>
           <img src=${i.img} class=w1 aria-describedby="${i.id}_alt" />
           <span id="${i.id}_alt" class=db>${i.alt} (${i.size[0]}x${i.size[1]}px)</span>
           <div class=pb>
-            <button type="button" onclick=${e => viewImage(i.img)}>View</button>
-            ${showDelete ? html`<button type="button" onclick=${e => editAlt(i)}>Edit Alt</button>` : ''}
-            ${showDelete ? html`<button type="button" class=del onclick=${e => deleteImage(i)}>Delete</button>` : ''}
-            ${insert ? html`<button type="button" onclick=${e => insert(e, i)}>Insert</button>` : ''}
+            <button type="button" onclick=${e => viewImage(i.img)}>{{translate:viewImageButton}}</button>
+            ${showDelete ? html`<button type="button" onclick=${e => editAlt(i)}>{{translate:editAltTextButton}}</button>` : ''}
+            ${showDelete ? html`<button type="button" class=del onclick=${e => deleteImage(i)}>{{translate:deleteImageButton}}</button>` : ''}
+            ${insert ? html`<button type="button" onclick=${e => insert(e, i)}>{{translate:insertImageButton}}</button>` : ''}
           </div>
           ${
             showUsed
             ? [
               html`<details>
-                <summary class=b>Used in ${i.pgs.length} pages</summary>
+                <summary class=b>{{translate:imageUsedIn}}</summary>
                 <ul>
                   ${ i.pgs.map(pg => html`<li><a href="?page=${pg.slug}">${pg.name}</a></li>`) }
                 </ul>
@@ -67,12 +67,12 @@ export const gallery = (state, emit, options = {}) => {
   }
 
   function editAlt(i) {
-    state.p.img[i.id].alt = prompt('Alt text:', i.alt) ?? i.alt;
+    state.p.img[i.id].alt = prompt('{{translate:imageAltTextPrompt}}', i.alt) ?? i.alt;
     emit(events.CHECK_CHANGED);
   }
 
   function deleteImage(i) {
-    if (!confirm('Permanently delete image from all pages in wiki?')) return false;
+    if (!confirm('{{translate:deleteImagePrompt}}')) return false;
     delete state.p.img[i.id];
     if (i.pgs.length > 0) {
       state.p.pages = state.p.pages.map(pg => {
@@ -89,7 +89,7 @@ export const gallery = (state, emit, options = {}) => {
 export const modal = (state, insert) => {
   return html`<dialog id=g>
     <form class=fr method=dialog>
-      <button>Close</button>
+      <button>{{translate:closeButton}}</button>
     </form>
     ${ gallery(state, () => {}, { insert: (e, i) => FW.img.put(e, i, insert) }) }
   </dialog>`;

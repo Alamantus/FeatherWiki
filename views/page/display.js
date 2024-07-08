@@ -35,17 +35,17 @@ export const pageDisplay = (page) => {
   return [
     !page?.e && page?.tags?.length
       ? html`<aside class="db r">
-        <b class=c>Tagged:</b>
+        <b class=c>{{translate:tagged}}</b>
         <dd class=c>
           ${page.tags.replace(/,/g, ', ')}
         </dd>
       </aside>`
       : '',
     html`<article class=uc>
-      ${ c ? html.raw(c) : 'No Page Content' }
+      ${ c ? html.raw(c) : '{{translate:noPageContent}}' }
     </article>`,
     children.length > 0 ? html`<footer>
-      <h2>Sub Pages</h2>
+      <h2>{{translate:subPages}}</h2>
       <ul>
         ${children.map(c => FW.getChildList(c, true))}
       </ul>

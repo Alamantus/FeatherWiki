@@ -36,17 +36,19 @@ export const globalView = (state, emit) => {
   }
 
   let saveButton = [
-    changed ? html`<div>Wiki has changed!</div>` : '',
+    changed ? html`<div>{{translate:wikiHasChanged}}</div>` : '',
   ];
-  const saveTitle = 'Download wiki in its current state';
   if (state.canPut) {
+    const serverUrl = location.origin + root;
     saveButton.push(html`<div>
-      <button class=${changed ? 'chg' : ''} title="Save wiki to ${location.origin}${root}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>Save Wiki to Server</button>
+      <button class=${changed ? 'chg' : ''} title="{{translate: saveToServerHelpText}}" onclick=${() => emit(events.PUT_SAVE_WIKI)}>
+        {{translate:saveToServerButton}}
+      </button>
     </div>`);
   }
   saveButton.push(html`<div>
-    <button class=${!state.canPut && changed ? 'chg' : ''} title="Download wiki in its current state" onclick=${() => emit(events.SAVE_WIKI)}>
-      Save Wiki${state.canPut ? ' Locally' : ''}
+    <button class=${!state.canPut && changed ? 'chg' : ''} title="{{translate: saveWikiHelpText}}" onclick=${() => emit(events.SAVE_WIKI)}>
+      ${state.canPut ? '{{translate:saveWikiLocallyButton}}' : '{{translate:saveWikiButton}}'}
     </button>
   </div>`);
 
@@ -56,43 +58,43 @@ export const globalView = (state, emit) => {
         <span class=db><a href=? class=t>${p.name}</a></span>
         ${ p.desc ? html`<p class=pb>${p.desc}</p>` : ''}
         ${ showEditFields ? saveButton : '' }
-        <button class=sbt onclick=${() => toggleSidebar()}>${sb ? 'Hide' : 'Show'} Menu</button>
+        <button class=sbt onclick=${() => toggleSidebar()}>${sb ? '{{translate:hideMenuButton}}' : '{{translate:showMenuButton}}'}</button>
         <nav class=${!sb ? 'n' : ''}>
           ${
             showEditFields
             ? [
-              html`<p><a href="?page=s">Wiki Settings</a></p>`,
+              html`<p><a href="?page=s">{{translate:wikiSettings}}</a></p>`,
               html`<details class=pb ontoggle=${() => document.getElementById('np').focus()}>
-                <summary class=np>New Page</summary>
+                <summary class=np>{{translate:newPageButton}}</summary>
                 <form onsubmit=${createNewPage}>
-                  <label class=sr for=np>New Page Title</label>
-                  <input id=np placeholder="New Page Title" autocomplete=off>
-                  <button type=submit>Create</button>
+                  <label class=sr for=np>{{translate: newPageTitleLabel}}</label>
+                  <input id=np placeholder="{{translate: newPageTitleLabel}}" autocomplete=off>
+                  <button type=submit>{{translate:createNewPageButton}}</button>
                 </form>
               </details>`
             ] : ''
           }
           <div class=tabs>
-            <button class=${sbTab === 'Pages' && 'a'} onclick=${changeTab}>Pages</button>
-            ${t.length > 0 ? html`<button class=${sbTab === 'Tags' && 'a'} onclick=${changeTab}>Tags</button>` : ''}
-            <button class=${sbTab === 'Recent' && 'a'} onclick=${changeTab}>Recent</button>
+            <button class=${sbTab === '{{translate:pagesTab}}' && 'a'} onclick=${changeTab}>{{translate:pagesTab}}</button>
+            ${t.length > 0 ? html`<button class=${sbTab === '{{translate:tagsTab}}' && 'a'} onclick=${changeTab}>{{translate:tagsTab}}</button>` : ''}
+            <button class=${sbTab === '{{translate:recentTab}}' && 'a'} onclick=${changeTab}>{{translate:recentTab}}</button>
           </div>
           ${
-            sbTab === 'Pages'
+            sbTab === '{{translate:pagesTab}}'
             ? html`<ul>
               ${parents.map(pp => FW.getChildList(pp, true))}
-              <li><a href="?page=a">All Pages</a></li>
-              ${FW.missing().length > 0 ? html`<li><a href="?page=m">Missing Pages</a></li>` : ''}
+              <li><a href="?page=a">{{translate:allPages}}</a></li>
+              ${FW.missing().length > 0 ? html`<li><a href="?page=m">{{translate:missingPages}}</a></li>` : ''}
             </ul>` : ''
           }
           ${
-            sbTab === 'Tags'
+            sbTab === '{{translate:tagsTab}}'
             ? html`<ul>
               ${t.map(tag => html`<li><a href="?tag=${tag}">${tag}</a></li>`)}
             </ul>` : ''
           }
           ${
-            sbTab === 'Recent'
+            sbTab === '{{translate:recentTab}}'
             ? html`<ul style="padding:0">
               ${recents.map(pp => html`<li>
                 <a href="?page=${pp.slug}">${pp.name}</a>
@@ -105,7 +107,7 @@ export const globalView = (state, emit) => {
       <section>${ pageToRender }</section>
     </main>
     <footer>
-      <span class=fr>Powered by <a href="{{package.json:homepage}}" title="Version: {{package.json:version}}" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
+      <span class=fr>{{translate:poweredBy}} <a href="{{package.json:homepage}}" title="{{translate:version}}: {{package.json:version}} ({{package.json:nickname}})" target="_blank" rel="noopener noreferrer">{{package.json:title}}</a></span>
     </footer>
     <div class=notis>
       ${Object.values(notis)}
@@ -115,7 +117,7 @@ export const globalView = (state, emit) => {
   function createNewPage(e) {
     e.preventDefault();
     const title = e.currentTarget.np.value.trim();
-    if (title.length < 2) return alert('Enter more than 1 character to create a new page.');
+    if (title.length < 2) return alert('{{translate:pageTitleLengthError}}');
     emit(events.CREATE_PAGE, title.trim());
   }
 

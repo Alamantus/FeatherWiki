@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{localeName}}">
 <!--
 This file is part of Feather Wiki.
 
@@ -13,14 +13,14 @@ You should have received a copy of the GNU Affero General Public License along w
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{package.json:title}}</title>
-  <meta name="description" content="{{package.json:description}}" />
-  <meta name="application-name" content="{{package.json:title}}" />
+  <meta name="description" content="{{package.json: description}}" />
+  <meta name="application-name" content="{{package.json: title}}" />
   <meta name="version" content="{{package.json:version}}" />
   <style id="s">{{cssOutput}}</style>
   <script id="p" type="application/json">{}</script>
   <script id="a">{{jsOutput}}</script>
 </head>
 <body>
-  <a href="https://src.feather.wiki/#versions">JavaScript</a> is required
+  {{translate:javascriptRequired}}
 </body>
 </html>

@@ -14,7 +14,7 @@ export default function (file, callback = () => {}) {
     const file = event.target.result;
     const pString = matchHtml(file, 'script', 'p type=application/json');
     // validate that wiki data exists and is probably JSON
-    if (!pString.length || pString[0] !== '{') return alert('Could not find {{package.json:title}} data.');
+    if (!pString.length || pString[0] !== '{') return alert('{{translate:couldNotExtractMessage}}');
     const pData = FW.json.decompress(JSON.parse(pString));
     pData.img = await migrateImg(pData.img);
     callback([

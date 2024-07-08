@@ -11,10 +11,10 @@ export const missingView = (s, e) => {
   const missing = FW.missing();
   return [
     html`<header>
-      <h1>Missing Pages</h1>
+      <h1>{{translate:missingPages}}</h1>
     </header>`,
     html`<article>
-      <p>These referenced page${missing.length !== 1 ? 's' : ''} don't exist:</p>
+      <p>{{translate:referencedButNotCreated}}</p>
       <ul>
         ${
           missing.map(el => html`<li>${el}</li>`)
