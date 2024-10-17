@@ -18,6 +18,10 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
 }
 
+// Get the package.json file so data like the version can be used.
+const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
+const packageJson = JSON.parse(packageJsonFile);
+
 // Minify the CSS to insert into the HTML
 const cssResult = esbuild.buildSync({
   entryPoints: ['index.css'],
@@ -28,7 +32,7 @@ const cssResult = esbuild.buildSync({
 }).outputFiles[0];
 // Output the CSS as an optional download
 const cssOutput = new TextDecoder().decode(cssResult.contents);
-const cssPath = path.resolve(outputDir, `FeatherWiki.css`);
+const cssPath = path.resolve(outputDir, `FeatherWiki-plumage_${packageJson.nickname}.css`);
 fs.writeFileSync(cssPath, cssOutput);
 const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
 console.info(cssPath, outputCssKb);
@@ -61,10 +65,6 @@ function localize (localeFileName, string) {
 
   return string;
 }
-
-// Get the package.json file so data like the version can be used.
-const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
-const packageJson = JSON.parse(packageJsonFile);
 
 function injectVariables(content) {
   const matches = content.match(/(?<={{)package\.json:.+?(?=}})/g);
@@ -175,7 +175,7 @@ function build(localeFileName) {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsFilename = localeName === 'en-US' ? 'FeatherWiki.js' : `FeatherWiki_${localeName}.js`;
+        const jsFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
         const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
@@ -193,7 +193,7 @@ function build(localeFileName) {
     html = htmlParts[0] + cssOutput + htmlParts[1];
     html = localize(localeFileName, html);
     html = injectVariables(html);
-    const filename = localeName === 'en-US' ? 'FeatherWiki.html' : `FeatherWiki_${localeName}.html`;
+    const filename = `FeatherWiki_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
     const filePath = path.resolve(outputDir, filename);
     const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
