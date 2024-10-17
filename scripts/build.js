@@ -89,7 +89,7 @@ function injectVariables(content) {
   return result;
 }
 
-const htmlMinifyOptions = {
+const minifyOptions = {
   collapseWhitespace: true,
   conservativeCollapse: true,
   collapseInlineTagWhitespace: true,
@@ -123,37 +123,42 @@ function build(localeFileName) {
             let contents = await fs.promises.readFile(fileName, 'utf8');
 
             try {
-              const minified = minifyHTMLLiterals(contents, {
-                fileName,
-                htmlMinifyOptions,
-                shouldMinify(template) {
-                  return (
-                    defaultShouldMinify(template) ||
-                    template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
-                  );
-                }
-              });
-
-              if (minified) {
-                contents = minified.code;
-              }
-            } catch (e) {
-              return { errors: [e] };
-            }
-
-            try {
               contents = localize(localeFileName, contents);
             } catch (e) {
+              console.error(e);
               return { errors: [e] };
             }
 
             try {
               contents = injectVariables(contents);
             } catch (e) {
+              console.error(e);
               return { errors: [e] };
             }
 
             contents = contents.replace(/(let|const)\s/g, 'var ');
+
+            if (/\/(views|helpers)\/[^\.]+\.js$/.test(args.path)) {
+              try {
+                const minified = minifyHTMLLiterals(contents, {
+                  fileName,
+                  minifyOptions,
+                  shouldMinify(template) {
+                    return (
+                      defaultShouldMinify(template) ||
+                      template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
+                    );
+                  }
+                });
+
+                if (minified) {
+                  contents = minified.code;
+                }
+              } catch (e) {
+                console.error(e);
+                return { errors: [e] };
+              }
+            }
 
             return { contents };
           });
@@ -190,7 +195,7 @@ function build(localeFileName) {
     html = injectVariables(html);
     const filename = localeName === 'en-US' ? 'FeatherWiki.html' : `FeatherWiki_${localeName}.html`;
     const filePath = path.resolve(outputDir, filename);
-    const outHtml = minify(html, htmlMinifyOptions);
+    const outHtml = minify(html, minifyOptions);
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
