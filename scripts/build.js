@@ -13,14 +13,19 @@ import esbuild from 'esbuild';
 import { minifyHTMLLiterals, defaultShouldMinify } from 'minify-html-literals';
 import { minify } from 'html-minifier';
 
-const outputDir = path.resolve(process.cwd(), 'builds');
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir);
-}
-
 // Get the package.json file so data like the version can be used.
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
+
+const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
+const buildDir = path.resolve(process.cwd(), `builds`);
+if (!fs.existsSync(buildDir)) {
+  fs.mkdirSync(buildDir);
+}
+const outputDir = path.resolve(buildDir, `v${version}`);
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir);
+}
 
 // Minify the CSS to insert into the HTML
 const cssResult = esbuild.buildSync({
