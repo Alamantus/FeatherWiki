@@ -143,26 +143,24 @@ function build(localeFileName) {
 
             contents = contents.replace(/(let|const)\s/g, 'var ');
 
-            if (/\/(views|helpers)\/[^\.]+\.js$/.test(args.path)) {
-              try {
-                const minified = minifyHTMLLiterals(contents, {
-                  fileName,
-                  minifyOptions,
-                  shouldMinify(template) {
-                    return (
-                      defaultShouldMinify(template) ||
-                      template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
-                    );
-                  }
-                });
-
-                if (minified) {
-                  contents = minified.code;
+            try {
+              const minified = minifyHTMLLiterals(contents, {
+                fileName,
+                minifyOptions,
+                shouldMinify(template) {
+                  return (
+                    defaultShouldMinify(template) ||
+                    template.parts.some(part => part.text.includes('<!DOCTYPE html>'))
+                  );
                 }
-              } catch (e) {
-                console.error(e);
-                return { errors: [e] };
+              });
+
+              if (minified) {
+                contents = minified.code;
               }
+            } catch (e) {
+              console.error(e);
+              return { errors: [e] };
             }
 
             return { contents };
