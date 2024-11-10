@@ -213,7 +213,7 @@ function build(localeFileName) {
 
 // Build all locales except for the en-US locale.
 const locales = fs.readdirSync(localesFilePath, { encoding: 'utf-8' });
-locales.filter(locale => !locale.startsWith('en-US'))
+locales.filter(locale => !locale.startsWith('en-US') && locale.endsWith('.json'))
   .forEach(async (localeFileName) => {
     await build(localeFileName);
   });
