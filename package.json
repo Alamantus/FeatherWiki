@@ -15,9 +15,6 @@
     "test": "npm run build && node scripts/test-build.js"
   },
   "type": "module",
-  "dependencies": {
-    "nanohtml": "^1.10.0"
-  },
   "devDependencies": {
     "esbuild": "^0.20.2",
     "minify-html-literals": "^1.3.5"

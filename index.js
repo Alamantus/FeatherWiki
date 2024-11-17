@@ -20,8 +20,7 @@ import * as inject from './helpers/injection';
 import * as json from './helpers/jsonCompress';
 
 // Populate window with dependencies and helpers before starting app
-window.html = require('nanohtml');
-html.raw = require('nanohtml/raw');
+window.html = require('./nanohtml').default;
 window.ed = require('./helpers/ed').default;
 window.md = require('./helpers/md').default;
 
