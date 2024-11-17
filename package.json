@@ -16,7 +16,6 @@
   },
   "type": "module",
   "dependencies": {
-    "nanohref": "^3.1.0",
     "nanohtml": "^1.10.0"
   },
   "devDependencies": {

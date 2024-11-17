@@ -14,7 +14,7 @@
  */
 
 import nanobus from './nanobus' // Handles the emitter
-var nanohref = require('nanohref') // Prevents browser navigation within wiki
+import nanohref from './nanohref' // Prevents browser navigation within wiki
 import nanomorph from './nanomorph' // Efficiently diffs DOM elements for render
 import nanoraf from './nanoraf' // Prevents too many renders
 
