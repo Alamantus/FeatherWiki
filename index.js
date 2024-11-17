@@ -7,7 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-import Choo from './nanochoo';
+import Choo from './featherchoo';
 import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
