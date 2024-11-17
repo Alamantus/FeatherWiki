@@ -13,7 +13,7 @@
  * @licence MIT
  */
 
-var nanobus = require('nanobus') // Handles the emitter
+import nanobus from './nanobus' // Handles the emitter
 var nanohref = require('nanohref') // Prevents browser navigation within wiki
 var nanomorph = require('nanomorph') // Efficiently diffs DOM elements for render
 var nanoraf = require('nanoraf') // Prevents too many renders

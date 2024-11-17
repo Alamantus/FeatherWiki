@@ -16,7 +16,6 @@
   },
   "type": "module",
   "dependencies": {
-    "nanobus": "^4.5.0",
     "nanohref": "^3.1.0",
     "nanohtml": "^1.10.0",
     "nanomorph": "^5.4.3",
