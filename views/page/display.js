@@ -7,30 +7,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const parseContent = (page) => {
-  const { img, pg, out, hLink } = FW.inject;
-  let nowiki = [];
-  let nIdx = 0; // nowiki index
-  // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
-  let c = (page.content ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
-    nowiki[nIdx] = content;
-    return `{nowiki-${nIdx++}}`;
-  });
-  c = pg(FW.img.fix(c));
-  c = page.editor === 'md' ? md(c ?? '') : c;
-  c = img(
-    hLink(
-      out(c)
-    )
-  );
-  for (let i = 0; i < nIdx; i++) {
-    c = c.replace(`{nowiki-${i}}`, nowiki[i]);
-  }
-  return c;
-}
-
 export const pageDisplay = (page) => {
-  const c = parseContent(page);
+  const c = FW.parseContent(page?.content, page.editor === 'md');
   const children = FW.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length

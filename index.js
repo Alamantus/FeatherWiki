@@ -47,7 +47,27 @@ FW.upload = (mime, cb) => {
   input.click();
   document.body.removeChild(input);
 };
-
+FW.parseContent = (pageContent, isMd = false) => {
+  const { img, pg, out, hLink } = FW.inject;
+  let nowiki = [];
+  let nIdx = 0; // nowiki index
+  // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
+  let c = (pageContent ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
+    nowiki[nIdx] = content;
+    return `{nowiki-${nIdx++}}`;
+  });
+  c = pg(FW.img.fix(c));
+  c = isMd ? md(c ?? '') : c;
+  c = img(
+    hLink(
+      out(c)
+    )
+  );
+  for (let i = 0; i < nIdx; i++) {
+    c = c.replace(`{nowiki-${i}}`, nowiki[i]);
+  }
+  return c;
+}
 FW.find = (s, a = 'slug') => FW.state.p.pages.find(p => p[a] === s);
 FW.getPage = () => {
   const { query, p } = FW.state;
