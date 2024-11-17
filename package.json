@@ -17,9 +17,7 @@
   "type": "module",
   "dependencies": {
     "nanohref": "^3.1.0",
-    "nanohtml": "^1.10.0",
-    "nanomorph": "^5.4.3",
-    "nanoraf": "^3.1.0"
+    "nanohtml": "^1.10.0"
   },
   "devDependencies": {
     "esbuild": "^0.20.2",
