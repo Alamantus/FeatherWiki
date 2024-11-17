@@ -7,13 +7,39 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+ :root {
+  --font: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --size: 12pt;
+  --color: #000;
+  --bg: #fff;
+  --sb-bg: #ddd;
+  --link: #65A;
+  --btn-bg: #65A;
+  --btn-color: #fff;
+  --btn-padding: 5px 12px;
+  --btn-border: 0;
+  --btn-radius: 1rem;
+  --btn-warn: red;
+  --tab-active: #87C;
+  --el-margin: .5rem 0;
+  --input-pad: .5rem;
+  --h-margin: .5rem 0;
+  --h1: 2rem;
+  --h2: 1.8rem;
+  --h3: 1.6rem;
+  --h4: 1.4rem;
+  --h5: 1.2rem;
+  --h6: 1rem;
+  --focus-outline: 2px solid #000;
+ }
+ 
  html {
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-family: var(--font);
 }
 html, button, input, select, option, textarea {
-  font-size: 12pt;
-  background: #fff;
-  color: #000;
+  font-size: var(--size);
+  background: var(--bg);
+  color: var(--color);
 }
 html, body {
   margin: 0;
@@ -21,7 +47,7 @@ html, body {
 }
 
 :focus {
-  outline: 2px solid #000;
+  outline: var(--focus-outline);
 }
 
 * {
@@ -31,7 +57,7 @@ html, body {
 }
 
 * + *, p, li > ul, li > ol, .ed-uc > *:not(:first-child) { /* Consolidating .ed-uc here to reduce repetition */
-  margin: .5rem 0;
+  margin: var(--el-margin);
 }
 
 main > * { padding: 1rem 1.5rem 2rem; }
@@ -41,54 +67,54 @@ main > * { padding: 1rem 1.5rem 2rem; }
 }
 
 input, select, textarea {
-  padding: .5rem;
+  padding: var(--input-pad);
   tab-size: 4;
 }
 
 /* Heading & title */
 h1, h2, h3, h4, h5, h6, .t {
   font-weight: bold;
-  margin: .5rem 0;
+  margin: var(--h-margin);
 }
 h1 {
-  font-size: 1.8rem;
+  font-size: var(--h1);
 }
 h2 {
-  font-size: 1.65rem;
+  font-size: var(--h2);
 }
 h3, .t {
-  font-size: 1.5rem;
+  font-size: var(--h3);
 }
 h4 {
-  font-size: 1.35rem;
+  font-size: var(--h4);
 }
 h5 {
-  font-size: 1.2rem;
+  font-size: var(--h5);
 }
 h6 {
-  font-size: 1.05rem;
+  font-size: var(--h6);
 }
 
 .np { max-width: 8rem; }
 button, summary:is(.np, .b) {
   text-align: center;
-  color: #fff;
-  padding: 5px 12px;
-  background-color: #65A;
-  border: 0;
-  border-radius: 1rem;
+  color: var(--btn-color);
+  padding: var(--btn-padding);
+  background-color: var(--btn-bg);
+  border: var(--btn-border);
+  border-radius: var(--btn-radius);
   z-index: 2;
 }
 a, button, summary, .noti { cursor: pointer; }
 a {
   text-decoration: none;
-  color: #65A;
+  color: var(--link);
 }
 :is(a, button):is(:hover, :active, :visited) {
   opacity: .8;
 }
 a.e {
-  color: red;
+  color: var(--btn-warn);
 }
 a.l { visibility: hidden; }
 :is(h1, h2, h3, h4, h5, h6):hover a.l, a.l:is(:focus, :active) {
@@ -128,19 +154,19 @@ blockquote {
 
 abbr[title] { cursor: help; }
 
-.sb { background: #ddd; }
+.sb { background: var(--sb-bg); }
 /* default width for all widths is 100% for small screens—no columns */
 .w1, .w34, .w12, .w14, .r, main { width: 100%; }
 /* tabs */
 .tabs > * {
-  border: 2px solid #65A;
+  border: 2px solid var(--btn-bg);
   border-bottom: 0;
   border-radius: .5rem .5rem 0 0;
   margin: 0;
 }
 .a {
-  background: #87C;
-  color: #fff;
+  background: var(--tab-active);
+  color: var(--btn-color);
 }
 @media(min-width:50rem) {
   /* row */
@@ -194,7 +220,7 @@ abbr[title] { cursor: help; }
 .tr:not(.ml) { text-align: right; }
 .fr:not(.ml) { float: right; }
 .chg, .del {
-  background: red;
+  background: var(--btn-warn);
 }
 .del {
   opacity: .8;
@@ -216,7 +242,7 @@ abbr[title] { cursor: help; }
 }
 .notis {
   position: fixed;
-  inset: 1vw 40vw auto;
+  inset: 1vw 35vw auto;
 }
 .noti {
   padding: 1em;
