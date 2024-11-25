@@ -10,6 +10,7 @@
 // This extension finds any content between double braces {{like_this}} and looks for a page with a matching
 // slug. If found, the braced content will be replaced with the content of the target page within an `article`
 // tag with a class of `transclusion` so it can be targeted and styled.
+// Add `|raw` {{like_this|raw}} to exclude the heading and link to the transcluded page & only show content.
 FW.ready(() => {
   const { state, emitter } = FW;
   state.tDepth = 0;
@@ -27,24 +28,22 @@ FW.ready(() => {
   function injectTransclusion() {
     if (state.pg) {
       const uc = document.querySelector('.uc');
-      const matches = uc?.innerHTML?.match(/{{.+?(?=}})/g) ?? [];
+      const matches = uc?.innerHTML?.match(/{{[^}]+}}/g) ?? [];
       matches.forEach(l => {
-        const slug = l.replace('{{', '').trim();
+        let includeHeading = true;
+        let slug = l.replace(/[}{]/g, '').trim();
+        if (/\|\s?raw/.test(slug)) {
+          includeHeading = false;
+          slug = slug.replace(/\|\s?raw/, '').trim();
+        }
         const page = state.p.pages.find(pg => pg.slug === slug);
-        console.log(slug, page);
         if (!page) return;
-        const { img, pg, out, hLink } = FW.inject;
-        const pageContent = img(
-          pg(
-            hLink(
-              out(`<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${page.editor === 'md' ? md(page.content) : page.content}`)
-            ),
-            state
-          ),
-          state
-        );
+        const parsed = parseContent(page.content, page.editor === 'md');
+        const pageContent = includeHeading
+          ? `<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${parsed}`
+          : parsed;
         uc.innerHTML = uc.innerHTML.replace(
-          `${l}}}`,
+          l,
           `<article class="transclusion">${pageContent}</article>`
         );
       });
@@ -55,5 +54,31 @@ FW.ready(() => {
         injectTransclusion();
       }
     }
+  }
+
+  function parseContent(pageContent, isMd = false) {
+    if (typeof FW.parseContent !== 'undefined') {
+      return FW.parseContent(pageContent, isMd);
+    }
+
+    const { img, pg, out, hLink } = FW.inject;
+    let nowiki = [];
+    let nIdx = 0; // nowiki index
+    // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
+    let c = (pageContent ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
+      nowiki[nIdx] = content;
+      return `{nowiki-${nIdx++}}`;
+    });
+    c = pg(FW.img.fix(c));
+    c = isMd ? md(c ?? '') : c;
+    c = img(
+      hLink(
+        out(c)
+      )
+    );
+    for (let i = 0; i < nIdx; i++) {
+      c = c.replace(`{nowiki-${i}}`, nowiki[i]);
+    }
+    return c;
   }
 });
