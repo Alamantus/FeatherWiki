@@ -18,7 +18,7 @@ FW.ready(() => {
         emitter.emit(events.NOTIFY, 'Nem lehet automatikusan menteni', 5000, 'background:#e88');
         return;
       }
-      if (typeof noti !== 'string' || noti === 'Settings updated') {
+      if (typeof noti !== 'string' || noti === 'Settings updated' || noti === 'Beállítások frissítve') {
         emitter.emit(events.PUT_SAVE_WIKI);
       }
     });
