@@ -7,10 +7,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-// This extension finds any content between double braces {{like_this}} and looks for a page with a matching
-// slug. If found, the braced content will be replaced with the content of the target page within an `article`
-// tag with a class of `transclusion` so it can be targeted and styled.
-// Add `|raw` {{like_this|raw}} to exclude the heading and link to the transcluded page & only show content.
+// Ez a kiterjesztés megkeresi a kettős kapcsos zárójelek közötti tartalmat {{mint_ez}}, és keres egy olyan oldalt, amelyiknek a slug definíciója azonos.
+// Ha van találat, akkor a kapcsos zárójeles tartalom helyére a céloldal tartalma kerül egy `article` elemben.
+// Osztálya `transclusion` lesz, így a behelyettesített tartalom később célzottan megtalálható és stilizálható.
+// A `|raw` kóddal {{mint_ez|raw}} a címsor és az oldalra ugró hivatkozás kikapcsolható, így csak az oldal tartalma lesz látható .
 FW.ready(() => {
   const { state, emitter } = FW;
   state.tDepth = 0;
@@ -40,7 +40,7 @@ FW.ready(() => {
         if (!page) return;
         const parsed = parseContent(page.content, page.editor === 'md');
         const pageContent = includeHeading
-          ? `<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Go to Page</a></h1>${parsed}`
+          ? `<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Ugrás az Oldalra</a></h1>${parsed}`
           : parsed;
         uc.innerHTML = uc.innerHTML.replace(
           l,
