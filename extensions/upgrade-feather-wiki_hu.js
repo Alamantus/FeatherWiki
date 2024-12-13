@@ -64,7 +64,9 @@ FW.ready(() => {
   }
 
   async function getUpgradedHtml() {
-    const upgrade = await fetch('https://feather.wiki/builds/FeatherWiki.html').then(r => r.text()).then(h => {
+    const lang = document.documentElement.lang ?? 'en-US';
+    const buildName = `FeatherWiki${lang !== 'en-US' ? '_' + lang : ''}.html`;
+    const upgrade = await fetch(`https://feather.wiki/builds/${buildName}`).then(r => r.text()).then(h => {
 	  	const { c, p, j } = state;
 	    const static = FW.gen(state).replace(new RegExp(`.*<body> (.*?) <${j ? 'script' : '/body'}.*`, 's'), '$1');
       // Try to match the most specific pieces of HTML possible
@@ -81,7 +83,10 @@ FW.ready(() => {
 	      /<body> <a href="?https:\/\/src.feather.wiki\/#versions"?>JavaScript<\/a> is required /,
 	      `<body> ${static} ${j ? `<script id=j>${j}<\/script> ` : ''}`
 	    );
-	  });
+	  }).catch(e => {
+      console.error(e);
+      return null;
+    });
     if (!upgrade) {
       emitter.emit(events.NOTIFY, `A frissítés sikertelen! Nem lehet ellenőrizni a legfrissebb verziót`, 9999, 'background:#e88');
       return null;
