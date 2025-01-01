@@ -54,7 +54,7 @@ async function fetchUpdatePosts() {
         'Authorization': 'Bearer bRGz9dJymhifUzxxpOPoRc0KPmSAE_bIrsLmykXAi_8',
       },
     }).then(r => r.json());
-    state.updatePosts = json?.filter(p => p.in_reply_to_id === null).slice(0, 5) ?? [];
+    state.updatePosts = json?.filter(p => p.in_reply_to_id === null && p.visibility === 'public').slice(0, 5) ?? [];
     if (state.pg?.id === state.p.home) emitter.emit('render');
   } catch (e) {
     console.error(e);
