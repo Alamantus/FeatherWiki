@@ -26,7 +26,8 @@ export const pageView = (state, emit, page) => {
     parent = getParent(parent);
   }
   
-  const crFormat = FW.date(new Date(cd));
+  const created = new Date(cd);
+  const crFormat = FW.date(created);
   const modified = new Date(md ?? cd); // If no modified date, use created
   const mdFormat = FW.date(modified);
   return [
@@ -37,15 +38,22 @@ export const pageView = (state, emit, page) => {
         ${
           page.e
           ? ''
-          : html`<div class="c w14 tr">
-            <time datetime=${modified.toISOString()}>
-              <abbr title="{{translate: pageCreated}} ${crFormat}">${mdFormat}</abbr>
-            </time>
-          ${
-            !p.published
-            ? html`<button onclick=${() => emit(events.START_EDIT)}>{{translate:pageEditButton}}</button>`
-            : ''
-          }
+          : html`<div class="c tr" style="width:300px">
+            <div class="tr ib at">
+              <time datetime=${modified.toISOString()}>${mdFormat}</time>
+              ${
+                crFormat !== mdFormat
+                ? html`<span class="db h">
+                  {{translate: pageCreated}} <time datetime=${created.toISOString()}>${crFormat}</time>
+                </span>`
+                : ''
+              }
+            </div>
+            ${
+              !p.published
+              ? html`<button onclick=${() => emit(events.START_EDIT)}>{{translate:pageEditButton}}</button>`
+              : ''
+            }
           </div>`
         }
       </div>
