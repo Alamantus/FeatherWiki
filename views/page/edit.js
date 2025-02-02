@@ -126,7 +126,11 @@ export const pageEdit = (state, emit, page) => {
     const pg = { ...page };
     pg.name = n;
     pg.slug = FW.slug(slug);
-    pg.content = FW.img.fix(FW.img.abbr(state.edits.content), true);
+    // When pasting or moving text in the contenteditable, it inserts a style attribute with default styles,
+    // which is both unnecessary and a lot of extra text to store, so this aims to remove it when found.
+    const c = state.edits.content.replace(/ ?[-a-z]+: ?(var\(--(color|font|size)\))?;/g, '')
+      .replace(/ ?style=\"?\"?/g, ''); // Then any empty `style` attributes left behind
+    pg.content = FW.img.fix(FW.img.abbr(c), true);
     pg.tags = getTagsArray().join(',');
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
