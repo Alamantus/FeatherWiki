@@ -12,12 +12,14 @@ export const pageDisplay = (page) => {
   const children = FW.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length
-      ? html`<aside class="db r">
-        <b class=c>{{translate:tagged}}</b>
+      ? html`<dl class="db r">
+        <dt class=c>{{translate:tagged}}</dt>
         <dd class=c>
-          ${page.tags.replace(/,/g, ', ')}
+          ${html.raw( //Use html.raw() here to join with commas more easily, but convert special chars to HTML by extracting from innerHTML
+            page.tags.split(',').map((t) => `<a href="?tag=${encodeURIComponent(t)}">${html`<p>${t}</p>`.innerHTML}</a>`).join(', ')
+          )}
         </dd>
-      </aside>`
+      </dl>`
       : '',
     html`<article class=uc>
       ${ c ? html.raw(c) : '{{translate:noPageContent}}' }

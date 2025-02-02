@@ -90,7 +90,7 @@ export const globalView = (state, emit) => {
           ${
             sbTab === '{{translate:tagsTab}}'
             ? html`<ul>
-              ${t.map(tag => html`<li><a href="?tag=${tag}">${tag}</a></li>`)}
+              ${t.map(tag => html`<li><a href="?tag=${encodeURIComponent(tag)}">${tag}</a></li>`)}
             </ul>` : ''
           }
           ${
