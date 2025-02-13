@@ -31,6 +31,6 @@ export const editor = (state, emit) => {
         ${src ? '{{translate:showEditor}}' : '{{translate:showHtml}}'}
       </button>
     </div>`,
-    modal(state, () => element.edUc?.img()),
+    modal(state, element.edUc?.ins),
   ];
 }
