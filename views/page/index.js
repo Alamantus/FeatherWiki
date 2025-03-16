@@ -38,7 +38,7 @@ export const pageView = (state, emit, page) => {
         ${
           page.e
           ? ''
-          : html`<div class="c tr" style="width:300px">
+          : html`<div class="c tr" style="margin-left:auto;width:300px">
             <div class="tr ib at">
               <time datetime=${modified.toISOString()}>${mdFormat}</time>
               ${
