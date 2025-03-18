@@ -47,14 +47,14 @@ const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
 const englishFile = fs.readFileSync(englishFilePath, 'utf-8');
 const english = JSON.parse(englishFile);
 
-function localize (localeFileName, string) {
+function localize(localeFileName, string) {
   let locale = english;
   if (localeFileName !== 'en-US.json') {
     const localeFilePath = path.resolve(localesFilePath, localeFileName);
     const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
     locale = JSON.parse(localeFile);
   }
-  
+
   const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   string = string.replace(/\{\{localeName\}\}/g, localeName);
 
@@ -204,6 +204,21 @@ function build(localeFileName) {
       if (err) throw err;
       console.info(filePath, outputKb);
     });
+
+    // For the "bare bones" html version
+    const bareFileName = path.relative(process.cwd(), 'index-bare.html');
+    let bareHtml = await fs.promises.readFile(bareFileName, 'utf8');
+    bareHtml = localize(localeFileName, bareHtml);
+    bareHtml = injectVariables(bareHtml);
+    const bareFilename = `FeatherWiki-bare_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
+    const bareFilePath = path.resolve(outputDir, bareFilename);
+    const bareOutHtml = minify(bareHtml, minifyOptions);
+    const bareOutputKb = (Uint8Array.from(Buffer.from(bareOutHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+    await fs.writeFile(bareFilePath, bareOutHtml, (err) => {
+      if (err) throw err;
+      console.info(bareFilePath, bareOutputKb);
+    });
+
     return { size: outputKb };
   }).catch((e) => {
     console.error(e);
