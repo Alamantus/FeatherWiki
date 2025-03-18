@@ -17,6 +17,11 @@ import { minify } from 'html-minifier';
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
 
+// Nicely formatted file name and size
+const fileAndSize = (fullPath, sizeString) => {
+  return path.relative(process.cwd(), fullPath).padEnd(60) + sizeString.padStart(16);
+}
+
 const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
 const buildDir = path.resolve(process.cwd(), `builds`);
 if (!fs.existsSync(buildDir)) {
@@ -40,7 +45,7 @@ const cssOutput = new TextDecoder().decode(cssResult.contents);
 const cssPath = path.resolve(outputDir, `FeatherWiki-plumage_${packageJson.nickname}.css`);
 fs.writeFileSync(cssPath, cssOutput);
 const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-console.info(cssPath, outputCssKb);
+console.info(fileAndSize(cssPath, outputCssKb));
 
 const localesFilePath = path.resolve(process.cwd(), 'locales');
 const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
@@ -182,7 +187,7 @@ function build(localeFileName) {
         const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-        console.info(jsOutPath, jsKb);
+        console.info(fileAndSize(jsOutPath, jsKb));
 
         // I can't do replace because of the regex stuff in here,
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need!
@@ -202,7 +207,7 @@ function build(localeFileName) {
     const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
-      console.info(filePath, outputKb);
+      console.info(fileAndSize(filePath, outputKb));
     });
 
     // For the "bare bones" html version
@@ -216,7 +221,7 @@ function build(localeFileName) {
     const bareOutputKb = (Uint8Array.from(Buffer.from(bareOutHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
     await fs.writeFile(bareFilePath, bareOutHtml, (err) => {
       if (err) throw err;
-      console.info(bareFilePath, bareOutputKb);
+      console.info(fileAndSize(bareFilePath, bareOutputKb));
     });
 
     return { size: outputKb };
