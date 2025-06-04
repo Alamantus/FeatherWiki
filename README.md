@@ -11,7 +11,7 @@ Feather Wiki will only run on browsers that support [ECMAScript 2015](https://ca
 <details>
 <summary>👨‍💻 Technical Talk: Supported Browsers</summary>
 
-According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es6/), the following browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
+According to [this ECMAScript compatibility table](https://compat-table.github.io/compat-table/es6/), the following browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
 
 - Chrome 86+
 - Edge 87+
