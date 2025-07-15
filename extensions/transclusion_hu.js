@@ -15,45 +15,51 @@ FW.ready(() => {
   const { state, emitter } = FW;
   state.tDepth = 0;
   state.tDepthMax = 20; // Maximum depth to check for transclusion
-  ['DOMContentLoaded', 'render'].forEach(ev => {
-    emitter.on(ev, () => {
-      state.tDepth = 0;
-      setTimeout(() => { // Adds a very small delay so it injects after render when elements exist in DOM
-        injectTransclusion();
-      }, 300);
-    });
-  });
-  emitter.emit('DOMContentLoaded');
 
-  function injectTransclusion() {
-    if (state.pg) {
-      const uc = document.querySelector('.uc');
-      const matches = uc?.innerHTML?.match(/{{[^}]+}}/g) ?? [];
-      matches.forEach(l => {
-        let includeHeading = true;
-        let slug = l.replace(/[}{]/g, '').trim();
-        if (/\|\s?raw/.test(slug)) {
-          includeHeading = false;
-          slug = slug.replace(/\|\s?raw/, '').trim();
-        }
-        const page = state.p.pages.find(pg => pg.slug === slug);
-        if (!page) return;
-        const parsed = parseContent(page.content, page.editor === 'md');
-        const pageContent = includeHeading
-          ? `<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Ugrás az Oldalra</a></h1>${parsed}`
-          : parsed;
-        uc.innerHTML = uc.innerHTML.replace(
-          l,
-          `<article class="transclusion">${pageContent}</article>`
-        );
-      });
-      if (matches.length > 0 && state.tDepth < state.tDepthMax) {
-        state.tDepth++;
-        // If transclusion is injected, run again to see if more is needed
-        // Only run it state.tDepthMax times to prevent potential infinite recursion
-        injectTransclusion();
-      }
+  emitter.on('render', () => {
+    const pg = FW.getPage();
+    if (!state.edit && pg && !pg.orig_content) {
+      state.tDepth = 0;
+      pg.orig_content = pg.content;
+      pg.content = transclude(pg.orig_content ?? '');
+      setTimeout(() => {
+        // Replace transcluded content with original content & remove extra key after render
+        pg.content = pg.orig_content;
+        delete pg.orig_content;
+      }, 500);
     }
+  });
+  if (FW.getPage()) {
+    emitter.emit('render');
+  }
+
+  function transclude(content) {
+    const matches = content.match(/{{[^}]+}}/g) ?? [];
+    matches.forEach(l => {
+      let includeHeading = true;
+      let slug = l.replace(/[}{]/g, '').trim();
+      if (/\|\s?raw/.test(slug)) {
+        includeHeading = false;
+        slug = slug.replace(/\|\s?raw/, '').trim();
+      }
+      const page = state.p.pages.find(pg => pg.slug === slug);
+      if (!page) return content;
+      const parsed = parseContent(page.content, page.editor === 'md');
+      const pageContent = includeHeading
+          ? `<h1 id=${page.slug}>${page.name} <a internal href="?page=${page.slug}" class="fr h">Ugrás az Oldalra</a></h1>${parsed}`
+        : parsed;
+      content = content.replace(
+        l,
+        `<article class="transclusion">${pageContent}</article>`
+      );
+    });
+    if (matches.length > 0 && state.tDepth < state.tDepthMax) {
+      state.tDepth++;
+      // If transclusion is injected, run again to see if more is needed
+      // Only run it state.tDepthMax times to prevent potential infinite recursion
+      return transclude(content);
+    }
+    return content;
   }
 
   function parseContent(pageContent, isMd = false) {
