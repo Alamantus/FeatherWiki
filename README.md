@@ -44,6 +44,8 @@ Feather Wiki's CSS and JavaScript files are available separately from the full H
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how you can help with the project. Details on adding non-English translations to Feather Wiki are included there.
 
+If you want to support the developer monetarily, you can send one-time donations via <https://buymeacoffee.com/robbieantenesse> or <https://ko-fi.com/robbieantenesse>, or you can use <https://liberapay.com/robbieantenesse> to set up recurring donations. This is absolutely not required, but it's greatly appreciated!
+
 ## Development
 
 Feather Wiki uses only a few JavaScript dependencies to function on the front end, but it requires more to develop.
