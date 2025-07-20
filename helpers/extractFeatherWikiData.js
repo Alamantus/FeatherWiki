@@ -12,7 +12,7 @@ export default function (file, callback = () => {}) {
   const reader = new FileReader();
   reader.onload = async event => {
     const file = event.target.result;
-    const pString = matchHtml(file, 'script', 'p type=application/json');
+    const pString = matchHtml(file, 'script', 'p"? type="?application/json');
     // validate that wiki data exists and is probably JSON
     if (!pString.length || pString[0] !== '{') return alert('{{translate:couldNotExtractMessage}}');
     const pData = FW.json.decompress(JSON.parse(pString));
@@ -33,9 +33,9 @@ export default function (file, callback = () => {}) {
 function matchHtml (source, element, id) {
   // The '\\s' in each regex start string makes sure it doesn't match *that* line but does match the HTML with a space before it.
   // Feather Wiki's HTML output has spaces between elements, which is important in this case because it helps us match the content.
-  const start = `\\s<${element} id=${id}>`; // Start of custom CSS regular expression.
+  const start = `\\s<${element} id="?${id}"?>`; // Start of custom CSS regular expression.
   const match = source.match(new RegExp(start + `.+?(?=</${element}>)`, 's'));
-  return ((match ?? []).length) ? match[0].replace(start.replace('\\s', ''), '').trim() : '';
+  return ((match ?? []).length) ? match[0].replace(new RegExp(start), '').trim() : '';
 }
 
 async function migrateImg (img) {
