@@ -7,14 +7,14 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-// This extension downloads a copy of the most recent version of the current Feather Wiki's build from https://feather.wiki, checks the version number,
-// and displays an "Upgrade to Feather Wiki version X.X.X" button on the Settings page below the current Feather Wiki version if the latest version
-// is newer than the current version. If using Warbler and server saving is available, clicking this button will save the upgraded file to the server,
-// overwriting the existing file. Otherwise, it will prompt for a download of the upgraded file.
-// Please only use this extension when checking for an upgrade, and please remove it when you're done!
+// Ez a kiterjesztés letölti az aktuális Feather Wiki legfrissebb verziójának másolatát a https://feather.wiki oldalról, ellenőrzi a verziószámot,
+// és megjeleníti a „A Feather Wiki frissítése a(z) X.X.X.X verzióra” gombot a Beállítások oldalon az aktuális Feather Wiki verzió alatt, ha a legújabb verzió
+// újabb, mint az aktuális verzió. Ha a Warblert használjuk, és a szerverre mentés elérhető, akkor erre a gombra kattintva a frissített fájl a szerverre kerül,
+// felülírva a meglévő fájlt. Ellenkező esetben a frissített fájl letöltése elindul.
+// Kérjük, csak akkor használja ezt a kiterjesztést, ha frissítést keres, és kérjük, távolítsa el, ha végzett!
 FW.ready(() => {
   const { state, emitter } = FW;
-  console.log('running upgrade-feather-wiki.js');
+  console.log('Az upgrade-feather-wiki.js futtatása');
   const { events } = state;
   const version = document.head.getElementsByTagName('meta').namedItem('version')?.content?.split('_');
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -33,7 +33,7 @@ FW.ready(() => {
     if (!showButton) return;
 
     const section = html`<p id="upgradeButtonSection" style="margin-top:20px;">
-      <button onclick=${() => saveUpgradedHtml()}>Upgrade to Feather Wiki version ${state.upgradeToVersion}</button>
+      <button onclick=${() => saveUpgradedHtml()}>Frissítés a Feather Wiki ${state.upgradeToVersion} verziójára</button>
     </p>`;
     document.querySelector('article.mw>div.tr').appendChild(section);
   }
@@ -88,15 +88,15 @@ FW.ready(() => {
       return null;
     });
     if (!upgrade) {
-      emitter.emit(events.NOTIFY, `Upgrade failed! Couldn't get new version of ${buildName}.`, 9999, 'background:#e88');
+      emitter.emit(events.NOTIFY, `A frissítés sikertelen! Nem lehet ellenőrizni a legfrissebb verziót`, 9999, 'background:#e88');
       return null;
     }
     return upgrade;
   }
 
   function saveUpgradedHtml() {
-    if (!state.upgradeHtml) return emitter.emit(events.NOTIFY, `Upgrade failed! Couldn't get new version.`, 9999, 'background:#e88');
-    if (state.canSave && !confirm('This attempts to insert the current wiki\'s data into the newest version & save over the file on the server.\n\nPlease save a copy of your wiki before continuing!\n\nContinue?')) return;
+    if (!state.upgradeHtml) return emitter.emit(events.NOTIFY, `A frissítés sikertelen! Nem lehet letölteni a legújabb verziót.`, 9999, 'background:#e88');
+    if (state.canSave && !confirm('Ez megpróbálja beilleszteni a jelenlegi wiki\ adatait a legújabb verzióba és felülírja a kiszolgálón található fájlt.\n\n\nKérjük, mentse el a wiki egy példányát, mielőtt folytatja!\n\n\nFolytatja?')) return;
     const { root } = state;
     if (state.canSave) {
       fetch(root, { method: 'PUT', body: state.upgradeHtml })
@@ -105,11 +105,11 @@ FW.ready(() => {
         )
         .then(result => {
           if (!result.ok) throw result.text ? result.text : `Status ${result.status}.`
-          alert('Upgraded. Page will now reload.');
+          alert('Frissítve. Az oldal újból betöltődik.');
           window.location.reload();
         })
         .catch(err => {
-          emitter.emit(events.NOTIFY, `Upgrade failed! ${err}`, 9999, 'background:#e88');
+          emitter.emit(events.NOTIFY, `A frissítés sikertelen! ${err}`, 9999, 'background:#e88');
         });
     } else {
       const filename = /\/$/.test(root) ? 'index.html' : root.substring(root.lastIndexOf('/') + 1);

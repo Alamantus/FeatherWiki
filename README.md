@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 54.748 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A 54.883 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
@@ -11,7 +11,7 @@ Feather Wiki will only run on browsers that support [ECMAScript 2015](https://ca
 <details>
 <summary>👨‍💻 Technical Talk: Supported Browsers</summary>
 
-According to [this ECMAScript compatibility table](https://kangax.github.io/compat-table/es6/), the following browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
+According to [this ECMAScript compatibility table](https://compat-table.github.io/compat-table/es6/), the following browser versions should definitely be able to run Feather Wiki version 1.3.0 and up without issues:
 
 - Chrome 86+
 - Edge 87+
@@ -43,6 +43,8 @@ Feather Wiki's CSS and JavaScript files are available separately from the full H
 ## Contribution
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how you can help with the project. Details on adding non-English translations to Feather Wiki are included there.
+
+If you want to support the developer monetarily, you can send one-time donations via <https://buymeacoffee.com/robbieantenesse> or <https://ko-fi.com/robbieantenesse>, or you can use <https://liberapay.com/robbieantenesse> to set up recurring donations. This is absolutely not required, but it's greatly appreciated!
 
 ## Development
 

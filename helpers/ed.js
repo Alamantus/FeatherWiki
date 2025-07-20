@@ -123,12 +123,12 @@ export const bar = [
   { // insertImage
     icon: '📸',
     title: '{{translate:insertImageHelpText}}',
-    result: () => edUc?.img(),
+    result: () => FW.img.upload(FW.state, edUc.ins),
   },
   { // existingImage
     icon: '📎',
     title: '{{translate:addExistingImageHelpText}}',
-    result: () => document.getElementById('g').showModal(),
+    result: () => FW.emit(FW.state.events.RENDER, () => document.getElementById('g').showModal()),
   },
 ];
 
@@ -151,10 +151,10 @@ export const init = settings => {
       setTimeout(() => ex(event.shiftKey ? 'outdent' : 'indent'), 0);
     }
   }}></div>`;
-  edUc.img = () => FW.img.upload(FW.state, i => {
+  edUc.ins = i => {
     if (document.activeElement !== edUc) edUc.focus();
     ex('insertHTML', `<p><img src="${i.img}#${i.id}"></p>`);
-  })
+  };
 
   const barHtml = html`<div class=ed-bar role=toolbar>
     ${(ed.bar ?? bar).map(b => {
@@ -163,21 +163,21 @@ export const init = settings => {
       </button>`;
 
       if (b.state) {
-        const handler = () => button.classList[b.state() ? 'add' : 'remove']('ed-sel')
-        ael(edUc, 'keyup', handler)
-        ael(edUc, 'mouseup', handler)
-        ael(button, 'click', handler)
+        const handler = () => button.classList[b.state() ? 'add' : 'remove']('ed-sel');
+        ael(edUc, 'keyup', handler);
+        ael(edUc, 'mouseup', handler);
+        ael(button, 'click', handler);
       }
 
-      return button
+      return button;
     })}
   </div>`;
   ac(el, barHtml);
   ac(el, edUc);
 
-  ex('defaultParagraphSeparator', 'p')
+  ex('defaultParagraphSeparator', 'p');
 
   return el;
 }
 
-export default { bar, init }
+export default { bar, init };
