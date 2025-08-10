@@ -35,6 +35,19 @@ export const initEmitter = (state, emitter) => {
     if (state.t.length) emit(RENDER);
     else tab();
 
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (FW.state.canPut && !e.shiftKey) {
+          // If server saving & not holding shift, put save
+          FW.emit(PUT_SAVE_WIKI);
+        } else {
+          // If holding shift or not a server saving instance, regular save
+          FW.emit(SAVE_WIKI);
+        }
+      }
+    });
+
     emit(DETECT_PUT_SUPPORT);
   });
 
