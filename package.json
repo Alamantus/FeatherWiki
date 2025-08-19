@@ -17,7 +17,8 @@
   "type": "module",
   "devDependencies": {
     "esbuild": "^0.20.2",
-    "minify-html-literals": "^1.3.5"
+    "minify-html-literals": "^1.3.5",
+    "selenium-webdriver": "^4.34.0"
   },
   "peerDependencies": {
     "assert": "^2.0.0",

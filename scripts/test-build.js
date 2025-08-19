@@ -10,8 +10,12 @@
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
+import { runTests } from './tests.mjs';
 
-const servePath = path.resolve(process.cwd(), 'builds', `FeatherWiki.html`);
+const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
+const packageJson = JSON.parse(packageJsonFile);
+const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
+const servePath = path.resolve(process.cwd(), 'builds', `v${version}`, `FeatherWiki_${packageJson.nickname}.html`);
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {
@@ -49,3 +53,9 @@ let app = http.createServer((req, res) => {
 // Start the server on port 3000
 app.listen(3000, 'localhost');
 console.log('Node server running at http://localhost:3000 and serving ' + servePath);
+
+(async () => {
+    await runTests(app);
+    app.close();
+    process.exit();
+})();
