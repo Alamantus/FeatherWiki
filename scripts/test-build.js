@@ -7,6 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+// Pass the exact names of specific tests as arguments to run only those tests
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
@@ -55,7 +56,7 @@ app.listen(3000, 'localhost');
 console.log('Node server running at http://localhost:3000 and serving ' + servePath);
 
 (async () => {
-    await runTests(app);
+    await runTests(process.argv.slice(2));
     app.close();
     process.exit();
 })();

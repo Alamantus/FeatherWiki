@@ -3,7 +3,7 @@ import { Browser, Builder, By, WebDriver, WebElement } from "selenium-webdriver"
 import * as settings from './tests/settings.mjs';
 import * as ed from './tests/ed.mjs';
 
-export async function runTests(server) {
+export async function runTests(args = []) {
     const driver = await new Builder().forBrowser(Browser.FIREFOX).build();
     const root = 'http://localhost:3000';
     await driver.get(root);
@@ -15,8 +15,9 @@ export async function runTests(server) {
     }
 
     try {
-      for (let i = 0; i < Object.keys(tests).length; i++) {
-        const testName = Object.keys(tests)[i];
+      const testKeys = args.length > 0 ? args : Object.keys(tests);
+      for (let i = 0; i < testKeys.length; i++) {
+        const testName = testKeys[i];
         try {
           await tests[testName](driver);
           console.info('✅', testName)
