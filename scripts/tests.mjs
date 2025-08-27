@@ -1,7 +1,7 @@
 import assert from "assert";
 import { Browser, Builder, By, until, WebDriver, WebElement } from "selenium-webdriver";
 import * as settings from './tests/settings.mjs';
-import * as ed from './tests/ed.mjs';
+import * as ed from './tests/pages/ed.mjs';
 import * as tags from './tests/tags.mjs';
 
 export async function runTests(args = []) {
@@ -99,55 +99,9 @@ export async function expectValue(driver, cssSelector, expectedValue, failureMes
   }
   const elementText = await element.getAttribute('value');
   if (!failureMessage) {
-    failureMessage = 'Field with CSS Selector `' + cssSelector + '` had the text "' + elementText
+    failureMessage = 'Field with CSS Selector `' + cssSelector + '` had the value "' + elementText
       + '" instead of the expected "' + expectedValue + '"';
   }
   assert.equal(elementText, expectedValue, failureMessage);
   return element;
-}
-
-/**
- * Create and fill a new page on the wiki without saving
- * 
- * @param {WebDriver} driver The initialized browser driver
- * @param {?String} editor The editor to use
- * @param {?String} pageTitle The title of the page to create
- * 
- * @returns {Object}
- */
-export async function createNewPage(driver, editor = 'ed', pageTitle = null) {
-  const newPageExpander = await expectText(driver, 'main > .sb nav > details summary', 'New Page');
-  await newPageExpander.click();
-  const newPageField = await expectVisible(driver, '#np', 'The New Page field should be visible');
-
-  const newPageTitle = pageTitle ?? 'Page Title';
-  const newPageSlug = await driver.executeScript('return FW.slug(arguments[0])', newPageTitle);
-  await newPageField.sendKeys(newPageTitle);
-  await driver.findElement(By.css('main .sb nav details form button')).click();
-
-  // Should go to new page edit with title and slug filled
-  await expectText(driver, 'main > section header h1', 'Edit Page');
-  await expectValue(driver, 'main > section header #name', newPageTitle);
-  await expectValue(driver, 'main > section header #slug', newPageSlug);
-  let textarea;
-  if (editor === 'md') {
-    await driver.findElement(By.css('main > section form > div.w1.tr button')).click();
-    await expectVisible(driver, 'main > section form > textarea', 'The markdown textarea should be visible');
-    textarea = await driver.findElement(By.css('main > section form > textarea'));
-    await driver.wait(until.elementIsVisible(textarea));
-    await textarea.click();
-  } else {
-    await expectVisible(driver, '#e', 'The visual editor should be visible');
-    textarea = await driver.findElement(By.css('#e .ed-uc'));
-    await driver.wait(until.elementIsVisible(textarea));
-    await textarea.click();
-  }
-  const newPageContent = 'This is a new page';
-  await textarea.sendKeys(newPageContent);
-
-  return {
-    title: newPageTitle,
-    slug: newPageSlug,
-    content: newPageContent,
-  };
 }
