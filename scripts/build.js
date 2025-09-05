@@ -17,6 +17,16 @@ import { minify } from 'html-minifier';
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
 
+// Formatted file size string
+const kbStr = (outHtml) => {
+  return (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+}
+
+// Nicely formatted file name and size
+const fileAndSize = (fullPath, sizeString) => {
+  return path.relative(process.cwd(), fullPath).padEnd(60) + sizeString.padStart(16);
+}
+
 const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
 const buildDir = path.resolve(process.cwd(), `builds`);
 if (!fs.existsSync(buildDir)) {
@@ -39,8 +49,8 @@ const cssResult = esbuild.buildSync({
 const cssOutput = new TextDecoder().decode(cssResult.contents);
 const cssPath = path.resolve(outputDir, `FeatherWiki-plumage_${packageJson.nickname}.css`);
 fs.writeFileSync(cssPath, cssOutput);
-const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-console.info(cssPath, outputCssKb);
+const outputCssKb = kbStr(cssOutput);
+console.info(fileAndSize(cssPath, outputCssKb));
 
 const localesFilePath = path.resolve(process.cwd(), 'locales');
 const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
@@ -54,7 +64,7 @@ function localize (localeFileName, string) {
     const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
     locale = JSON.parse(localeFile);
   }
-  
+
   const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   string = string.replace(/\{\{localeName\}\}/g, localeName);
 
@@ -181,8 +191,8 @@ function build(localeFileName) {
         const jsFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
         const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
-        const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-        console.info(jsOutPath, jsKb);
+        const jsKb = kbStr(output);
+        console.info(fileAndSize(jsOutPath, jsKb));
 
         // I can't do replace because of the regex stuff in here,
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need!
@@ -199,11 +209,26 @@ function build(localeFileName) {
     const filename = `FeatherWiki_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
     const filePath = path.resolve(outputDir, filename);
     const outHtml = minify(html, minifyOptions);
-    const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+    const outputKb = kbStr(outHtml);
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
-      console.info(filePath, outputKb);
+      console.info(fileAndSize(filePath, outputKb));
     });
+
+    // For the "bare bones" html version
+    const bareFileName = path.relative(process.cwd(), 'index-bare.html');
+    let bareHtml = await fs.promises.readFile(bareFileName, 'utf8');
+    bareHtml = localize(localeFileName, bareHtml);
+    bareHtml = injectVariables(bareHtml);
+    const bareFilename = `FeatherWiki-bare_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
+    const bareFilePath = path.resolve(outputDir, bareFilename);
+    const bareOutHtml = minify(bareHtml, minifyOptions);
+    const bareOutputKb = kbStr(bareOutHtml);
+    await fs.writeFile(bareFilePath, bareOutHtml, (err) => {
+      if (err) throw err;
+      console.info(fileAndSize(bareFilePath, bareOutputKb));
+    });
+
     return { size: outputKb };
   }).catch((e) => {
     console.error(e);
