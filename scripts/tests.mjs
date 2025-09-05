@@ -2,6 +2,7 @@ import assert from "assert";
 import { Browser, Builder, By, until, WebDriver, WebElement } from "selenium-webdriver";
 import * as settings from './tests/settings.mjs';
 import * as ed from './tests/pages/ed.mjs';
+import * as md from './tests/pages/md.mjs';
 import * as tags from './tests/tags.mjs';
 
 export async function runTests(args = []) {
@@ -13,6 +14,7 @@ export async function runTests(args = []) {
     const tests = {
       ...settings,
       ...ed,
+      ...md,
       ...tags,
     }
 
@@ -38,11 +40,11 @@ export async function runTests(args = []) {
 
 /**
  * Assert that the element matching the provided cssSelector is visible
- * 
+ *
  * @param {WebDriver} driver The initialized browser driver
  * @param {String} cssSelector The selector that will find the element
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
- * 
+ *
  * @returns {WebElement}
  */
 export async function expectVisible(driver, cssSelector, failureMessage) {
@@ -60,12 +62,12 @@ export async function expectVisible(driver, cssSelector, failureMessage) {
 
 /**
  * Assert that the element matching the provided cssSelector has the provided text
- * 
+ *
  * @param {WebDriver} driver The initialized browser driver
  * @param {String} cssSelector The selector that will find the element
  * @param {String} expectedText The content that is expected to be found
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
- * 
+ *
  * @returns {WebElement}
  */
 export async function expectText(driver, cssSelector, expectedText, failureMessage) {
@@ -83,13 +85,42 @@ export async function expectText(driver, cssSelector, expectedText, failureMessa
 }
 
 /**
+ * Assert that the element matching the provided cssSelector has the provided inner HTML
+ *
+ * @param {WebDriver} driver The initialized browser driver
+ * @param {String} cssSelector The selector that will find the element
+ * @param {String} expectedHtml The content that is expected to be found
+ * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
+ *
+ * @returns {WebElement}
+ */
+export async function expectHtml(driver, cssSelector, expectedHtml, failureMessage) {
+  const element = await driver.findElement(By.css(cssSelector));
+  if (!element) {
+    throw new Error('Element not found with CSS Selector `' + cssSelector + '`');
+  }
+
+  let html = await driver.executeScript('return document.querySelector(arguments[0])?.innerHTML ?? null', cssSelector);
+  if (!html) {
+    throw new Error('innerHTML not found with CSS Selector `' + cssSelector + '`');
+  }
+  html = html.trim();
+  if (!failureMessage) {
+    failureMessage = 'Element with CSS Selector `' + cssSelector + '` had the html "' + html
+      + '" instead of the expected "' + expectedHtml + '"';
+  }
+  assert.equal(html, expectedHtml, failureMessage);
+  return element;
+}
+
+/**
  * Assert that the form element matching the provided cssSelector has the provided value
- * 
+ *
  * @param {WebDriver} driver The initialized browser driver
  * @param {String} cssSelector The selector that will find the element
  * @param {String} expectedText The content that is expected to be found
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
- * 
+ *
  * @returns {WebElement}
  */
 export async function expectValue(driver, cssSelector, expectedValue, failureMessage) {

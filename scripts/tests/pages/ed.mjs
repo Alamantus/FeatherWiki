@@ -1,5 +1,5 @@
 import assert from "assert";
-import { expectText, expectVisible } from "../../tests.mjs";
+import { expectHtml, expectText, expectVisible } from "../../tests.mjs";
 import { By, until, WebDriver } from "selenium-webdriver";
 import { createNewPage, saveOpenedPage } from "./index.mjs";
 
@@ -9,7 +9,7 @@ import { createNewPage, saveOpenedPage } from "./index.mjs";
  * @return {void}
  */
 export async function canCreateNewPageWithEd(driver) {
-  const newPage = await createNewPage(driver, null, null, true);
+  const newPage = await createNewPage(driver, 'ed', null, true);
 
   await expectText(driver, 'main > section header h1', newPage.title);
   await expectText(driver, 'main > section > article.uc', newPage.content);
@@ -38,4 +38,27 @@ export async function canEditNewPageWithEd(driver) {
   await saveOpenedPage(driver);
 
   await expectText(driver, 'main > section > article.uc', newPageContent);
+}
+
+/**
+ * Pages can edit the raw HTML of its content
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {void}
+ */
+export async function canModifyRawHtmlWithEd(driver) {
+  await createNewPage(driver, 'ed');
+
+  const htmlButton = await expectText(driver, 'main > section form div.tr button[type="button"]', 'Show HTML');
+  htmlButton.click();
+  await driver.sleep(500);
+  const textarea = await driver.findElement(By.css('main > section form > textarea'));
+  await driver.wait(until.elementIsVisible(textarea));
+  await textarea.click();
+  await textarea.clear();
+  const html = '<p>This is custom HTML</p>';
+  textarea.sendKeys(html);
+
+  await saveOpenedPage(driver);
+
+  await expectHtml(driver, 'main > section > article.uc', html);
 }
