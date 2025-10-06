@@ -37,7 +37,7 @@ export const pageDisplay = (page) => {
       ? html`<aside class="db r">
         <b class=c>{{translate:tagged}}</b>
         <dd class=c>
-          ${page.tags.split(',').map(t => html`<a href="?tag=${t}">${t}</a>`).reduce((p,n)=>{ if (p.length) p.push(', '); p.push(n); return p; }, [])}
+          ${html.raw(page.tags.split(',').map(t => `<a href="?tag=${t}">${t}</a>`).join(', '))}
         </dd>
       </aside>`
       : '',
