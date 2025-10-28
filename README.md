@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 55.263 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A 55.259 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
@@ -76,7 +76,7 @@ The overarching goal is to keep Feather Wiki as small as possible while still pr
 
 ## License Clarification
 
-Feather Wiki is an HTML document containing a self-replicating JavaScript application for creating wiki-style websites whose content is also stored in the output.  
+Feather Wiki is an HTML document containing a self-replicating JavaScript application for creating wiki-style websites whose content is also stored in the output.
 Copyright (C) 2022 [Robbie Antenesse](https://robbie.antenesse.net) \<dev@alamantus.com\>
 
 Feather Wiki is free software: you can redistribute it and/or modify
