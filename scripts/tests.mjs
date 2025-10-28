@@ -3,6 +3,7 @@ import { Browser, Builder, By, until, WebDriver, WebElement } from "selenium-web
 import * as settings from './tests/settings.mjs';
 import * as ed from './tests/pages/ed.mjs';
 import * as md from './tests/pages/md.mjs';
+import * as nesting from './tests/pages/nesting.mjs';
 import * as tags from './tests/tags.mjs';
 
 export async function runTests(args = []) {
@@ -15,6 +16,7 @@ export async function runTests(args = []) {
       ...settings,
       ...ed,
       ...md,
+      ...nesting,
       ...tags,
     }
 
@@ -135,4 +137,19 @@ export async function expectValue(driver, cssSelector, expectedValue, failureMes
   }
   assert.equal(elementText, expectedValue, failureMessage);
   return element;
+}
+
+/**
+ * Assert that the element matching the provided cssSelector is not present on the page
+ *
+ * @param {WebDriver} driver The initialized browser driver
+ * @param {String} cssSelector The selector that will find the element
+ * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
+ *
+ * @returns {void}
+ */
+export async function expectMissing(driver, cssSelector, failureMessage) {
+  const matchingElements = await driver.findElements(By.css(cssSelector));
+
+  assert.equal(matchingElements.length < 1, true, failureMessage);
 }
