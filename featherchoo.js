@@ -1,15 +1,15 @@
 /**
  * Modified from nanochoo, a fork of choo at about half the size, specifically for use with Feather Wiki
  * https://github.com/nanaian/nanochoo
- * 
+ *
  * The `nanochoo` fork of `choo@6` removed the `navigate` events and `nanohref` package
  * that Feather Wiki needs to prevent links from changing pages, so that has been
  * added back in along with a `go` event that combines the removed `navigate`,
  * `pushState`, and `replaceState` events into one. I also removed the `toString`
  * method entirely because Feather Wiki is only focused on browser use.
- * 
+ *
  * `nanochoo`'s primary changes to `choo@6` are recorded in its README on GitHub.
- * 
+ *
  * @licence MIT
  */
 var params = () => {
@@ -75,7 +75,7 @@ Choo.prototype.start = function () {
     if (this._loaded) {
       this.emit(this._events.RENDER, () => {
         // Scroll to top of page if no location hash is set
-        hashScroll() || window.scroll(0, 0);
+        hashScroll() || (!this.state.query.page ? window.scroll(0, 0) : document.querySelector('h1')?.scrollIntoView());
       })
     }
   })
