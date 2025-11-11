@@ -1,5 +1,5 @@
 import assert from "assert";
-import { expectHtml, expectText, expectVisible } from "../../tests.mjs";
+import { expectHtml, expectText, expectValue, expectVisible } from "../../tests.mjs";
 import { By, until, WebDriver } from "selenium-webdriver";
 import { createNewPage, saveOpenedPage } from "./index.mjs";
 import path from "path";
@@ -42,6 +42,17 @@ export async function canEditNewPageWithEd(driver) {
 }
 
 /**
+ * Click the "Show HTML button in the edit page view
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+async function clickShowHtmlButton(driver) {
+  const htmlButton = await expectText(driver, 'main > section form div.tr button[type="button"]', 'Show HTML');
+  htmlButton.click();
+  await driver.sleep(500);
+}
+
+/**
  * Pages can edit the raw HTML of its content
  * @param {WebDriver} driver The initialized browser driver
  * @return {Promise<void>}
@@ -49,9 +60,8 @@ export async function canEditNewPageWithEd(driver) {
 export async function canModifyRawHtmlWithEd(driver) {
   await createNewPage(driver, 'ed');
 
-  const htmlButton = await expectText(driver, 'main > section form div.tr button[type="button"]', 'Show HTML');
-  htmlButton.click();
-  await driver.sleep(500);
+  await clickShowHtmlButton(driver);
+
   const textarea = await driver.findElement(By.css('main > section form > textarea'));
   await driver.wait(until.elementIsVisible(textarea));
   await textarea.click();
@@ -65,21 +75,19 @@ export async function canModifyRawHtmlWithEd(driver) {
 }
 
 /**
- * Pages can edit the raw HTML of its content
- * @param {WebDriver} driver The initialized browser driver
- * @return {Promise<void>}
+ * Upload an expected test image and return its expected data
+ * @param {WebDriver} driver
+ * @return {Promise<Object>}
  */
-export async function canUploadImageWithEd(driver) {
-  await createNewPage(driver, 'ed');
-
+ async function uploadImageWithEd(driver) {
   // Overwrite FW.upload() to not rely on file selector modal
   await driver.executeScript('FW.upload = (mime, cb) => {'
-    + 'const input = html`<input type="file" accept=${mime} onchange=${e => {'
-      + 'const f = e.target.files;'
-      + 'if (f.length > 0) cb(f[0]);'
-      + 'document.body.removeChild(input);'
-    + '}} />`;'
-    + 'document.body.appendChild(input);'
+  + 'const input = html`<input type="file" accept=${mime} onchange=${e => {'
+    + 'const f = e.target.files;'
+    + 'if (f.length > 0) cb(f[0]);'
+    + 'document.body.removeChild(input);'
+  + '}} />`;'
+  + 'document.body.appendChild(input);'
   + '};');
 
   await driver.sleep(500);
@@ -127,6 +135,75 @@ export async function canUploadImageWithEd(driver) {
   // const html = await driver.executeScript('return document.querySelector("#e .ed-uc")?.innerHTML ?? null');
   // console.log(html);
 
-  const html = '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABfklEQVQYV2PUiJqz/Nuv3+cfrcnsYoAAdiD+CWUzyIVOr+BkZ9FhVAideZ2DjUnt869fxk9XZ18wiWj2e/zm65WXezruSYfOMuBnZzr/9efvm4zyIdOPCvKyW7z7/OvMozUZ5nqhrUtff/j24Pnu1mqg3DkBHjbD919/HWWUC50RIsjNtvLT998Mf3790+dleLv6/Zcfj5h4ZMrY2ZjOc7EzMwLlQhllQvs4mf9zPRDlZxd59elnI/efNxUfvnx/w8Ivu1CMn73mzacfrx9++S3LCHI00IpaEX6Ohtcffx7j/P3K5suP379Y+KTPivCxW776+Kv68Zr0NrBChdCpElxs7A9//f33i+HbS84fv/8ycAlK/WJhYmJ5+/W3zMv1ma/ACkFALnhmHj83S+vXD8/Z//7595dPVPrfx6+/K4AenAyShyuU8p3JJcDPfOHHx9eMQJMl+YTFXnz48E/v2eb0bygKQRxxt0XcrP8uZbGxsf36zC099/Xq7C8wGwFYd6q/Ia1YEwAAAABJRU5ErkJggg==#-553774246"></p>';
+  const hash = '-553774246';
+  const data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABfklEQVQYV2PUiJqz/Nuv3+cfrcnsYoAAdiD+CWUzyIVOr+BkZ9FhVAideZ2DjUnt869fxk9XZ18wiWj2e/zm65WXezruSYfOMuBnZzr/9efvm4zyIdOPCvKyW7z7/OvMozUZ5nqhrUtff/j24Pnu1mqg3DkBHjbD919/HWWUC50RIsjNtvLT998Mf3790+dleLv6/Zcfj5h4ZMrY2ZjOc7EzMwLlQhllQvs4mf9zPRDlZxd59elnI/efNxUfvnx/w8Ivu1CMn73mzacfrx9++S3LCHI00IpaEX6Ohtcffx7j/P3K5suP379Y+KTPivCxW776+Kv68Zr0NrBChdCpElxs7A9//f33i+HbS84fv/8ycAlK/WJhYmJ5+/W3zMv1ma/ACkFALnhmHj83S+vXD8/Z//7595dPVPrfx6+/K4AenAyShyuU8p3JJcDPfOHHx9eMQJMl+YTFXnz48E/v2eb0bygKQRxxt0XcrP8uZbGxsf36zC099/Xq7C8wGwFYd6q/Ia1YEwAAAABJRU5ErkJggg==';
+
+  return {
+    hash,
+    data,
+  };
+}
+
+/**
+ * Images can be uploaded, stored, and shown in HTML
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canUploadImageWithEd(driver) {
+  await createNewPage(driver, 'ed');
+
+  const img = await uploadImageWithEd(driver);
+  const html = `<p><img src="${img.data}#${img.hash}"></p>`;
+  await expectHtml(driver, '#e .ed-uc', html);
+}
+
+/**
+ * Image data is converted to id shorthand when viewing HTML
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function doesShortenImageDataInHtmlView(driver) {
+  await createNewPage(driver, 'ed');
+
+  const img = await uploadImageWithEd(driver);
+
+  await clickShowHtmlButton(driver);
+
+  const html = `<p><img src="img:${img.hash}:img"></p>`;
+  await expectValue(driver, 'main > section form > textarea', html);
+}
+
+ /**
+  * Previously uploaded images can be added to a page
+  * @param {WebDriver} driver The initialized browser driver
+  * @return {Promise<void>}
+  */
+export async function canInsertExistingImageIntoEd(driver) {
+  await createNewPage(driver, 'ed');
+
+  const img = await uploadImageWithEd(driver);
+
+  // Switch to HTML view to clear the content
+  await clickShowHtmlButton(driver);
+  await driver.sleep(500);
+  const textarea = await driver.findElement(By.css('main > section form > textarea'));
+  await driver.wait(until.elementIsVisible(textarea));
+  await textarea.click();
+  await textarea.clear();
+
+  const editorButton = await expectText(driver, 'main > section form div.tr button[type="button"]', 'Show Editor');
+  editorButton.click();
+  await driver.sleep(500);
+
+  const existingImageButton = await expectText(driver, 'main > section form div#e button[title="Add Existing Image"]', '📎');
+  existingImageButton.click();
+
+  const galleryDialog = await driver.findElement(By.css('dialog#g'));
+  await driver.wait(until.elementIsVisible(galleryDialog));
+  const insertButton = await expectText(driver, '#g section .g button:last-of-type', 'Insert', 'Could not find Insert button');
+  await insertButton.click();
+  await driver.sleep(500);
+
+  const html = `<p><img src="${img.data}#${img.hash}"></p>`;
   await expectHtml(driver, '#e .ed-uc', html);
 }
