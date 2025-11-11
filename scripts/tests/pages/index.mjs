@@ -3,13 +3,13 @@ import { expectText, expectValue, expectVisible } from "../../tests.mjs";
 
 /**
  * Create and fill a new page on the wiki without saving
- * 
+ *
  * @param {WebDriver} driver The initialized browser driver
  * @param {?String} editor The editor to use
  * @param {?String} pageTitle The title of the page to create
  * @param {?Boolean} save Click the save button after creating
- * 
- * @returns {Object}
+ *
+ * @returns {Promise<Object>}
  */
 export async function createNewPage(driver, editor = 'ed', pageTitle = null, save = false) {
   const newPageExpander = await expectText(driver, 'main > .sb nav > details summary', 'New Page');
@@ -54,10 +54,10 @@ export async function createNewPage(driver, editor = 'ed', pageTitle = null, sav
 
 /**
  * Create and fill a new page on the wiki without saving
- * 
+ *
  * @param {WebDriver} driver The initialized browser driver
- * 
- * @returns {void}
+ *
+ * @returns {Promise<void>}
  */
 export async function saveOpenedPage(driver) {
   await driver.findElement(By.css('main > section > form footer button[type="submit"]')).click();

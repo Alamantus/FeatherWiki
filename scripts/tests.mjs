@@ -47,7 +47,7 @@ export async function runTests(args = []) {
  * @param {String} cssSelector The selector that will find the element
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
  *
- * @returns {WebElement}
+ * @returns {Promise<WebElement>}
  */
 export async function expectVisible(driver, cssSelector, failureMessage) {
   const element = await driver.findElement(By.css(cssSelector));
@@ -70,7 +70,7 @@ export async function expectVisible(driver, cssSelector, failureMessage) {
  * @param {String} expectedText The content that is expected to be found
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
  *
- * @returns {WebElement}
+ * @returns {Promise<WebElement>}
  */
 export async function expectText(driver, cssSelector, expectedText, failureMessage) {
   const element = await driver.findElement(By.css(cssSelector));
@@ -94,7 +94,7 @@ export async function expectText(driver, cssSelector, expectedText, failureMessa
  * @param {String} expectedHtml The content that is expected to be found
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
  *
- * @returns {WebElement}
+ * @returns {Promise<WebElement>}
  */
 export async function expectHtml(driver, cssSelector, expectedHtml, failureMessage) {
   const element = await driver.findElement(By.css(cssSelector));
@@ -123,7 +123,7 @@ export async function expectHtml(driver, cssSelector, expectedHtml, failureMessa
  * @param {String} expectedText The content that is expected to be found
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
  *
- * @returns {WebElement}
+ * @returns {Promise<WebElement>}
  */
 export async function expectValue(driver, cssSelector, expectedValue, failureMessage) {
   const element = await driver.findElement(By.css(cssSelector));
@@ -146,7 +146,7 @@ export async function expectValue(driver, cssSelector, expectedValue, failureMes
  * @param {String} cssSelector The selector that will find the element
  * @param {String|Error} failureMessage The message that will be output to the console if the element text does not match
  *
- * @returns {void}
+ * @returns {Promise<void>}
  */
 export async function expectMissing(driver, cssSelector, failureMessage) {
   const matchingElements = await driver.findElements(By.css(cssSelector));

@@ -6,7 +6,7 @@ import assert from "assert";
 /**
  * Click the Wiki Settings link in the side bar
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 async function openSettings(driver) {
   const settingsLink = await expectText(driver, 'main > .sb nav p a', 'Wiki Settings');
@@ -17,7 +17,7 @@ async function openSettings(driver) {
 /**
  * Click the save button on the settings page
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 async function saveSettings(driver) {
   let submitButton = await driver.findElement(By.css('main > section form button[type="submit"]'));
@@ -27,7 +27,7 @@ async function saveSettings(driver) {
 /**
  * The title and description of the wiki can be set from the Wiki Settings
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canUpdateTitleAndDescription(driver) {
   await openSettings(driver);
@@ -50,7 +50,7 @@ export async function canUpdateTitleAndDescription(driver) {
 /**
  * The home page can be set
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canUpdateHomePage(driver) {
   const newPage = await createNewPage(driver, null, 'Home Page', true);
@@ -74,7 +74,7 @@ export async function canUpdateHomePage(driver) {
 /**
  * The page order can be changed
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canChangePageOrder(driver) {
   const page1 = await createNewPage(driver, null, 'Page 1', true);
@@ -100,7 +100,7 @@ export async function canChangePageOrder(driver) {
 /**
  * The Publish checkbox hides edit buttons
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canUsePublishToDisableEditing(driver) {
   const page1 = await createNewPage(driver, null, 'Page 1', true);

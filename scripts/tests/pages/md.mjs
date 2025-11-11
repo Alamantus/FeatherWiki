@@ -6,7 +6,7 @@ import { createNewPage, saveOpenedPage } from "./index.mjs";
 /**
  * Pages can be created using the New Page button and display correctly when saved
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canCreateNewPageWithMd(driver) {
   const newPage = await createNewPage(driver, 'md', null, true);
@@ -21,7 +21,7 @@ export async function canCreateNewPageWithMd(driver) {
 /**
  * Created pages can be edited with new content and title successfully
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canEditNewPageWithMd(driver) {
   await canCreateNewPageWithMd(driver);
@@ -43,7 +43,7 @@ export async function canEditNewPageWithMd(driver) {
 /**
  * Created pages can be edited with new content and title successfully
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function markdownRendersCorrectly(driver) {
   await createNewPage(driver, 'md');

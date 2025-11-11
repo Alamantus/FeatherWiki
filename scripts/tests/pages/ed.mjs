@@ -7,7 +7,7 @@ import path from "path";
 /**
  * Pages can be created using the New Page button and display correctly when saved
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canCreateNewPageWithEd(driver) {
   const newPage = await createNewPage(driver, 'ed', null, true);
@@ -22,7 +22,7 @@ export async function canCreateNewPageWithEd(driver) {
 /**
  * Created pages can be edited with new content and title successfully
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canEditNewPageWithEd(driver) {
   await canCreateNewPageWithEd(driver);
@@ -44,7 +44,7 @@ export async function canEditNewPageWithEd(driver) {
 /**
  * Pages can edit the raw HTML of its content
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canModifyRawHtmlWithEd(driver) {
   await createNewPage(driver, 'ed');
@@ -67,7 +67,7 @@ export async function canModifyRawHtmlWithEd(driver) {
 /**
  * Pages can edit the raw HTML of its content
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canUploadImageWithEd(driver) {
   await createNewPage(driver, 'ed');

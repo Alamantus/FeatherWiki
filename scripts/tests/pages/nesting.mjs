@@ -6,7 +6,7 @@ import { createNewPage, saveOpenedPage } from "./index.mjs";
 /**
  * A page can be set as another page's parent, and it will display the nesting correctly
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canCreateChildPage(driver) {
   const parentPage = await createNewPage(driver, null, 'Parent Page', true);

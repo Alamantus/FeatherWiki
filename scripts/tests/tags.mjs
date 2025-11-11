@@ -6,7 +6,7 @@ import { createNewPage, saveOpenedPage } from "./pages/index.mjs";
 /**
  * When setting tags on a new page, those tags appear on the page and in the sidebar
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canCreateNewPageWithTags(driver) {
   await createNewPage(driver);
@@ -24,7 +24,7 @@ export async function canCreateNewPageWithTags(driver) {
 /**
  * Pages with tags are filtered correctly when clicking from the sidebar.
  * @param {WebDriver} driver The initialized browser driver
- * @return {void}
+ * @return {Promise<void>}
  */
 export async function canFilterPagesByTag(driver) {
   await createNewPage(driver, 'ed', 'Untagged Page', true);
