@@ -19,7 +19,7 @@ export const editor = (state) => {
     }, 999);
   }
   // Call this `target` to save some bytes when constructing objects
-  const target = html`<textarea oninput=${textChange}>${state.edits.content}</textarea>`;
+  const target = html`<textarea id=md oninput=${textChange}>${state.edits.content}</textarea>`;
   textChange({ target });
   return [
     target,
@@ -29,7 +29,7 @@ export const editor = (state) => {
     preview,
     modal(state, insert),
   ];
-  
+
   // Modified from https://stackoverflow.com/a/19961519
   function insert ({ id }) {
     const text = `![](img:${id}:img)`;

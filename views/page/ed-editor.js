@@ -15,7 +15,7 @@ export const editor = (state, emit) => {
   const { content } = edits;
   let element;
   if (src) {
-    element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
+    element = html`<textarea id=html onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
   } else {
     element = init({
       onChange: val => state.edits.content = val,
