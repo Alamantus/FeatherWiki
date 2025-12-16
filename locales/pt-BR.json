@@ -22,6 +22,7 @@
   "customJs": "JS Personalizado",
   "customJsHelpText": "Executa apenas uma vez ao carregar o wiki. Para testar, salve o wiki e carregue o arquivo.",
   "default": "padrão",
+  "defaultEditor": "Editor de página padrão",
   "deleteImageButton": "Excluir",
   "deleteImagePrompt": "Excluir permanentemente a imagem de todas as páginas do wiki?",
   "deletePage": "Excluir",

@@ -26,18 +26,26 @@ export async function createNewPage(driver, editor = 'ed', pageTitle = null, sav
   await expectValue(driver, 'main > section header #name', newPageTitle);
   await expectValue(driver, 'main > section header #slug', newPageSlug);
   let textarea;
-  if (editor === 'md') {
+  if (editor === 'default') {
+    const defaultEditor = await driver.executeScript('return FW.state.p.editor');
+    if (['html', 'md'].includes(defaultEditor)) {
+      const selector = `main > section form > textarea#${defaultEditor}`;
+      await expectVisible(driver, selector, `The ${defaultEditor} textarea should be visible`);
+      textarea = await driver.findElement(By.css(selector));
+    } else {
+      await expectVisible(driver, '#e', 'The visual editor should be visible');
+      textarea = await driver.findElement(By.css('#e .ed-uc'));
+    }
+  } else if (editor === 'md') {
     await driver.findElement(By.css('main > section form > div.w1.tr button')).click();
-    await expectVisible(driver, 'main > section form > textarea', 'The markdown textarea should be visible');
-    textarea = await driver.findElement(By.css('main > section form > textarea'));
-    await driver.wait(until.elementIsVisible(textarea));
-    await textarea.click();
+    await expectVisible(driver, 'main > section form > textarea#md', 'The markdown textarea should be visible');
+    textarea = await driver.findElement(By.css('main > section form > textarea#md'));
   } else {
     await expectVisible(driver, '#e', 'The visual editor should be visible');
     textarea = await driver.findElement(By.css('#e .ed-uc'));
-    await driver.wait(until.elementIsVisible(textarea));
-    await textarea.click();
   }
+  await driver.wait(until.elementIsVisible(textarea));
+  await textarea.click();
   const newPageContent = 'This is a new page';
   await textarea.sendKeys(newPageContent);
 

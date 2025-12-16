@@ -22,6 +22,7 @@
   "customJs": "Custom JS",
   "customJsHelpText": "Only runs once on wiki load. To test, save wiki & load that file.",
   "default": "default",
+  "defaultEditor": "Default Page Editor",
   "deleteImageButton": "Delete",
   "deleteImagePrompt": "Permanently delete image from all pages in wiki?",
   "deletePage": "Delete",

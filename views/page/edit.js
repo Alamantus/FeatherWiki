@@ -12,18 +12,20 @@ export const pageEdit = (state, emit, page) => {
   const children = FW.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
-  const { useMd } = edits;
   function toggleEditor (e) {
     e.preventDefault();
-    const { useMd, content } = edits;
+    const { content } = edits;
+    const useMd = edits.editor === 'md';
     if (useMd) {
       if (confirm('{{translate:convertMarkdownPrompt}}\n({{translate:convertMarkdownHelpText}})')) state.edits.content = md(content);
     } else {
       state.edits.content = FW.img.abbr(content);
     }
-    state.edits.useMd = !useMd;
+    // Toggle to md if not currently or to either html or ed depending on default.
+    state.edits.editor = useMd ? (p.editor === 'html' ? 'html' : 'ed') : 'md';
     emit(events.RENDER);
   }
+  const useMd = edits.editor === 'md';
   const editor = [
     html`<div class="w1 tr">
       <button onclick=${toggleEditor}>${useMd ? '{{translate:useEditor}}' : '{{translate:useMarkdown}}'}</button>
@@ -103,7 +105,7 @@ export const pageEdit = (state, emit, page) => {
   function getTagsArray () {
     return FW.tidy(document.getElementById('tags').value.split(','));
   }
-  
+
   function addTag (e) {
     const tag = e.target.value;
     if (tag.length > 0) {
@@ -134,7 +136,7 @@ export const pageEdit = (state, emit, page) => {
     pg.tags = getTagsArray().join(',');
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
-    if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
+    pg.editor = edits.editor;
     emit(events.UPDATE_PAGE, pg);
   }
 

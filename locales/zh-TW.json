@@ -22,6 +22,7 @@
   "customJs": "自訂 JavaScript",
   "customJsHelpText": "僅在 wiki 載入時執行 1 次。測試方法：儲存 wiki 並讀取該檔案。",
   "default": "預設",
+  "defaultEditor": "預設頁面編輯器",
   "deleteImageButton": "刪除",
   "deleteImagePrompt": "是否永久刪除 wiki 中所有頁面的圖片？",
   "deletePage": "刪除",

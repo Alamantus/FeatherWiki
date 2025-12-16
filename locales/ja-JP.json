@@ -22,6 +22,7 @@
   "customJs": "カスタム JS",
   "customJsHelpText": "Wiki の読み込み時に 1 回だけ実行されます。テストするには、Wiki を保存してそのファイルを読み込みます。",
   "default": "デフォルト",
+  "defaultEditor": "デフォルトのページエディタ",
   "deleteImageButton": "削除",
   "deleteImagePrompt": "Wiki 内のすべてのページから画像を完全に削除しますか?",
   "deletePage": "削除",

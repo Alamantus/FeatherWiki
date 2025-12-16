@@ -20,7 +20,7 @@ export const initEmitter = (state, emitter) => {
   const emit = (...args) => emitter.emit(...args);
   const title = () => emit(TITLE, state.p.name + (state.pg ? ' | ' + state.pg.name : ''));
   const tab = () => setTimeout(() => document.querySelectorAll('textarea:not(.notab)').forEach(t => t.onkeydown = handleTab), 300);
-  
+
   const keepEditing = () => state.edits && !confirm('{{translate:unsavedWarning}}'); // True if editing & clicks cancel
   const stopEdit = () => { // Shave off more bytes
     state.edit = false;
@@ -124,20 +124,18 @@ export const initEmitter = (state, emitter) => {
   });
 
   emitter.on(START_EDIT, () => {
-    const { pg } = state;
+    const { p, pg } = state;
     state.edit = true;
-    const store = {
+    // edit state
+    state.edits = {
       name: pg.name ?? '',
       slug: pg.slug ?? '',
       content: FW.img.fix(pg.content ?? ''),
       tags: pg.tags ?? '',
       parent: pg.parent ?? '',
       hide: !!pg.hide,
+      editor: pg.editor ?? p.editor,
     };
-    // Use markdown if: the page is already using it or it's a new page and the last saved page used it
-    store.useMd = pg.editor === 'md' || (!store.content && state.useMd);
-    state.edits = store;
-    state.src = false;
     emit(RENDER);
   });
 
@@ -155,7 +153,7 @@ export const initEmitter = (state, emitter) => {
     }
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
     Object.keys(page).forEach(key => {
-      if (page[key].length < 1) delete page[key];
+      if (page[key]?.length ?? 0 < 1) delete page[key];
     })
     page.md = Date.now();
     if (pIndex > -1) {
@@ -165,7 +163,6 @@ export const initEmitter = (state, emitter) => {
     }
     state.recent = [{ p: page.id, t: page.md }, ...state.recent.filter(p => p.p !== page.id)];
     stopEdit();
-    state.useMd = page.editor === 'md';
     emit(COLLECT_TAGS);
     state.pg = FW.getPage();
     emit(CHECK_CHANGED);

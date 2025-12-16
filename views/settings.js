@@ -22,6 +22,12 @@ export const settingsView = (state, emit) => {
         <input class=w1 id=wTitle value=${p.name} minlength=1 required>
         <label for=wDesc>{{translate:wikiDescription}}</label>
         <input class=w1 id=wDesc value=${p.desc}>
+        <label for=dEd>{{translate:defaultEditor}}</label>
+        <select id=dEd>
+          <option value=ed selected=${p.editor === 'ed'}>{{translate:useEditor}}</option>
+          <option value=md selected=${p.editor === 'md'}>{{translate:useMarkdown}}</option>
+          <option value=html selected=${p.editor === 'html'}>{{translate:showHtml}}</option>
+        </select>
         <label for=home>{{translate:homePage}}</label>
         <select id=home>
           <option value="" selected=${!p.home}>{{translate:allPages}} ({{translate:default}})</option>
@@ -86,6 +92,7 @@ export const settingsView = (state, emit) => {
     } else {
       delete state.p.head;
     }
+    state.p.editor = form.dEd.value;
     state.p.static = form.wOut.checked;
     state.p.published = form.wPub.checked;
     emit(events.CHECK_CHANGED);

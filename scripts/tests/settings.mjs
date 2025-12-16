@@ -1,6 +1,6 @@
-import { expectMissing, expectText, expectValue } from "../tests.mjs";
+import { expectMissing, expectText, expectValue, expectVisible } from "../tests.mjs";
 import { By, Select, WebDriver } from "selenium-webdriver";
-import { createNewPage } from "./pages/index.mjs";
+import { createNewPage, saveOpenedPage } from "./pages/index.mjs";
 import assert from "assert";
 
 /**
@@ -45,6 +45,67 @@ export async function canUpdateTitleAndDescription(driver) {
 
   await expectText(driver, 'main .sb .t', newTitle);
   await expectText(driver, 'main .sb p', newDesc);
+}
+
+/**
+ * The default editor is set to the visual editor
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function confirmDefaultEditorIsEd(driver) {
+  await createNewPage(driver, 'default', 'ed page');
+  await expectText(driver, 'main > section form > div.w1.tr button', 'Use Markdown', '"Use Markdown" button is not present');
+  await saveOpenedPage(driver);
+
+  await openSettings(driver);
+
+  await expectVisible(driver, '#dEd');
+  const useEditorOption = await expectText(driver, '#dEd option:nth-child(1)', 'Use Editor');
+  assert.equal(true, await useEditorOption.isSelected())
+}
+
+/**
+ * The default editor can be set to Markdown from Settings
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canSetDefaultEditorToMd(driver) {
+  await confirmDefaultEditorIsEd(driver);
+
+  const optionText = 'Use Markdown';
+  const defaultEditorField = await expectVisible(driver, '#dEd');
+  const select = new Select(defaultEditorField);
+  const useMarkdownOption = await expectText(driver, '#dEd option:nth-child(2)', optionText);
+  await select.selectByVisibleText(optionText)
+  assert.equal(true, await useMarkdownOption.isSelected())
+
+  await saveSettings(driver);
+
+  await createNewPage(driver, 'default', 'md page');
+  await expectText(driver, 'main > section form > div.w1.tr button', 'Use Editor', '"Use Editor" button is not present');
+  await expectVisible(driver, 'main > section form > textarea#md', 'The Markdown editor is not visible');
+}
+
+/**
+ * The default editor can be set to HTML from Settings
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canSetDefaultEditorToHtml(driver) {
+  await confirmDefaultEditorIsEd(driver);
+
+  const optionText = 'Show HTML';
+  const defaultEditorField = await expectVisible(driver, '#dEd');
+  const select = new Select(defaultEditorField);
+  const useMarkdownOption = await expectText(driver, '#dEd option:nth-child(3)', optionText);
+  await select.selectByVisibleText(optionText)
+  assert.equal(true, await useMarkdownOption.isSelected())
+
+  await saveSettings(driver);
+
+  await createNewPage(driver, 'default', 'html page');
+  await expectVisible(driver, 'main > section form > textarea#html', 'The HTML editor is not visible');
+  await expectText(driver, 'main > section form > textarea#html + div.w1.tr button', 'Show Editor', '"Show Editor" button is not present');
 }
 
 /**

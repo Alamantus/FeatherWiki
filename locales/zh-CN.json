@@ -22,6 +22,7 @@
   "customJs": "自定义 JS",
   "customJsHelpText": "仅在 Wiki 加载时运行 1 次。测试方法：保存 Wiki 并读取该文件。",
   "default": "默认",
+  "defaultEditor": "默认页面编辑器",
   "deleteImageButton": "删除",
   "deleteImagePrompt": "是否永久删除 Wiki 中所有页面的图片吗？",
   "deletePage": "删除",

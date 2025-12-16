@@ -40,7 +40,8 @@ FW.ready(() => {
     button.parentNode.replaceChild(newButton, button);
     newButton.addEventListener('click', e => {
       e.preventDefault();
-      const { useMd, content } = state.edits;
+      const { content } = state.edits;
+      const useMd = state.edits.editor === 'md';
       if (useMd) {
         state.edits.content = md(content);
       } else {
@@ -52,7 +53,7 @@ FW.ready(() => {
         turndownService.keep(['del', 'ins']);
         state.edits.content = FW.img.abbr(turndownService.turndown(content));
       }
-      state.edits.useMd = !useMd;
+      state.edits.editor = useMd ? (p.editor === 'html' ? 'html' : 'ed') : 'md';
       emitter.emit(state.events.RENDER);
     });
   }
