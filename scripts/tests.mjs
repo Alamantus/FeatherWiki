@@ -20,22 +20,47 @@ export async function runTests(args = []) {
       ...tags,
     }
 
+    let passes = 0;
+    const failures = [];
+    const testsBegin = Date.now();
+
     try {
       const testKeys = args.length > 0 ? args : Object.keys(tests);
       for (let i = 0; i < testKeys.length; i++) {
+        const testStart = Date.now();
         const testName = testKeys[i];
         try {
           await tests[testName](driver);
-          console.info('✅', testName)
-        } catch (/** @var {Error} */ err) {
-          console.error('❌', testName, err);
+          const testEnd = Date.now();
+          console.info('✅', testName, `(${testEnd - testStart}ms)`);
+          passes++;
+        } catch (/** @var {Error} */ error) {
+          const testEnd = Date.now();
+          console.error('❌', testName, `(${testEnd - testStart}ms)`);
+          failures.push({ testName, error });
         }
         await driver.navigate().to(root);
-        await driver.sleep(500);
+        await driver.sleep(300);
       }
     } catch (/** @var {Error} */ err) {
       console.error(err);
     }
+
+    const testsComplete = Date.now();
+    let time = (testsComplete - testsBegin) / 1000;
+    if (time > 60) {
+      time = `${Math.floor(time / 60)} minutes`;
+      if (time % 60 > 0) {
+        time += ` ${time % 60}`;
+      }
+    }
+
+    failures.forEach((failure) => {
+      console.log('\n------------------------------\n');
+      console.error('❌', failure.testName, '\n', failure.error);
+    });
+    console.log('\n------------------------------\n');
+    console.info(`Ran ${time} seconds: ${passes} passed, ${failures.length} failed\n`);
 
     await driver.quit();
 }
