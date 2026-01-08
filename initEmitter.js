@@ -153,8 +153,10 @@ export const initEmitter = (state, emitter) => {
     }
     const pIndex = p.pages.findIndex(pg => pg.id === page.id);
     Object.keys(page).forEach(key => {
-      if (page[key]?.length ?? 0 < 1) delete page[key];
-    })
+      if (!page[key] || String(page[key]).trim().length < 1) {
+        delete page[key];
+      }
+    });
     page.md = Date.now();
     if (pIndex > -1) {
       p.pages[pIndex] = page;
