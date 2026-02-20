@@ -5,6 +5,7 @@ import * as ed from './tests/pages/ed.mjs';
 import * as md from './tests/pages/md.mjs';
 import * as nesting from './tests/pages/nesting.mjs';
 import * as tags from './tests/tags.mjs';
+import * as missing from './tests/missing.mjs';
 
 export async function runTests(args = []) {
     const driver = await new Builder().forBrowser(Browser.FIREFOX).build();
@@ -18,6 +19,7 @@ export async function runTests(args = []) {
       ...md,
       ...nesting,
       ...tags,
+      ...missing,
     }
 
     let passes = 0;
