@@ -43,7 +43,7 @@
     "internalLinkHelpText": "Ligações internas (hash opcional): [[Título da Página]] ou [[texto|page_slug#heading]].",
     "italicHelpText": "Itálico",
     "javascriptRequired": "JavaScript é necessário",
-    "linkExternalImageHelpText": "Ligar Imagem Externa",
+    "linkExternalImageHelpText": "Ligar a Imagem Externa",
     "linkExternalImagePrompt": "URL da Imagem:",
     "linkHelpText": "Ligação",
     "linkPromptText": "URL da Ligação:",
