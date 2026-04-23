@@ -1,7 +1,7 @@
 import assert from "assert";
 import path from "path";
 import { By, until, WebDriver } from "selenium-webdriver";
-import { expectHtml, expectMissing, expectText } from "../../tests.mjs";
+import { expectHtml, expectText } from "../../tests.mjs";
 import { createNewPage, saveOpenedPage } from "../pages/index.mjs";
 
 /**
@@ -229,4 +229,132 @@ async function findEmbeddedImageCard(driver, altText, sizeLabel) {
   );
   const labelElement = await driver.findElement(labelLocator);
   return labelElement.findElement(By.xpath("./ancestor::div[contains(@class,'g')]"));
+}
+
+/**
+ * Clicking Edit Alt on an embedded image prompts for a new alt text and
+ * updates `state.p.img[id].alt` to match.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canEditImageAltText(driver) {
+  const pageTitle = `Edit Alt Page ${Date.now()}`;
+  const initialAlt = 'Original Alt';
+  const { sizeLabel } = await createPageWithEmbeddedImage(driver, {
+    pageTitle,
+    altText: initialAlt,
+    width: 13,
+    height: 13,
+  });
+
+  await openSettings(driver);
+  const galleryCard = await findEmbeddedImageCard(driver, initialAlt, sizeLabel);
+
+  const editAltButton = await galleryCard.findElement(
+    By.xpath(".//button[normalize-space(text())='Edit Alt']")
+  );
+  await editAltButton.click();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const altPrompt = await driver.switchTo().alert();
+  const promptText = await altPrompt.getText();
+  assert.strictEqual(
+    promptText,
+    'Alt text:',
+    `Edit Alt button should open the alt-text prompt, got "${promptText}"`
+  );
+  const updatedAlt = 'Updated Alt Description';
+  await altPrompt.sendKeys(updatedAlt);
+  await altPrompt.accept();
+  await driver.sleep(200);
+
+  const altInState = await driver.executeScript(
+    'var all = Object.values(FW.state.p.img);'
+    + 'return all.length ? all[0].alt : null;'
+  );
+  assert.strictEqual(
+    altInState,
+    updatedAlt,
+    `Stored alt text should be "${updatedAlt}", got ${JSON.stringify(altInState)}`
+  );
+
+  // The new alt text should now appear on the gallery card
+  const refreshedCard = await findEmbeddedImageCard(driver, updatedAlt, sizeLabel);
+  assert.ok(refreshedCard, 'Gallery card should re-render with the new alt text');
+}
+
+/**
+ * The Markdown editor's Insert Image button uploads an image and injects the
+ * `![](img:id:img)` shorthand at the textarea cursor.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canInsertImageFromFileViaMdEditor(driver) {
+  await createNewPage(driver, 'md', `MD Image Page ${Date.now()}`);
+
+  await driver.executeScript(
+    'FW.upload = (mime, cb) => {'
+    + 'const input = html`<input type="file" accept=${mime} onchange=${e => {'
+    +   'const f = e.target.files;'
+    +   'if (f.length > 0) cb(f[0]);'
+    +   'document.body.removeChild(input);'
+    + '}} />`;'
+    + 'document.body.appendChild(input);'
+    + '};'
+  );
+
+  const textarea = await driver.findElement(By.css('main > section form > textarea#md'));
+  await textarea.click();
+  await textarea.clear();
+
+  // md-editor renders buttons after the textarea in this order:
+  //   1. Show Preview, 2. Insert Image from File, 3. Add Existing Image
+  const insertButton = await driver.findElement(
+    By.xpath("//main/section//form//textarea[@id='md']/following-sibling::button[2]")
+  );
+  await insertButton.click();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const confirmUpload = await driver.switchTo().alert();
+  await confirmUpload.accept();
+
+  const imagePath = path.resolve('logo.svg');
+  await driver.sleep(200);
+  await driver.findElement(By.css('body input[type="file"]:last-of-type')).sendKeys(imagePath);
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const widthPrompt = await driver.switchTo().alert();
+  await widthPrompt.sendKeys('8');
+  await widthPrompt.accept();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const heightPrompt = await driver.switchTo().alert();
+  await heightPrompt.sendKeys('8');
+  await heightPrompt.accept();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const altPrompt = await driver.switchTo().alert();
+  await altPrompt.accept();
+  await driver.sleep(300);
+
+  const currentValue = await driver.executeScript(
+    'return document.getElementById("md").value;'
+  );
+  assert.match(
+    currentValue,
+    /!\[\]\(img:.+?:img\)/,
+    `MD editor should now contain a markdown image ref, got "${currentValue}"`
+  );
+
+  const imgIds = await driver.executeScript('return Object.keys(FW.state.p.img);');
+  assert.strictEqual(
+    imgIds.length,
+    1,
+    `Exactly one image should be stored in state after the upload, got ${JSON.stringify(imgIds)}`
+  );
+  const expectedShorthand = `![](img:${imgIds[0]}:img)`;
+  assert.ok(
+    currentValue.includes(expectedShorthand),
+    `MD editor should include the exact image shorthand "${expectedShorthand}", got "${currentValue}"`
+  );
 }

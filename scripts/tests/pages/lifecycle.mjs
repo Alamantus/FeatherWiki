@@ -1,6 +1,6 @@
 import assert from "assert";
 import { By, until, WebDriver } from "selenium-webdriver";
-import { expectMissing, expectText, expectVisible } from "../../tests.mjs";
+import { expectMissing, expectText, expectValue, expectVisible } from "../../tests.mjs";
 import { createNewPage, saveOpenedPage } from "./index.mjs";
 
 /**
@@ -157,5 +157,202 @@ export async function dismissingCancelPromptKeepsEditing(driver) {
   assert.ok(
     currentHtml.includes(pending),
     `Editor should retain pending edits after dismissing cancel, got "${currentHtml}"`
+  );
+}
+
+/**
+ * Saving an edited page with a slug that already belongs to another page shows
+ * the slugExists alert and keeps the editor open.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function editingPageToDuplicateSlugShowsAlert(driver) {
+  const first = await createNewPage(driver, null, 'First Page', true);
+  await createNewPage(driver, null, 'Second Page', true);
+
+  await clickEditButton(driver);
+  const slugField = await driver.findElement(By.css('#slug'));
+  await slugField.clear();
+  await slugField.sendKeys(first.slug);
+
+  const saveButton = await driver.findElement(
+    By.css('main > section form footer button[type="submit"]')
+  );
+  await saveButton.click();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const slugAlert = await driver.switchTo().alert();
+  const slugAlertText = await slugAlert.getText();
+  assert.match(
+    slugAlertText,
+    new RegExp(`A page with the slug "?${first.slug}"? already exists`),
+    `Expected slugExists alert referencing "${first.slug}", got "${slugAlertText}"`
+  );
+  await slugAlert.accept();
+  await driver.sleep(150);
+
+  await expectText(
+    driver,
+    'main > section header h1',
+    'Edit Page',
+    'Editor should remain open after the duplicate slug is rejected'
+  );
+  const links = await driver.findElements(
+    By.css(`main .sb nav a[href="?page=${first.slug}"]`)
+  );
+  assert.strictEqual(
+    links.length,
+    1,
+    `Only the original page should own slug "${first.slug}" in the sidebar, found ${links.length}`
+  );
+}
+
+/**
+ * The page title input enforces minlength=2, preventing submission when the
+ * title is shorter than two characters.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function savingPageWithShortTitleIsBlocked(driver) {
+  const page = await createNewPage(driver, null, 'Valid Title Page', true);
+
+  await clickEditButton(driver);
+  const titleField = await expectValue(driver, '#name', page.title);
+  await titleField.clear();
+  await titleField.sendKeys('X');
+
+  const saveButton = await driver.findElement(
+    By.css('main > section form footer button[type="submit"]')
+  );
+  await saveButton.click();
+  await driver.sleep(150);
+
+  const validity = await driver.executeScript(
+    'var el = document.getElementById("name");'
+    + 'return { valid: el.validity.valid, tooShort: el.validity.tooShort };'
+  );
+  assert.strictEqual(validity.valid, false, 'Title input should be invalid when under minlength');
+  assert.strictEqual(
+    validity.tooShort,
+    true,
+    'Title input should report tooShort when below 2 characters'
+  );
+
+  await expectText(
+    driver,
+    'main > section header h1',
+    'Edit Page',
+    'Editor should stay open when short title blocks submission'
+  );
+  const stateName = await driver.executeScript(
+    'var target = arguments[0];'
+    + 'var s = FW.state.p.pages.find(function (p) { return p.slug === target; });'
+    + 'return s ? s.name : null;',
+    page.slug
+  );
+  assert.strictEqual(
+    stateName,
+    page.title,
+    'Stored page title should be unchanged when the submit is blocked'
+  );
+}
+
+/**
+ * The page slug input enforces minlength=2, preventing submission when the
+ * slug is shorter than two characters.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function savingPageWithShortSlugIsBlocked(driver) {
+  const page = await createNewPage(driver, null, 'Valid Slug Page', true);
+
+  await clickEditButton(driver);
+  const slugField = await expectValue(driver, '#slug', page.slug);
+  await slugField.clear();
+  await slugField.sendKeys('x');
+
+  const saveButton = await driver.findElement(
+    By.css('main > section form footer button[type="submit"]')
+  );
+  await saveButton.click();
+  await driver.sleep(150);
+
+  const validity = await driver.executeScript(
+    'var el = document.getElementById("slug");'
+    + 'return { valid: el.validity.valid, tooShort: el.validity.tooShort };'
+  );
+  assert.strictEqual(validity.valid, false, 'Slug input should be invalid when under minlength');
+  assert.strictEqual(
+    validity.tooShort,
+    true,
+    'Slug input should report tooShort when below 2 characters'
+  );
+
+  await expectText(
+    driver,
+    'main > section header h1',
+    'Edit Page',
+    'Editor should stay open when short slug blocks submission'
+  );
+  const stateSlug = await driver.executeScript(
+    'var target = arguments[0];'
+    + 'var s = FW.state.p.pages.find(function (p) { return p.name === target; });'
+    + 'return s ? s.slug : null;',
+    page.title
+  );
+  assert.strictEqual(
+    stateSlug,
+    page.slug,
+    'Stored page slug should be unchanged when the submit is blocked'
+  );
+}
+
+/**
+ * The "Slugify Title" button regenerates the slug field from the current title
+ * value, applying FW.slug's special-character transformation rules.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function slugifyTitleButtonRegeneratesSlug(driver) {
+  await createNewPage(driver, null, 'Original Title', true);
+
+  await clickEditButton(driver);
+  const newTitle = 'Hello, World! (Greetings)';
+  await driver.executeScript(
+    'var el = document.getElementById("name");'
+    + 'el.value = arguments[0];'
+    + 'el.dispatchEvent(new Event("change", { bubbles: true }));',
+    newTitle
+  );
+  await driver.sleep(150);
+
+  const slugifyButton = await driver.findElement(
+    By.xpath("//form/header//button[normalize-space(text())='Slugify Title']")
+  );
+  await slugifyButton.click();
+  await driver.sleep(200);
+
+  const expectedSlug = await driver.executeScript(
+    'return FW.slug(arguments[0]);',
+    newTitle
+  );
+  await expectValue(
+    driver,
+    '#slug',
+    expectedSlug,
+    `Slugify Title should regenerate slug from the current title field, expected "${expectedSlug}"`
+  );
+
+  await saveOpenedPage(driver);
+  const updatedSlug = await driver.executeScript(
+    'var target = arguments[0];'
+    + 'var s = FW.state.p.pages.find(function (p) { return p.name === target; });'
+    + 'return s ? s.slug : null;',
+    newTitle
+  );
+  assert.strictEqual(
+    updatedSlug,
+    expectedSlug,
+    `Saved page should use the slugified slug "${expectedSlug}", got "${updatedSlug}"`
   );
 }
