@@ -36,7 +36,8 @@ export const initEmitter = (state, emitter) => {
     else tab();
 
     document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      // Compare against e.code so Shift held with S still matches
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
         e.preventDefault();
         if (FW.state.canPut && !e.shiftKey) {
           // If server saving & not holding shift, put save
