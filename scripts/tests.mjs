@@ -4,8 +4,10 @@ import * as settings from './tests/settings.mjs';
 import * as ed from './tests/pages/ed.mjs';
 import * as md from './tests/pages/md.mjs';
 import * as nesting from './tests/pages/nesting.mjs';
+import * as lifecycle from './tests/pages/lifecycle.mjs';
 import * as tags from './tests/tags.mjs';
 import * as missing from './tests/missing.mjs';
+import * as internalLinks from './tests/internal-links.mjs';
 import * as mediaEmbedded from './tests/media/embedded.mjs';
 
 export async function runTests(args = []) {
@@ -19,8 +21,10 @@ export async function runTests(args = []) {
       ...ed,
       ...md,
       ...nesting,
+      ...lifecycle,
       ...tags,
       ...missing,
+      ...internalLinks,
       ...mediaEmbedded,
     }
 
