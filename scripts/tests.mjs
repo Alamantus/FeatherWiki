@@ -1,6 +1,7 @@
 import assert from "assert";
 import { Browser, Builder, By, until, WebDriver, WebElement } from "selenium-webdriver";
-import * as settings from './tests/settings.mjs';
+import * as settings from './tests/settings/basic.mjs';
+import * as settingsAdvanced from './tests/settings/advanced.mjs';
 import * as ed from './tests/pages/ed.mjs';
 import * as md from './tests/pages/md.mjs';
 import * as nesting from './tests/pages/nesting.mjs';
@@ -19,6 +20,7 @@ export async function runTests(args = []) {
 
     const tests = {
       ...settings,
+      ...settingsAdvanced,
       ...ed,
       ...md,
       ...nesting,

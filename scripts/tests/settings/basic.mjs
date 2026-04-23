@@ -1,28 +1,8 @@
-import { expectMissing, expectText, expectValue, expectVisible } from "../tests.mjs";
+import { expectMissing, expectText, expectValue, expectVisible } from "../../tests.mjs";
 import { By, Select, WebDriver } from "selenium-webdriver";
-import { createNewPage, saveOpenedPage } from "./pages/index.mjs";
+import { createNewPage, saveOpenedPage } from "../pages/index.mjs";
+import { openSettings, saveSettings } from "./index.mjs";
 import assert from "assert";
-
-/**
- * Click the Wiki Settings link in the side bar
- * @param {WebDriver} driver The initialized browser driver
- * @return {Promise<void>}
- */
-async function openSettings(driver) {
-  const settingsLink = await expectText(driver, 'main > .sb nav p a', 'Wiki Settings');
-  await settingsLink.click();
-  await expectText(driver, 'main > section > header > h1', 'Wiki Settings');
-}
-
-/**
- * Click the save button on the settings page
- * @param {WebDriver} driver The initialized browser driver
- * @return {Promise<void>}
- */
-async function saveSettings(driver) {
-  let submitButton = await driver.findElement(By.css('main > section form button[type="submit"]'));
-  await submitButton.click();
-}
 
 /**
  * The title and description of the wiki can be set from the Wiki Settings
@@ -178,4 +158,57 @@ export async function canUsePublishToDisableEditing(driver) {
   await expectMissing(driver, 'main .sb nav a[href="?page=s"]', 'Wiki Settings link should be missing');
   await expectMissing(driver, 'main .sb nav details', 'New Page expander should be missing');
   await expectMissing(driver, 'main > section > header button', 'Edit button should be missing');
+}
+
+/**
+ * Clearing the wiki title and attempting to save fails native form validation
+ * and does not overwrite the stored title.
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function settingsSaveRequiresTitle(driver) {
+  await openSettings(driver);
+
+  const titleField = await expectValue(driver, '#wTitle', 'New Wiki');
+  await titleField.clear();
+
+  const submit = await driver.findElement(By.css('main > section form button[type="submit"]'));
+  await submit.click();
+  await driver.sleep(150);
+
+  // The submit should have been blocked by the browser's required/minlength validation
+  const stillOnSettings = await driver.findElement(By.css('main > section > header > h1'));
+  assert.strictEqual(
+    await stillOnSettings.getText(),
+    'Wiki Settings',
+    'Submitting an empty title should not navigate away from settings'
+  );
+
+  const validity = await driver.executeScript(
+    'var el = document.getElementById("wTitle");'
+    + 'return { valid: el.validity.valid, valueMissing: el.validity.valueMissing };'
+  );
+  assert.strictEqual(
+    validity.valid,
+    false,
+    'The title input should be marked invalid when empty'
+  );
+  assert.strictEqual(
+    validity.valueMissing,
+    true,
+    'The title input should report valueMissing when empty'
+  );
+
+  const storedName = await driver.executeScript('return FW.state.p.name;');
+  assert.strictEqual(
+    storedName,
+    'New Wiki',
+    `Stored wiki name should be unchanged when submit is blocked, got ${storedName}`
+  );
+
+  await expectMissing(
+    driver,
+    '.notis .noti',
+    'No "Settings updated" notification should appear when submit is blocked'
+  );
 }
