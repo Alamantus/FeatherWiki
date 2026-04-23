@@ -151,7 +151,9 @@ function build(localeFileName) {
               return { errors: [e] };
             }
 
-            contents = contents.replace(/(let|const)\s/g, 'var ');
+            // Use \b so the replacement only touches standalone `let` / `const`
+            // otherwise substrings like "let " inside localized strings (e.g. "Bullet List") get mangled.
+            contents = contents.replace(/\b(let|const)\s/g, 'var ');
 
             try {
               const minified = minifyHTMLLiterals(contents, {
