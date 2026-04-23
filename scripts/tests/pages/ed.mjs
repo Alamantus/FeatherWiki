@@ -173,6 +173,351 @@ export async function doesShortenImageDataInHtmlView(driver) {
   await expectValue(driver, 'main > section form > textarea', html);
 }
 
+/**
+ * Fill the visual editor with the given text and select all of its content
+ * @param {WebDriver} driver
+ * @param {String} text
+ * @returns {Promise<import('selenium-webdriver').WebElement>}
+ */
+async function typeAndSelectAllInEd(driver, text) {
+  const editor = await driver.findElement(By.css('#e .ed-uc'));
+  await driver.wait(until.elementIsVisible(editor));
+  await editor.click();
+  await editor.clear();
+  await editor.sendKeys(text);
+  await driver.executeScript(
+    'const el = document.querySelector("#e .ed-uc");'
+    + 'el.focus();'
+    + 'const range = document.createRange();'
+    + 'range.selectNodeContents(el);'
+    + 'const sel = window.getSelection();'
+    + 'sel.removeAllRanges();'
+    + 'sel.addRange(range);'
+  );
+  return editor;
+}
+
+/**
+ * Focus the visual editor and place the caret at the end of its content
+ * @param {WebDriver} driver
+ * @returns {Promise<void>}
+ */
+async function focusEdCaretAtEnd(driver) {
+  await driver.executeScript(
+    'const el = document.querySelector("#e .ed-uc");'
+    + 'el.focus();'
+    + 'const range = document.createRange();'
+    + 'range.selectNodeContents(el);'
+    + 'range.collapse(false);'
+    + 'const sel = window.getSelection();'
+    + 'sel.removeAllRanges();'
+    + 'sel.addRange(range);'
+  );
+}
+
+/**
+ * Click a visual editor toolbar button by its translated title attribute
+ * @param {WebDriver} driver
+ * @param {String} title
+ * @returns {Promise<void>}
+ */
+async function clickEdToolbarButton(driver, title) {
+  const button = await driver.findElement(
+    By.css(`#e .ed-bar button[title="${title}"]`)
+  );
+  await button.click();
+  await driver.sleep(150);
+}
+
+/**
+ * Return the current innerHTML of the visual editor
+ * @param {WebDriver} driver
+ * @returns {Promise<String>}
+ */
+async function getEdHtml(driver) {
+  return await driver.executeScript(
+    'return document.querySelector("#e .ed-uc").innerHTML'
+  );
+}
+
+/**
+ * The Bold toolbar button wraps the current selection in a bold element
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canBoldSelectionWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Bold text');
+  await clickEdToolbarButton(driver, 'Bold');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<(?:b|strong)>[\s\S]*Bold text[\s\S]*<\/(?:b|strong)>/i,
+    `Expected bolded text in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Italic toolbar button wraps the current selection in an italic element
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canItalicizeSelectionWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Italic text');
+  await clickEdToolbarButton(driver, 'Italic');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<(?:i|em)>[\s\S]*Italic text[\s\S]*<\/(?:i|em)>/i,
+    `Expected italicized text in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Underline toolbar button wraps the current selection in an underline element
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canUnderlineSelectionWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Underlined text');
+  await clickEdToolbarButton(driver, 'Underline');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<u>[\s\S]*Underlined text[\s\S]*<\/u>/i,
+    `Expected underlined text in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Heading toolbar button converts the current block to an h2
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canFormatHeadingWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Section Heading');
+  await clickEdToolbarButton(driver, 'Heading');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<h2[^>]*>[\s\S]*Section Heading[\s\S]*<\/h2>/i,
+    `Expected h2 block in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Sub-Heading toolbar button converts the current block to an h3
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canFormatSubHeadingWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Sub Heading');
+  await clickEdToolbarButton(driver, 'Sub-Heading');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<h3[^>]*>[\s\S]*Sub Heading[\s\S]*<\/h3>/i,
+    `Expected h3 block in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Bullet List toolbar button converts the current block into an unordered list
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canCreateBulletListWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'First item');
+  await clickEdToolbarButton(driver, 'Bullet List');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<ul[^>]*>[\s\S]*<li[^>]*>[\s\S]*First item[\s\S]*<\/li>[\s\S]*<\/ul>/i,
+    `Expected bullet list in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Number List toolbar button converts the current block into an ordered list
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canCreateNumberListWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'First item');
+  await clickEdToolbarButton(driver, 'Number List');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<ol[^>]*>[\s\S]*<li[^>]*>[\s\S]*First item[\s\S]*<\/li>[\s\S]*<\/ol>/i,
+    `Expected numbered list in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Quote toolbar button wraps the current block in a blockquote
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canCreateBlockquoteWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'A famous quote');
+  await clickEdToolbarButton(driver, 'Quote');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<blockquote[^>]*>[\s\S]*A famous quote[\s\S]*<\/blockquote>/i,
+    `Expected blockquote in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Separator toolbar button inserts a horizontal rule at the caret position
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canInsertSeparatorWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Before separator');
+  await focusEdCaretAtEnd(driver);
+  await clickEdToolbarButton(driver, 'Separator');
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<hr[^>]*>/i,
+    `Expected horizontal rule in editor HTML, got ${html}`
+  );
+}
+
+/**
+ * The Link toolbar button prompts for a URL and wraps the selection in an anchor tag
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canInsertLinkWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, 'Click here');
+
+  const linkButton = await driver.findElement(
+    By.css('#e .ed-bar button[title="Link"]')
+  );
+  await linkButton.click();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const prompt = await driver.switchTo().alert();
+  const promptText = await prompt.getText();
+  assert.strictEqual(
+    promptText,
+    'Link URL:',
+    `Link toolbar prompt should ask for a URL, got "${promptText}"`
+  );
+  await prompt.sendKeys('https://example.com/');
+  await prompt.accept();
+  await driver.sleep(200);
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    /<a[^>]*href="https:\/\/example\.com\/?"[^>]*>[\s\S]*Click here[\s\S]*<\/a>/i,
+    `Expected anchor link wrapping selection, got ${html}`
+  );
+}
+
+/**
+ * The Link External Image toolbar button prompts for a URL and inserts an img tag
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function canInsertExternalImageWithEdToolbar(driver) {
+  await createNewPage(driver, 'ed');
+  await typeAndSelectAllInEd(driver, '');
+  await focusEdCaretAtEnd(driver);
+
+  const externalImageButton = await driver.findElement(
+    By.css('#e .ed-bar button[title="Link External Image"]')
+  );
+  await externalImageButton.click();
+
+  await driver.wait(until.alertIsPresent(), 1000);
+  const prompt = await driver.switchTo().alert();
+  const promptText = await prompt.getText();
+  assert.strictEqual(
+    promptText,
+    'Image URL:',
+    `External image prompt should ask for a URL, got "${promptText}"`
+  );
+  const imageUrl = 'https://example.com/image.png';
+  await prompt.sendKeys(imageUrl);
+  await prompt.accept();
+  await driver.sleep(200);
+
+  const html = await getEdHtml(driver);
+  assert.match(
+    html,
+    new RegExp(`<img[^>]*src="${imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`, 'i'),
+    `Expected external image inserted, got ${html}`
+  );
+}
+
+/**
+ * The visual editor toolbar renders every expected formatting button
+ * @param {WebDriver} driver The initialized browser driver
+ * @return {Promise<void>}
+ */
+export async function showsAllEdToolbarButtons(driver) {
+  await createNewPage(driver, 'ed');
+  await expectVisible(driver, '#e .ed-bar', 'The toolbar should be visible');
+
+  const expectedTitles = [
+    'Clear Formatting',
+    'Bold',
+    'Italic',
+    'Underline',
+    'Heading',
+    'Sub-Heading',
+    'Paragraph',
+    'Align Left',
+    'Align Center',
+    'Align Right',
+    'Number List',
+    'Bullet List',
+    'Quote',
+    'Separator',
+    'Link',
+    'Link External Image',
+    'Insert Image from File',
+    'Add Existing Image',
+  ];
+  for (const title of expectedTitles) {
+    await expectVisible(
+      driver,
+      `#e .ed-bar button[title="${title}"]`,
+      `The "${title}" toolbar button should be visible`
+    );
+  }
+
+  const buttons = await driver.findElements(By.css('#e .ed-bar button.ed-btn'));
+  assert.strictEqual(
+    buttons.length,
+    expectedTitles.length,
+    `The toolbar should render ${expectedTitles.length} buttons, got ${buttons.length}`
+  );
+}
+
  /**
   * Previously uploaded images can be added to a page
   * @param {WebDriver} driver The initialized browser driver
