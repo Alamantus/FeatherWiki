@@ -32,7 +32,9 @@ let app = http.createServer((req, res) => {
             data += chunk;
         });
         req.on('end', () => {
-            const savePath = path.resolve(process.cwd(), 'develop', 'put-save.html');
+            const saveDir = path.resolve(process.cwd(), 'develop');
+            if (!fs.existsSync(saveDir)) fs.mkdirSync(saveDir, { recursive: true });
+            const savePath = path.resolve(saveDir, 'put-save.html');
             fs.writeFile(savePath, data, (err) => {
                 if (err) throw err;
                 const outputKb = (Uint8Array.from(Buffer.from(data)).byteLength * 0.000977).toFixed(3) + ' kb';
