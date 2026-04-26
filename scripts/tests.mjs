@@ -9,6 +9,7 @@ import * as lifecycle from './tests/pages/lifecycle.mjs';
 import * as tags from './tests/tags.mjs';
 import * as missing from './tests/missing.mjs';
 import * as internalLinks from './tests/internal-links.mjs';
+import * as navigation from './tests/navigation.mjs';
 import * as save from './tests/save.mjs';
 import * as mediaEmbedded from './tests/media/embedded.mjs';
 
@@ -28,6 +29,7 @@ export async function runTests(args = []) {
       ...tags,
       ...missing,
       ...internalLinks,
+      ...navigation,
       ...save,
       ...mediaEmbedded,
     }
