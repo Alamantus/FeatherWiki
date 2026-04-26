@@ -1,6 +1,6 @@
 # Feather Wiki
 
-A 55.259 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
+A 55.735 kilobyte [quine](https://en.wikipedia.org/wiki/Quine_(computing)) for creating simple, self-contained wikis. The idea is that it's like [TiddlyWiki](https://tiddlywiki.com) but as small as possible.
 
 Check out the [Documentation](https://feather.wiki) to see it in action and learn how to use it!
 
@@ -38,7 +38,7 @@ You can see this functionality on [Tiddlyhost](https://tiddlyhost.com) or by usi
 
 ## Plumage & Bones
 
-Feather Wiki's CSS and JavaScript files are available separately from the full HTML, but it is important to note that the JavaScript currently expects both its code and the CSS to be _on the HTML page_ that is loaded _in full_ in order to save! Specifically, the contents of the `.js` file _must_ be in the HTML output inside of a `<script id="a">` script tag with the id as specified (`a`), and the contents of the `.css` _must_ be in the HTML output inside of a `<script id="s">` style tag with the id as specified (`s`). If you don't need to save your wiki, then you don't need to do this.
+Feather Wiki's CSS and JavaScript files are available separately from the full HTML that can be used alongside the "bare" HTML files in case you want to load them separately. This is useful if you are trying to store Feather Wiki data externally, but note that the data will need to be injected into the `<script id="p" type="application/json">` block, replacing the empty `{}` JSON object, othewise it will always only load an empty Feather Wiki.
 
 ## Contribution
 
@@ -64,13 +64,13 @@ To get your computer set up to develop:
 
 When you're ready to build, simply use the `npm run build` to build Feather Wiki.
 
-To test a build, you can use `npm test` to build and serve the Server build on a local http server. The test script will allow
-Feather Wiki to use the "Save Wiki to Server" button—the output gets saved to `develop/put-save.html` if you need
-to check it.
+To test a build, you can use `npm test` to run a suite of tests that are defined in `scripts/tests` to check a number
+of different scenarios. Please make sure any changes you make don't cause tests to fail without either adjusting the
+tests or fixing your code.
 
 ### Details
 
-Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./nanochoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/ed.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for its [Markdown parsing](./helpers/md.js).
+Feather Wiki uses a modified version of [Choo](https://choo.io) as its [base JavaScript framework](./featherchoo.js), a subset of [JSON-Compress](https://github.com/Alamantus/JSON-Compress) for minifying JSON output, a customized [pell](https://jaredreich.com/pell/) for its [HTML editor](./helpers/ed.js), and a greatly customized [md.js](https://github.com/thysultan/md.js) for its [Markdown parsing](./helpers/md.js).
 
 The overarching goal is to keep Feather Wiki as small as possible while still providing the most important features. Unfortunately, that's a pretty loose and fluid goal, but as long as you keep "as small as possible" in mind, you probably won't go too far astray.
 
