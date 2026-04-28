@@ -219,6 +219,7 @@ export async function savingPageWithShortTitleIsBlocked(driver) {
   await clickEditButton(driver);
   const titleField = await expectValue(driver, '#name', page.title);
   await titleField.clear();
+  await driver.sleep(50);
   await titleField.sendKeys('X');
 
   const saveButton = await driver.findElement(
@@ -269,6 +270,7 @@ export async function savingPageWithShortSlugIsBlocked(driver) {
   await clickEditButton(driver);
   const slugField = await expectValue(driver, '#slug', page.slug);
   await slugField.clear();
+  await driver.sleep(50);
   await slugField.sendKeys('x');
 
   const saveButton = await driver.findElement(
