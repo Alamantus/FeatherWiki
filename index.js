@@ -52,7 +52,7 @@ FW.parseContent = (pageContent, isMd = false) => {
   let nowiki = [];
   let nIdx = 0; // nowiki index
   // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
-  let c = (pageContent ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
+  let c = (pageContent ?? '').replace(/(<nowiki>.*?<\/nowiki>)/gs, (m, content) => {
     nowiki[nIdx] = content;
     return `{nowiki-${nIdx++}}`;
   });
