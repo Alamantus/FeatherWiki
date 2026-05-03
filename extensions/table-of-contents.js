@@ -10,6 +10,7 @@
 // This extension takes all heading elements (h1–8) and generates a table of contents if `<toc></toc>` is found in the page content.
 FW.ready(() => {
   const { emitter } = FW;
+  const tocId = 'auto-table-of-contents';
   console.log('running table-of-contents.js'); // Indicate that the extension has been added
   // If you need to add variables to the Feather Wiki state, you can do so here
   // Make the extension run *both* when the page renders *and* when the page first loads
@@ -19,6 +20,21 @@ FW.ready(() => {
         renderTableOfContents();
       }, 50);
     });
+  });
+  emitter.on('anchor', (hash, addToHistory = true) => {
+    const heading = document.querySelector(hash);
+    if (heading !== null) {
+      heading.scrollIntoView(true);
+      if (addToHistory) {
+        history.pushState({}, FW.state.title, location.href);
+      }
+    }
+  });
+  emitter.on(FW.state.events.GO, () => {
+    const toc = document.getElementById(tocId);
+    if (toc !== null && location.hash.length > 1) {
+      setTimeout(() => FW.emit('anchor', location.hash, false), 500);
+    }
   });
   emitter.emit('DOMContentLoaded'); // Ensure your extension renders
 
@@ -33,7 +49,7 @@ FW.ready(() => {
       return hNum < top ? hNum : top;
     }, Infinity);
     let prev = 0;
-    let content = '<ul>';
+    let content = `<ul id="${tocId}">`;
     headers.forEach(h => {
       const hNum = parseInt(h.nodeName.replace('H', ''));
       if (prev > 0) {
@@ -47,7 +63,7 @@ FW.ready(() => {
           }
         }
       }
-      content += `<li><a href="#${h.id}">${h.innerText.trim()}</a>`;
+      content += `<li><a onclick="FW.emit('anchor', '#${h.id}')">${h.innerText.trim()}</a>`;
       prev = hNum;
     });
     for (let i = 0; i <= (prev - biggestHeader); i++) {
