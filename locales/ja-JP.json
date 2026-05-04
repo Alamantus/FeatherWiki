@@ -94,7 +94,7 @@
   "showHtml": "HTML を表示",
   "showMenuButton": "メニューを表示",
   "slugExists": "スラッグ \"${page.slug}\" のページがすでに存在します！",
-  "slugifyTitle": "スラッグタイトル",
+  "slugifyTitle": "タイトルをスラッグへ",
   "status": "ステータス",
   "subheadingHelpText": "サブ見出し",
   "subPages": "サブページ",
