@@ -34,9 +34,9 @@ FW.ready(() => {
         #featherSearch{position:relative;}
         #featherSearchResults{
           position: absolute;
-          background: #fff;
-          border: 1px solid #000;
-          top: calc(12pt + .5rem + 2px);
+          background: var(--bg);
+          border: var(--focus-outline);
+          top: calc(var(--size) + var(--input-pad) + 2px);
           left: 0;
           width: 100%;
           max-height: 300px;
@@ -52,9 +52,9 @@ FW.ready(() => {
           width: 100%;
           padding: 6px 10px;
           margin: 2px 0;
-          color: #000;
+          color: var(--color);
         }
-        #featherSearchResults a:hover{color:#fff;background:#65a;}
+        #featherSearchResults a:hover{color:var(--btn-color);background:var(--btn-bg);}
       </style>
     </div>`;
     const nav = document.querySelector('.sb nav');
