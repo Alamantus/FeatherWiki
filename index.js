@@ -24,7 +24,6 @@ window.html = require('./nanohtml').default;
 window.ed = require('./helpers/ed').default;
 window.md = require('./helpers/md').default;
 
-// Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
 window.FW = Choo();
 // Replace whitespace with _ then all ASCII punctuation (except _) & non-print characters with -
 // Only ASCII ranges are replaced to allow non-English characters to be used

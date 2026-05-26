@@ -359,7 +359,6 @@ NanoScheduler.prototype.setTimeout = function (cb) {
  * Modified from https://github.com/choojs/nanohref
  * Prevents browser navigation within wiki
  */
-var safeExternalLink = /(noopener|noreferrer) (noopener|noreferrer)/
 var protocolLink = /^[\w-_]+:/
 
 function nanohref (cb, root) {
@@ -380,13 +379,14 @@ function nanohref (cb, root) {
 
     if (!anchor) return
 
-    if (window.location.protocol !== anchor.protocol ||
-        window.location.hostname !== anchor.hostname ||
-        window.location.port !== anchor.port ||
-        anchor.hasAttribute('download') ||
-        (anchor.getAttribute('target') === '_blank' &&
-        safeExternalLink.test(anchor.getAttribute('rel'))) ||
-      protocolLink.test(anchor.getAttribute('href'))) return
+    if (
+      window.location.protocol !== anchor.protocol ||
+      window.location.hostname !== anchor.hostname ||
+      window.location.port !== anchor.port ||
+      anchor.hasAttribute('download') ||
+      anchor.getAttribute('target') === '_blank' ||
+      protocolLink.test(anchor.getAttribute('href'))
+    ) return
 
     e.preventDefault()
     cb(anchor)

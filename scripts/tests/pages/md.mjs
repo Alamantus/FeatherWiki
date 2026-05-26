@@ -175,9 +175,9 @@ John didn't even know what the \`go_to()\` function did!
 
 ****************
 
-[Click me!](http://test.com/)
+[Click me!](http://feather.wiki/)
 
-[Click me!](http://test.com/ "Link to Test.com")
+[Click me!](http://feather.wiki/ "Link to feather.wiki")
 
 [Go to music](/music/).
 
@@ -188,8 +188,8 @@ John didn't even know what the \`go_to()\` function did!
 
 ![This is the alt-attribute for my image](http://imgur.com/myimage.jpg "An optional title")
 
-<http://testwebsite.com/> is equivalent to
-[http://testwebsite.com/](http://testwebsite.com/)
+<http://feather.wiki/> is equivalent to
+[http://feather.wiki/](http://feather.wiki/)
 
 <foo@bar.com>
 
@@ -280,15 +280,15 @@ Here's some &lt;Escaped text!&gt;
 \`\`\`</p>
 <p>John didn't even know what the <code>go_to()</code> function did!
 </p><hr><hr><hr><hr>
-<a href="http://test.com/" target="_blank" rel="noopener noreferrer">Click me!</a><p></p>
-<p><a href="http://test.com/" title="Link to Test.com">Click me!</a></p>
-<p><a href="/music/" target="_blank" rel="noopener noreferrer">Go to music</a>.</p>
-<ul><li><a href="#heading" target="_blank" rel="noopener noreferrer">Heading</a></li><li><a href="#another-heading" target="_blank" rel="noopener noreferrer">Another heading</a></li><li><a href="#chapter" target="_blank" rel="noopener noreferrer">Chapter</a><ul><li><a href="#subchapter-h3-" target="_blank" rel="noopener noreferrer">Subchapter &lt;h3 /&gt;</a></li></ul></li></ul>
+<a href="http://feather.wiki/" target="_blank">Click me!</a><p></p>
+<p><a href="http://feather.wiki/" title="Link to feather.wiki">Click me!</a></p>
+<p><a href="/music/" target="_blank">Go to music</a>.</p>
+<ul><li><a href="#heading" target="_blank">Heading</a></li><li><a href="#another-heading" target="_blank">Another heading</a></li><li><a href="#chapter" target="_blank">Chapter</a><ul><li><a href="#subchapter-h3-" target="_blank">Subchapter &lt;h3 /&gt;</a></li></ul></li></ul>
 
 <p><img src="http://imgur.com/myimage.jpg" alt="This is the alt-attribute for my image" title="An optional title"></p>
-<p><a href="http://testwebsite.com/" target="_blank" rel="noopener noreferrer">http://testwebsite.com/</a> is equivalent to
-<a href="http://testwebsite.com/" target="_blank" rel="noopener noreferrer">http://testwebsite.com/</a></p>
-<p><a href="mailto:foo@bar.com" target="_blank" rel="noopener noreferrer">foo@bar.com</a></p>
+<p><a href="http://feather.wiki/" target="_blank">http://feather.wiki/</a> is equivalent to
+<a href="http://feather.wiki/" target="_blank">http://feather.wiki/</a></p>
+<p><a href="mailto:foo@bar.com" target="_blank">foo@bar.com</a></p>
 <p>I want to type <em>this text surrounded by asterisks</em> but I don't want it to be
 in italics, so I do this: <em>this text surrounded by asterisks</em>.</p>
 <p>Your computer crashed? Try sending a

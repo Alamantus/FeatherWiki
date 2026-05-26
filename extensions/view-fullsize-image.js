@@ -25,7 +25,7 @@ FW.ready(() => {
     if (state.pg) {
       Array.from(document.querySelectorAll('img')).forEach(img => {
         if (img.parentNode.tagName.toLowerCase() !== 'a') {
-          const link = html`<a target="_blank" rel="noopener noreferrer" href="${img.src}" title="Open full size"></a>`;
+          const link = html`<a target="_blank" href="${img.src}" title="Open full size"></a>`;
           img.parentNode.insertBefore(link, img);
           link.appendChild(img);
         }
