@@ -23,16 +23,16 @@
   --tab-active: #87C;
   --el-margin: .5rem 0;
   --input-pad: .5rem;
-  --h-margin: .5rem 0;
+  --h-margin: 1rem 0 .5rem;
   --h1: 2rem;
-  --h2: 1.8rem;
-  --h3: 1.6rem;
-  --h4: 1.4rem;
-  --h5: 1.2rem;
+  --h2: 1.75rem;
+  --h3: 1.5rem;
+  --h4: 1.3rem;
+  --h5: 1.15rem;
   --h6: 1rem;
   --focus-outline: 2px solid #000;
  }
- 
+
  html {
   font-family: var(--font);
 }
@@ -76,24 +76,12 @@ h1, h2, h3, h4, h5, h6, .t {
   font-weight: bold;
   margin: var(--h-margin);
 }
-h1 {
-  font-size: var(--h1);
-}
-h2 {
-  font-size: var(--h2);
-}
-h3, .t {
-  font-size: var(--h3);
-}
-h4 {
-  font-size: var(--h4);
-}
-h5 {
-  font-size: var(--h5);
-}
-h6 {
-  font-size: var(--h6);
-}
+h1 { font-size: var(--h1); }
+h2 { font-size: var(--h2); }
+h3, .t { font-size: var(--h3); }
+h4 { font-size: var(--h4); }
+h5 { font-size: var(--h5); }
+h6 { font-size: var(--h6); }
 
 .np { max-width: 8rem; }
 button, summary:is(.np, .b) {
@@ -147,7 +135,7 @@ blockquote {
   font-size: 80%;
   padding: 1em;
   border-radius: 6px;
-  background-color: #eee;
+  background-color: var(--sb-bg);
   line-height: 1.5;
   overflow-x: auto;
 }
@@ -204,7 +192,7 @@ abbr[title] { cursor: help; }
   }
 
   form, .mw, #g, input, select, textarea, .ed { max-width: 1000px; }
-  
+
   .tr { text-align: right; }
   .fr { float: right; }
 }
@@ -251,7 +239,7 @@ abbr[title] { cursor: help; }
 
 /**** ed edior ***/
 #g, input, select, textarea, .ed, .noti {
-  border: 1px solid #000;
+  border: 1px solid var(--color);
   border-radius: 3px;
 }
 .ed * {
@@ -270,20 +258,20 @@ abbr[title] { cursor: help; }
   max-height: 600px;
 }
 .ed-uc nowiki {
-  background: #EEE;
+  background: var(--sb-bg);
 }
 :is(.ed-uc, textarea, .uc) * { max-width: 100%; }
 
 .ed-bar {
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid var(--color);
 }
 
 .ed-btn {
   background: transparent;
-  color: #000;
+  color: var(--color);
   vertical-align: middle;
 }
 
 .ed-sel {
-  background: #ddd;
+  background: var(--sb-bg);
 }
