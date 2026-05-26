@@ -35,19 +35,21 @@ export const initEmitter = (state, emitter) => {
     if (state.t.length) emit(RENDER);
     else tab();
 
-    document.addEventListener('keydown', (e) => {
-      // Compare against e.code so Shift held with S still matches
-      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
-        e.preventDefault();
-        if (FW.state.canPut && !e.shiftKey) {
-          // If server saving & not holding shift, put save
-          FW.emit(PUT_SAVE_WIKI);
-        } else {
-          // If holding shift or not a server saving instance, regular save
-          FW.emit(SAVE_WIKI);
+    if (!FW._loaded) {
+      document.addEventListener('keydown', (e) => {
+        // Compare against e.code so Shift held with S still matches
+        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
+          e.preventDefault();
+          if (FW.state.canPut && !e.shiftKey) {
+            // If server saving & not holding shift, put save
+            FW.emit(PUT_SAVE_WIKI);
+          } else {
+            // If holding shift or not a server saving instance, regular save
+            FW.emit(SAVE_WIKI);
+          }
         }
-      }
-    });
+      });
+    }
 
     emit(DETECT_PUT_SUPPORT);
   });
