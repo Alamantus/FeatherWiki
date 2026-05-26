@@ -4,8 +4,9 @@ I appreciate however you can help with this project! There are many ways you can
 
 ## For coders
 
-Feel free to fork this repo and submit pull requests to have your changes or additions reviewed! I might ask for changes
-to make the output smaller or improve organization, but as above, I also reserve the right to deny changes outright in favor of a future plugin/code extension system that allows users to inject their own code into their Feather Wiki instead of including it in the base.  
+Feel free to fork this repo and submit pull requests to have your changes or additions reviewed! I might ask for changes to make the output smaller or improve organization, but I also reserve the right to deny changes outright in favor of a future plugin/code extension system that allows users to inject their own code into their Feather Wiki instead of including it in the base.
+
+Any changes that are made to the base Feather Wiki code must also pass [the project's tests](./scripts/tests/) when running `npm test` from the project root. Adding features or fixing bugs must also either add a test to account for the new code and ensure that the existing tests still run successfully. See Testing on [README.md](./README.md) for more details.
 
 The observant among you may have noticed that there is a [mirror on GitHub](https://github.com/Alamantus/FeatherWiki) (if that's where you're reading this, hello to you!). I will review pull requests from the GitHub mirror, but I request that you make an attempt to submit your pull requests to the [Codeberg repository](https://codeberg.org/Alamantus/FeatherWiki) if at all possible. I will not be monitoring the GitHub repo closely, though I should receive email notifications.
 

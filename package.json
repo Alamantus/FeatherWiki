@@ -1,7 +1,7 @@
 {
   "name": "featherwiki",
-  "version": "1.8.2",
-  "nickname": "Woodlark",
+  "version": "1.9.0",
+  "nickname": "Greenfinch",
   "title": "Feather Wiki",
   "description": "A lightweight quine for simple, self-contained wikis",
   "homepage": "https://feather.wiki",
