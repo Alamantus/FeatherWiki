@@ -7,11 +7,16 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
+// Pass the exact names of specific tests as arguments to run only those tests
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
+import { runTests } from './tests.mjs';
 
-const servePath = path.resolve(process.cwd(), 'builds', `FeatherWiki.html`);
+const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
+const packageJson = JSON.parse(packageJsonFile);
+const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
+const servePath = path.resolve(process.cwd(), 'builds', `v${version}`, `FeatherWiki_${packageJson.nickname}.html`);
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {
@@ -27,7 +32,9 @@ let app = http.createServer((req, res) => {
             data += chunk;
         });
         req.on('end', () => {
-            const savePath = path.resolve(process.cwd(), 'develop', 'put-save.html');
+            const saveDir = path.resolve(process.cwd(), 'develop');
+            if (!fs.existsSync(saveDir)) fs.mkdirSync(saveDir, { recursive: true });
+            const savePath = path.resolve(saveDir, 'put-save.html');
             fs.writeFile(savePath, data, (err) => {
                 if (err) throw err;
                 const outputKb = (Uint8Array.from(Buffer.from(data)).byteLength * 0.000977).toFixed(3) + ' kb';
@@ -49,3 +56,9 @@ let app = http.createServer((req, res) => {
 // Start the server on port 3000
 app.listen(3000, 'localhost');
 console.log('Node server running at http://localhost:3000 and serving ' + servePath);
+
+(async () => {
+    await runTests(process.argv.slice(2));
+    app.close();
+    process.exit();
+})();

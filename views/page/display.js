@@ -7,39 +7,19 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-export const parseContent = (page) => {
-  const { img, pg, out, hLink } = FW.inject;
-  let nowiki = [];
-  let nIdx = 0; // nowiki index
-  // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
-  let c = (page.content ?? '').replace(/(<nowiki>.*<\/nowiki>)/gs, (m, content) => {
-    nowiki[nIdx] = content;
-    return `{nowiki-${nIdx++}}`;
-  });
-  c = pg(FW.img.fix(c));
-  c = page.editor === 'md' ? md(c ?? '') : c;
-  c = img(
-    hLink(
-      out(c)
-    )
-  );
-  for (let i = 0; i < nIdx; i++) {
-    c = c.replace(`{nowiki-${i}}`, nowiki[i]);
-  }
-  return c;
-}
-
 export const pageDisplay = (page) => {
-  const c = parseContent(page);
+  const c = FW.parseContent(page?.content, page.editor === 'md');
   const children = FW.getChildren(page, true);
   return [
     !page?.e && page?.tags?.length
-      ? html`<aside class="db r">
-        <b class=c>{{translate:tagged}}</b>
+      ? html`<dl class="db r">
+        <dt class=c>{{translate:tagged}}</dt>
         <dd class=c>
-          ${html.raw(page.tags.split(',').map(t => `<a href="?tag=${t}">${t}</a>`).join(', '))}
+          ${html.raw( //Use html.raw() here to join with commas more easily, but convert special chars to HTML by extracting from innerHTML
+            page.tags.split(',').map((t) => `<a href="?tag=${encodeURIComponent(t)}">${html`<p>${t}</p>`.innerHTML}</a>`).join(', ')
+          )}
         </dd>
-      </aside>`
+      </dl>`
       : '',
     html`<article class=uc>
       ${ c ? html.raw(c) : '{{translate:noPageContent}}' }

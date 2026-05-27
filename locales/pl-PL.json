@@ -22,6 +22,7 @@
   "customJs": "Niestandardowy JS",
   "customJsHelpText": "Uruchamia się tylko jeden raz podczas ładowania Wiki. Aby przetestować, zapisz Wiki i załaduj plik ponownie.",
   "default": "domyślny",
+  "defaultEditor": "Domyślny edytor stron",
   "deleteImageButton": "Usuń",
   "deleteImagePrompt": "Trwale usunąć obraz ze wszystkich stron Wiki?",
   "deletePage": "Usuń",

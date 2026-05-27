@@ -45,14 +45,14 @@ export function img (content, includeId = false) {
   return c;
 }
 
-// Insert `target="_blank" rel="noopener noreferrer"` into every `a` tag to make it external
+// Insert `target="_blank"` into every `a` tag to make it external
 export function out (content) {
   let c = content ?? null;
   if (c) {
     (content?.match(/<a href="[^"]+">/gi) ?? []).forEach(url => {
       c = c.replace(
         url,
-        url.replace('>', 'target="_blank" rel="noopener noreferrer">')
+        url.replace('>', 'target="_blank">')
       );
     });
   }

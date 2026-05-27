@@ -12,18 +12,20 @@ export const pageEdit = (state, emit, page) => {
   const children = FW.getChildren(page).map(c => c.id);
   const isNew = !p.pages.some(pg => pg.id === page.id);
 
-  const { useMd } = edits;
   function toggleEditor (e) {
     e.preventDefault();
-    const { useMd, content } = edits;
+    const { content } = edits;
+    const useMd = edits.editor === 'md';
     if (useMd) {
       if (confirm('{{translate:convertMarkdownPrompt}}\n({{translate:convertMarkdownHelpText}})')) state.edits.content = md(content);
     } else {
       state.edits.content = FW.img.abbr(content);
     }
-    state.edits.useMd = !useMd;
+    // Toggle to md if not currently or to either html or ed depending on default.
+    state.edits.editor = useMd ? (p.editor === 'html' ? 'html' : 'ed') : 'md';
     emit(events.RENDER);
   }
+  const useMd = edits.editor === 'md';
   const editor = [
     html`<div class="w1 tr">
       <button onclick=${toggleEditor}>${useMd ? '{{translate:useEditor}}' : '{{translate:useMarkdown}}'}</button>
@@ -103,7 +105,7 @@ export const pageEdit = (state, emit, page) => {
   function getTagsArray () {
     return FW.tidy(document.getElementById('tags').value.split(','));
   }
-  
+
   function addTag (e) {
     const tag = e.target.value;
     if (tag.length > 0) {
@@ -126,11 +128,15 @@ export const pageEdit = (state, emit, page) => {
     const pg = { ...page };
     pg.name = n;
     pg.slug = FW.slug(slug);
-    pg.content = FW.img.fix(FW.img.abbr(state.edits.content), true);
+    // When pasting or moving text in the contenteditable, it inserts a style attribute with default styles,
+    // which is both unnecessary and a lot of extra text to store, so this aims to remove it when found.
+    const c = state.edits.content.replace(/ ?[-a-z]+: ?(var\(--(color|font|size)\))?;/g, '')
+      .replace(/ ?style=" *"/g, ''); // Then any empty `style` attributes left behind
+    pg.content = FW.img.fix(FW.img.abbr(c), true);
     pg.tags = getTagsArray().join(',');
     pg.parent = f.parent.value;
     if (f.hide.checked) pg.hide = true; else delete pg.hide;
-    if (edits.useMd) pg.editor = 'md'; else delete pg.editor;
+    pg.editor = edits.editor;
     emit(events.UPDATE_PAGE, pg);
   }
 

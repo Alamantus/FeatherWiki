@@ -7,7 +7,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-import { parseContent } from './display';
 import { modal } from '../gallery';
 
 export const editor = (state) => {
@@ -16,11 +15,11 @@ export const editor = (state) => {
     state.edits.content = e.target.value;
     clearTimeout(state.debounce);
     state.debounce = setTimeout(() => {
-      preview.innerHTML = parseContent({ ...state.edits, editor: 'md' });
-    }, 500);
+      preview.innerHTML = FW.parseContent(state.edits?.content, true);
+    }, 999);
   }
   // Call this `target` to save some bytes when constructing objects
-  const target = html`<textarea oninput=${textChange}>${state.edits.content}</textarea>`;
+  const target = html`<textarea id=md oninput=${textChange}>${state.edits.content}</textarea>`;
   textChange({ target });
   return [
     target,
@@ -30,7 +29,7 @@ export const editor = (state) => {
     preview,
     modal(state, insert),
   ];
-  
+
   // Modified from https://stackoverflow.com/a/19961519
   function insert ({ id }) {
     const text = `![](img:${id}:img)`;

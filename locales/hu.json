@@ -22,6 +22,7 @@
   "customJs": "Egyéni JS",
   "customJsHelpText": "Csak egyszer fut, a wiki betöltésekor. Teszteléshez mentse el a wikit, majd töltse be a mentett fájlt.",
   "default": "Alapértelmezett",
+  "defaultEditor": "Alapértelmezett oldalszerkesztő",
   "deleteImageButton": "Törlés",
   "deleteImagePrompt": "Véglegesen törli a képet a wiki összes oldaláról?",
   "deletePage": "Törlés",

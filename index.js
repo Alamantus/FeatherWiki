@@ -7,7 +7,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Feather Wiki. If not, see https://www.gnu.org/licenses/.
  */
-import Choo from './nanochoo';
+import Choo from './featherchoo';
 import { initState } from './initState';
 import { initEmitter } from './initEmitter';
 import { globalView } from './views/global';
@@ -20,12 +20,10 @@ import * as inject from './helpers/injection';
 import * as json from './helpers/jsonCompress';
 
 // Populate window with dependencies and helpers before starting app
-window.html = require('nanohtml');
-html.raw = require('nanohtml/raw');
+window.html = require('./nanohtml').default;
 window.ed = require('./helpers/ed').default;
 window.md = require('./helpers/md').default;
 
-// Reminder: outlinks require `target="_blank"` *and* `rel="noopener noreferrer"`
 window.FW = Choo();
 // Replace whitespace with _ then all ASCII punctuation (except _) & non-print characters with -
 // Only ASCII ranges are replaced to allow non-English characters to be used
@@ -48,7 +46,27 @@ FW.upload = (mime, cb) => {
   input.click();
   document.body.removeChild(input);
 };
-
+FW.parseContent = (pageContent, isMd = false) => {
+  const { img, pg, out, hLink } = FW.inject;
+  let nowiki = [];
+  let nIdx = 0; // nowiki index
+  // Parse out content wrapped "nowiki" HTML tags - must be added in either HTML or Markdown view
+  let c = (pageContent ?? '').replace(/(<nowiki>.*?<\/nowiki>)/gs, (m, content) => {
+    nowiki[nIdx] = content;
+    return `{nowiki-${nIdx++}}`;
+  });
+  c = pg(FW.img.fix(c));
+  c = isMd ? md(c ?? '') : c;
+  c = img(
+    hLink(
+      out(c)
+    )
+  );
+  for (let i = 0; i < nIdx; i++) {
+    c = c.replace(`{nowiki-${i}}`, nowiki[i]);
+  }
+  return c;
+}
 FW.find = (s, a = 'slug') => FW.state.p.pages.find(p => p[a] === s);
 FW.getPage = () => {
   const { query, p } = FW.state;

@@ -22,7 +22,6 @@ export const initState = state => {
   state.edit = false;
   state.edits = null; // Edit store
   state.keep = false; // Keep Editor, Prevent navigation if editing
-  state.src = false; // Show HTML in editor
   state.notis = {}; // Notifications
   state.canPut = false; // Show "Save Wiki to Server" button
 
@@ -55,14 +54,16 @@ export const initState = state => {
   state.j = FW.parseJs(document.querySelector('script#j')?.innerHTML ?? '');
   try {
     state.p = FW.json.decompress(JSON.parse(document.querySelector('script#p').innerHTML));
+    if (typeof state.p.editor === 'undefined') {
+      // determine last-used editor
+      const lastModified = state.p.pages.find(p => p.id === state.recent[0]?.p);
+      state.p.editor = lastModified?.editor ?? 'ed';
+    }
   } catch (e) {
     state.p = {name:'{{translate:newWiki}}',desc:'',pages:[],img:{}};
   }
+
   state.pg = FW.getPage();
-  
-  // determine last-used editor
-  const lastModified = state.p.pages.find(p => p.id === state.recent[0]?.p);
-  state.useMd = lastModified?.editor === 'md';
 
   state.t = []; // all used tags
   state.prev = FW.hash.object(state.p); // Hash of state at last save

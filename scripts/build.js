@@ -17,6 +17,16 @@ import { minify } from 'html-minifier';
 const packageJsonFile = fs.readFileSync(path.relative(process.cwd(), 'package.json'), 'utf8');
 const packageJson = JSON.parse(packageJsonFile);
 
+// Formatted file size string
+const kbStr = (outHtml) => {
+  return (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+}
+
+// Nicely formatted file name and size
+const fileAndSize = (fullPath, sizeString) => {
+  return path.relative(process.cwd(), fullPath).padEnd(60) + sizeString.padStart(16);
+}
+
 const version = packageJson.version.split('.').map((v, i, a) => i === (a.length - 1) ? 'x' : v).join('.');
 const buildDir = path.resolve(process.cwd(), `builds`);
 if (!fs.existsSync(buildDir)) {
@@ -39,8 +49,8 @@ const cssResult = esbuild.buildSync({
 const cssOutput = new TextDecoder().decode(cssResult.contents);
 const cssPath = path.resolve(outputDir, `FeatherWiki-plumage_${packageJson.nickname}.css`);
 fs.writeFileSync(cssPath, cssOutput);
-const outputCssKb = (Uint8Array.from(Buffer.from(cssOutput)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-console.info(cssPath, outputCssKb);
+const outputCssKb = kbStr(cssOutput);
+console.info(fileAndSize(cssPath, outputCssKb));
 
 const localesFilePath = path.resolve(process.cwd(), 'locales');
 const englishFilePath = path.resolve(localesFilePath, 'en-US.json');
@@ -54,7 +64,7 @@ function localize (localeFileName, string) {
     const localeFile = fs.readFileSync(localeFilePath, 'utf-8');
     locale = JSON.parse(localeFile);
   }
-  
+
   const localeName = localeFileName.split('.')?.[0] ?? 'en-US';
   string = string.replace(/\{\{localeName\}\}/g, localeName);
 
@@ -141,7 +151,9 @@ function build(localeFileName) {
               return { errors: [e] };
             }
 
-            contents = contents.replace(/(let|const)\s/g, 'var ');
+            // Use \b so the replacement only touches standalone `let` / `const`
+            // otherwise substrings like "let " inside localized strings (e.g. "Bullet List") get mangled.
+            contents = contents.replace(/\b(let|const)\s/g, 'var ');
 
             try {
               const minified = minifyHTMLLiterals(contents, {
@@ -178,11 +190,11 @@ function build(localeFileName) {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
+        const jsFilename = `FeatherWiki-muscles_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
         const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
-        const jsKb = (Uint8Array.from(Buffer.from(output)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
-        console.info(jsOutPath, jsKb);
+        const jsKb = kbStr(output);
+        console.info(fileAndSize(jsOutPath, jsKb));
 
         // I can't do replace because of the regex stuff in here,
         const htmlParts = html.split('{{jsOutput}}'); // But this does exactly what I need!
@@ -199,11 +211,26 @@ function build(localeFileName) {
     const filename = `FeatherWiki_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
     const filePath = path.resolve(outputDir, filename);
     const outHtml = minify(html, minifyOptions);
-    const outputKb = (Uint8Array.from(Buffer.from(outHtml)).byteLength * 0.000977).toFixed(3) + ' kilobytes';
+    const outputKb = kbStr(outHtml);
     await fs.writeFile(filePath, outHtml, (err) => {
       if (err) throw err;
-      console.info(filePath, outputKb);
+      console.info(fileAndSize(filePath, outputKb));
     });
+
+    // For the "bare bones" html version
+    const bonesFileName = path.relative(process.cwd(), 'index-bones.html');
+    let bonesHtml = await fs.promises.readFile(bonesFileName, 'utf8');
+    bonesHtml = localize(localeFileName, bonesHtml);
+    bonesHtml = injectVariables(bonesHtml);
+    const bonesFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
+    const bonesFilePath = path.resolve(outputDir, bonesFilename);
+    const bonesOutHtml = minify(bonesHtml, minifyOptions);
+    const bonesOutputKb = kbStr(bonesOutHtml);
+    await fs.writeFile(bonesFilePath, bonesOutHtml, (err) => {
+      if (err) throw err;
+      console.info(fileAndSize(bonesFilePath, bonesOutputKb));
+    });
+
     return { size: outputKb };
   }).catch((e) => {
     console.error(e);

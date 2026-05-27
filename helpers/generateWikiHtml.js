@@ -22,10 +22,10 @@ export default function (state) {
   ${p.desc ? `<meta name="description" content="${p.desc.replace(/"/g, '\\"')}">` : ''}
   <meta name="application-name" content="{{package.json: title}}" />
   <meta name="version" content="{{package.json:version}}" />
-  <style id="s">${document.getElementById('s').innerHTML}</style>
+  ${styleTag()}
   ${c ? `<style id=c>${c}</style>` : ''}
   <script id="p" type="application/json">${JSON.stringify(FW.json.compress(p))}</script>
-  <script id="a">${document.getElementById('a').innerHTML}</script>
+  ${scriptTag()}
   ${FW.inject.esc(p.head, true)}
 </head>
 <body>
@@ -34,6 +34,24 @@ export default function (state) {
   ${j ? `<script id=j>FW.ready(()=>{/**/${j}/**/});</script>` : ''}
 </body>
 </html>`;
+
+  function scriptTag() {
+    const a = document.getElementById('a');
+    if (a.hasAttribute('src')) {
+      return `<script id=a src="${a.getAttribute('src')}"></script>`;
+    } else {
+      return `<script id=a>${a.innerHTML}</script>`;
+    }
+  }
+
+  function styleTag() {
+    const s = document.getElementById('s');
+    if (s.hasAttribute('href')) {
+      return `<link id=s href="${s.getAttribute('href')}" rel=stylesheet>`;
+    } else {
+      return `<style id=s>${s.innerHTML}</style>`;
+    }
+  }
 
   function staticExport() {
     const st = { ...state, edit: false, sb: true, sbx: new Set(), pg: undefined, query: { page: 'a' }, p: { ...p, published: true } };

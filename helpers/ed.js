@@ -1,9 +1,9 @@
 /**
  * Modified from pell, the simplest and smallest WYSIWYG text editor for web, with no dependencies
  * https://github.com/jaredreich/pell
- * 
+ *
  * Several customization options have been removed to work with Feather Wiki specifically.
- * 
+ *
  * @licence MIT
  */
 

@@ -22,6 +22,7 @@
   "customJs": "JS personnalisé",
   "customJsHelpText": "S'exécute une fois au chargement du wiki. Pour tester, enregistrer le wiki et le recharger.",
   "default": "par défaut",
+  "defaultEditor": "Éditeur de page par défaut",
   "deleteImageButton": "Supprimer",
   "deleteImagePrompt": "Supprimer définitivement l'image de toutes les pages du wiki ?",
   "deletePage": "Supprimer",

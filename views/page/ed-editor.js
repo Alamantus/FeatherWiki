@@ -11,11 +11,12 @@ import { modal } from '../gallery';
 
 export const editor = (state, emit) => {
   const { init } = ed; // From `window`
-  const { src, edits } = state;
+  const { edits } = state;
   const { content } = edits;
+  const src = edits.editor === 'html';
   let element;
   if (src) {
-    element = html`<textarea onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
+    element = html`<textarea id=html onchange=${e => state.edits.content = e.target.value}>${FW.img.abbr(content)}</textarea>`;
   } else {
     element = init({
       onChange: val => state.edits.content = val,
@@ -27,7 +28,7 @@ export const editor = (state, emit) => {
   return [
     element,
     html`<div class="w1 tr pb">
-      <button type=button onclick=${() => { state.src = !src; emit(state.events.RENDER) }}>
+      <button type=button onclick=${() => { state.edits.editor = src ? 'ed' : 'html'; emit(state.events.RENDER) }}>
         ${src ? '{{translate:showEditor}}' : '{{translate:showHtml}}'}
       </button>
     </div>`,
