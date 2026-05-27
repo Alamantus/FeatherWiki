@@ -190,7 +190,7 @@ function build(localeFileName) {
     for (const out of result.outputFiles) {
       let output = new TextDecoder().decode(out.contents);
       if (/\.js$/.test(out.path)) {
-        const jsFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
+        const jsFilename = `FeatherWiki-muscles_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.js`;
         const jsOutPath = path.resolve(outputDir, jsFilename);
         fs.writeFileSync(jsOutPath, output);
         const jsKb = kbStr(output);
@@ -218,17 +218,17 @@ function build(localeFileName) {
     });
 
     // For the "bare bones" html version
-    const bareFileName = path.relative(process.cwd(), 'index-bare.html');
-    let bareHtml = await fs.promises.readFile(bareFileName, 'utf8');
-    bareHtml = localize(localeFileName, bareHtml);
-    bareHtml = injectVariables(bareHtml);
-    const bareFilename = `FeatherWiki-bare_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
-    const bareFilePath = path.resolve(outputDir, bareFilename);
-    const bareOutHtml = minify(bareHtml, minifyOptions);
-    const bareOutputKb = kbStr(bareOutHtml);
-    await fs.writeFile(bareFilePath, bareOutHtml, (err) => {
+    const bonesFileName = path.relative(process.cwd(), 'index-bones.html');
+    let bonesHtml = await fs.promises.readFile(bonesFileName, 'utf8');
+    bonesHtml = localize(localeFileName, bonesHtml);
+    bonesHtml = injectVariables(bonesHtml);
+    const bonesFilename = `FeatherWiki-bones_${packageJson.nickname}${localeName !== 'en-US' ? `_${localeName}` : ''}.html`;
+    const bonesFilePath = path.resolve(outputDir, bonesFilename);
+    const bonesOutHtml = minify(bonesHtml, minifyOptions);
+    const bonesOutputKb = kbStr(bonesOutHtml);
+    await fs.writeFile(bonesFilePath, bonesOutHtml, (err) => {
       if (err) throw err;
-      console.info(fileAndSize(bareFilePath, bareOutputKb));
+      console.info(fileAndSize(bonesFilePath, bonesOutputKb));
     });
 
     return { size: outputKb };
