@@ -168,17 +168,15 @@ export async function dismissingCancelPromptKeepsEditing(driver) {
  */
 export async function editingPageToDuplicateSlugShowsAlert(driver) {
   const first = await createNewPage(driver, null, 'First Page', true);
-  await createNewPage(driver, null, 'Second Page', true);
+  const second = await createNewPage(driver, null, 'Second Page', true);
 
   await clickEditButton(driver);
-  const slugField = await driver.findElement(By.css('#slug'));
+  const slugField = await expectValue(driver, 'main > section header #slug', second.slug);
   await slugField.clear();
+  await driver.sleep(100);
   await slugField.sendKeys(first.slug);
 
-  const saveButton = await driver.findElement(
-    By.css('main > section form footer button[type="submit"]')
-  );
-  await saveButton.click();
+  await saveOpenedPage(driver);
 
   await driver.wait(until.alertIsPresent(), 1000);
   const slugAlert = await driver.switchTo().alert();
