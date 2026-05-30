@@ -322,8 +322,12 @@ function nanotiming (name) {
  * Modified from https://github.com/choojs/nanoscheduler
  */
 function NanoScheduler () {
-  this.hasIdle = typeof window.requestIdleCallback !== 'undefined';
-  this.method = this.hasIdle ? window.requestIdleCallback.bind(window) : this.setTimeout;
+  const hasIdle = typeof window.requestIdleCallback !== 'undefined';
+  this.method = hasIdle ? window.requestIdleCallback.bind(window) : (cb) => {
+    setTimeout(cb, 0, {
+      timeRemaining: () => 1,
+    });
+  };
   this.scheduled = false;
   this.queue = [];
 }
@@ -347,12 +351,6 @@ NanoScheduler.prototype.schedule = function () {
     self.scheduled = false;
     if (self.queue.length) self.schedule();
   })
-}
-
-NanoScheduler.prototype.setTimeout = function (cb) {
-  setTimeout(cb, 0, {
-    timeRemaining: () => 1,
-  });
 }
 
 /**
