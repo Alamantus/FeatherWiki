@@ -36,7 +36,7 @@
   "imageAltTextPrompt": "代替テキスト:",
   "imageUsedIn": "${i.pgs.length} ページ使用",
   "importButton": "他の {{package.json:title}} ファイルをインポート・上書きする",
-  "includeStaticHtml": "静的 HTML を含めるL",
+  "includeStaticHtml": "静的 HTML を含める",
   "includeStaticHtmlHelpText": "非 JS ブラウザ用に、Wiki コンテンツをプレーン HTML で含めます。出力サイズがほぼ 2 倍になります。",
   "insertImageButton": "挿入",
   "insertImageHelpText": "ファイルから画像を挿入",
