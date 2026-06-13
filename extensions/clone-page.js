@@ -9,7 +9,7 @@
  */
 // This extension adds a "Clone Page" button next to the "Edit" button on every page. Click it, set a new name, and a copy of the current page will appear for editing.
 FW.ready(() => {
-  const { state, emitter } = FW;
+  const { state, emitter, emit } = FW;
   console.log('running clone-page.js');
 
   ['DOMContentLoaded', 'render'].forEach(ev => {
@@ -19,7 +19,7 @@ FW.ready(() => {
       }, 50);
     });
   });
-  emitter.emit('DOMContentLoaded');
+  emit('DOMContentLoaded');
 
   function renderClonePageButton () {
     const editButton = Array.from(document.querySelectorAll('main > section > header button')).find(el => el.textContent === 'Edit');
@@ -30,14 +30,22 @@ FW.ready(() => {
       if (!newName) return;
       newName = newName.trim();
       if (newName.length < 2) return alert('Enter more than 1 character to create a new page.');
-      emitter.emit(state.events.CREATE_PAGE, newName);
-      const wait = setInterval(() => {
-        if (state.pg.id !== pg.id) {
-          clearInterval(wait);
-          state.pg = {...pg, ...state.pg};
-          emitter.emit(state.events.START_EDIT);
+      emit(state.events.CREATE_PAGE, newName);
+      const newId = state.recent[0].p;
+      const newPg = FW.find(newId, 'id');
+      Object.keys(newPg).forEach((key) => {
+        if (['id', 'name', 'slug'].includes(key)) {
+          // Keep saved id, name, and slug
+          return;
         }
-      }, 100);
+        let val = pg[key];
+        if (key === 'content') {
+          // In case transclusion is used, explicitly target orig_content if it exists
+          val = pg.orig_content ?? pg.content ?? '';
+        }
+        newPg[key] = val;
+      });
+      emit(state.events.START_EDIT);
     }}>Clone Page</button>`;
     editButton.parentElement.insertBefore(cloneButton, editButton.nextSibling);
   }
