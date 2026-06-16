@@ -111,9 +111,7 @@ export default function md (markdown) {
     // checkboxes
     .replace(/\[( |x)\]/g, (m, checked) => `<input type="checkbox" disabled${ checked.toLowerCase() === 'x' ? ' checked' : '' }>`)
     // line breaks
-    .replace(/  +\n/gm, '<br>')
-    // paragraphs - exclude lists, already-rendered HTML, & whitespace
-    .replace(/^([^-\+\*\d<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`);
+    .replace(/  +\n/gm, '<br>');
 
   // lists
   let spaces;
@@ -139,9 +137,11 @@ export default function md (markdown) {
 
   markdown = (
     markdown
-  // Combine lists
+      // Combine lists
       .replace(/(<\/ul>\n?[ \t]*<ul>)+?/g, '')
       .replace(/(<\/ol>\n?[ \t]*<ol>)+?/g, '')
+			// paragraphs - exclude already-rendered HTML & leading whitespace
+			.replace(/^([^<\t \n])([^]*?)(?:\n\n)/gm, (m, leadingCharacter, body) => `<p>${ leadingCharacter }${ body }</p>\n`)
       // strong
       .replace(/\*\*([^\n*]+?)\*\*/g, '<strong>$1</strong>')
       .replace(/__([^\n_]+?)__/g, '<strong>$1</strong>')
