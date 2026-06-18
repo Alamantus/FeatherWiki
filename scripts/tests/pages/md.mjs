@@ -220,14 +220,13 @@ within that element's contents.--><p></p>
 
 <h2 id="this_is_an_h2">This is an h2 <a class="l" href="#this_is_an_h2">#</a></h2>
 
-<em>This text is in italics.</em>
-<p><em>And so is this text.</em></p>
-<strong>This text is in bold.</strong>
-<p><strong>And so is this text.</strong></p>
-<em><strong>This text is in both.</strong></em>
+<p><em>This text is in italics.</em>
+<em>And so is this text.</em></p>
+<p><strong>This text is in bold.</strong>
+<strong>And so is this text.</strong></p>
+<p><em><strong>This text is in both.</strong></em>
 <strong><em>As is this!</em></strong>
-<em><strong>And this!</strong></em>
-
+<em><strong>And this!</strong></em></p>
 <p><del>This text is rendered with strikethrough.</del></p>
 <p>This is a paragraph. I'm typing in a paragraph isn't this fun?</p>
 <p>Now I'm in paragraph 2.
@@ -264,7 +263,7 @@ above me!</p>
 <ol><li>Item one</li><li>Item two</li><li>Item three<ul><li>mixing</li><li>Sub-list types</li></ul></li><li>Item four</li></ol>
 
 <p>Boxes below without the 'x' are unchecked HTML checkboxes.
-</p><ul><li><input type="checkbox" disabled=""> First task to complete.</li><li><input type="checkbox" disabled=""> Second task that needs done<p></p></li></ul>
+</p><ul><li><input type="checkbox" disabled=""> First task to complete.</li><li><input type="checkbox" disabled=""> Second task that needs done</li></ul><p></p>
 <p>This checkbox below will be a checked HTML checkbox.</p>
 <ul><li><input type="checkbox" disabled="" checked=""> This task has been completed</li></ul>
 
